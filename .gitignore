@@ -1,0 +1,41 @@
+# Entornos virtuales
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+
+# Variables privadas
+.env
+.env.*
+!.env.example
+
+# Archivos comerciales y de prueba
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+*.pdf
+/db.sqlite3
+/PruebaSemana15 - Dimanno/
+
+# Resultados y archivos temporales
+uploads/
+resultados/
+archivos_temporales/
+temp/
+
+# Editores y sistema
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
