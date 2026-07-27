@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+import ctypes
+import gc
 import json
 import re
 import shutil
@@ -264,39 +266,90 @@ def calcular_con_reintentos(
     ) from ultimo_error
 
 
+def _proceso_sigue_activo(pid: int) -> bool:
+    """True si el PID todavía existe en Windows."""
+    PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+    handle = ctypes.windll.kernel32.OpenProcess(
+        PROCESS_QUERY_LIMITED_INFORMATION,
+        False,
+        pid,
+    )
+    if handle:
+        ctypes.windll.kernel32.CloseHandle(handle)
+        return True
+    return False
+
+
 def cerrar_aplicacion_excel(
     libro: xw.Book | None,
     aplicacion: xw.App | None,
     *,
     guardar: bool = False,
 ) -> None:
-    """Cierra libro y aplicación liberando el archivo."""
+    """
+    Cierra únicamente la instancia de Excel creada por el writer.
+
+    Orden: Close del libro → Quit → esperar → kill del PID
+    propio si sigue vivo → liberar referencias → gc.collect().
+    """
+    pid: int | None = None
+
+    if aplicacion is not None:
+        try:
+            pid = int(aplicacion.pid)
+        except (
+            com_error,
+            OSError,
+            AttributeError,
+            TypeError,
+            ValueError,
+        ):
+            pid = None
+
     if libro is not None:
         try:
             libro.api.Close(SaveChanges=guardar)
-        except Exception:
+        except (com_error, OSError, AttributeError):
             try:
                 libro.close()
-            except Exception:
+            except (com_error, OSError, AttributeError):
                 pass
+
+    time.sleep(0.5)
 
     if aplicacion is not None:
         try:
             aplicacion.api.Quit()
-        except Exception:
+        except (com_error, OSError, AttributeError):
             try:
                 aplicacion.quit()
-            except Exception:
+            except (com_error, OSError, AttributeError):
                 pass
 
-        # Si Quit no liberó el proceso, forzar cierre.
-        try:
-            aplicacion.kill()
-        except Exception:
-            pass
+    if pid is not None:
+        limite = time.monotonic() + 15.0
+        while time.monotonic() < limite:
+            if not _proceso_sigue_activo(pid):
+                break
+            time.sleep(0.25)
+        else:
+            # Quit no terminó esta instancia: forzar solo ese PID.
+            if aplicacion is not None:
+                try:
+                    aplicacion.kill()
+                except (com_error, OSError, AttributeError):
+                    pass
 
-    # Windows puede tardar en soltar el bloqueo del .xlsx
-    time.sleep(1.5)
+            limite_forzado = time.monotonic() + 5.0
+            while time.monotonic() < limite_forzado:
+                if not _proceso_sigue_activo(pid):
+                    break
+                time.sleep(0.25)
+
+    libro = None
+    aplicacion = None
+    gc.collect()
+    time.sleep(0.5)
 
 @dataclass(frozen=True)
 class ResultadoEscrituraDimanno:
@@ -567,6 +620,7 @@ def escribir_archivo_dimanno(
     procesamiento: ResultadoPreparacionDimanno,
     ruta_archivo_cliente: str | Path,
     ruta_salida: str | Path,
+    recalcular_al_final: bool = True,
 ) -> ResultadoEscrituraDimanno:
     if not procesamiento.puede_escribir:
         raise ProcesamientoNoListoError(
@@ -612,6 +666,7 @@ def escribir_archivo_dimanno(
 
     aplicacion: xw.App | None = None
     libro: xw.Book | None = None
+    escritura_completada = False
 
     try:
         aplicacion = xw.App(
@@ -723,9 +778,10 @@ def escribir_archivo_dimanno(
 
         aplicacion.api.CutCopyMode = False
 
-        calcular_con_reintentos(
-            aplicacion=aplicacion,
-        )
+        if recalcular_al_final:
+            calcular_con_reintentos(
+                aplicacion=aplicacion,
+            )
 
         rango_tabla = str(tabla.Range.Address)
 
@@ -734,13 +790,7 @@ def escribir_archivo_dimanno(
             aplicacion=aplicacion,
         )
 
-        cerrar_aplicacion_excel(
-            libro=libro,
-            aplicacion=aplicacion,
-            guardar=False,
-        )
-        libro = None
-        aplicacion = None
+        escritura_completada = True
 
         return ResultadoEscrituraDimanno(
             archivo_origen=origen.name,
@@ -772,6 +822,10 @@ def escribir_archivo_dimanno(
         )
 
     except Exception:
+        raise
+
+    finally:
+        # Una sola limpieza: éxito o error.
         cerrar_aplicacion_excel(
             libro=libro,
             aplicacion=aplicacion,
@@ -780,20 +834,11 @@ def escribir_archivo_dimanno(
         libro = None
         aplicacion = None
 
-        if salida.exists():
+        if not escritura_completada and salida.exists():
             try:
                 salida.unlink()
             except OSError:
                 pass
-
-        raise
-
-    finally:
-        cerrar_aplicacion_excel(
-            libro=libro,
-            aplicacion=aplicacion,
-            guardar=False,
-        )
 
 
 def main() -> None:

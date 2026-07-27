@@ -1,5 +1,6 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
+import os
 import unittest
 
 from openpyxl import load_workbook
@@ -30,19 +31,30 @@ RUTA_CLIENTE_SIN_SEMANA = (
     / "DIMANNO Liquidaciones v2.1 Sin Semana 15.xlsx"
 )
 
+RUTA_CLIENTE_CON_SEMANA = (
+    CARPETA_PRUEBA
+    / "DIMANNO Liquidaciones v2.1 Con Semana 15.xlsx"
+)
+
 ARCHIVOS_DISPONIBLES = all(
     ruta.is_file()
     for ruta in (
         RUTA_LIQUIDACION,
         RUTA_DESPACHOS,
         RUTA_CLIENTE_SIN_SEMANA,
+        RUTA_CLIENTE_CON_SEMANA,
     )
 )
 
+EJECUTAR_PRUEBAS_EXCEL = os.getenv("RUN_EXCEL_TESTS") == "1"
+
 
 @unittest.skipUnless(
-    ARCHIVOS_DISPONIBLES,
-    "Los archivos reales de prueba no están disponibles.",
+    ARCHIVOS_DISPONIBLES and EJECUTAR_PRUEBAS_EXCEL,
+    (
+        "Prueba lenta de integración con Excel. "
+        "Ejecute con RUN_EXCEL_TESTS=1."
+    ),
 )
 class PruebasEscritorDimanno(unittest.TestCase):
     @classmethod
@@ -69,6 +81,7 @@ class PruebasEscritorDimanno(unittest.TestCase):
                     RUTA_CLIENTE_SIN_SEMANA
                 ),
                 ruta_salida=ruta_salida,
+                recalcular_al_final=False,
             )
 
             self.assertTrue(ruta_salida.is_file())
@@ -219,22 +232,9 @@ class PruebasEscritorDimanno(unittest.TestCase):
         with TemporaryDirectory(
             ignore_cleanup_errors=True,
         ) as carpeta_temporal:
-            primera_salida = (
+            ruta_salida = (
                 Path(carpeta_temporal)
-                / "primera_salida.xlsx"
-            )
-
-            segunda_salida = (
-                Path(carpeta_temporal)
-                / "segunda_salida.xlsx"
-            )
-
-            escribir_archivo_dimanno(
-                procesamiento=self.procesamiento,
-                ruta_archivo_cliente=(
-                    RUTA_CLIENTE_SIN_SEMANA
-                ),
-                ruta_salida=primera_salida,
+                / "resultado_duplicado.xlsx"
             )
 
             with self.assertRaises(
@@ -242,8 +242,11 @@ class PruebasEscritorDimanno(unittest.TestCase):
             ):
                 escribir_archivo_dimanno(
                     procesamiento=self.procesamiento,
-                    ruta_archivo_cliente=primera_salida,
-                    ruta_salida=segunda_salida,
+                    ruta_archivo_cliente=(
+                        RUTA_CLIENTE_CON_SEMANA
+                    ),
+                    ruta_salida=ruta_salida,
+                    recalcular_al_final=False,
                 )
 
 
