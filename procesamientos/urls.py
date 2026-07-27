@@ -10,4 +10,14 @@ urlpatterns = [
         views.cargar_dimanno,
         name="dimanno_cargar",
     ),
+    path(
+        "dimanno/<uuid:procesamiento_id>/",
+        views.detalle_dimanno,
+        name="dimanno_detalle",
+    ),
+    path(
+        "dimanno/<uuid:procesamiento_id>/gastos/editar/",
+        views.editar_gastos_dimanno,
+        name="dimanno_gastos_editar",
+    ),
 ]

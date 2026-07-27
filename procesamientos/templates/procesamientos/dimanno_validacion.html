@@ -39,6 +39,21 @@
     h1 { font-size: 1.75rem; }
     h2 { font-size: 1.15rem; margin-top: 1.75rem; }
 
+    .mensajes {
+      list-style: none;
+      margin: 0 0 1rem;
+      padding: 0;
+    }
+
+    .mensajes li {
+      background: #e3f9e5;
+      border: 1px solid #b8e6bf;
+      color: var(--ok);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+    }
+
     .tarjeta {
       background: var(--tarjeta);
       border: 1px solid var(--borde);
@@ -98,21 +113,67 @@
       font-weight: 600;
     }
 
+    td.num, th.num {
+      text-align: right;
+    }
+
+    tfoot td {
+      font-weight: 700;
+      border-bottom: 0;
+      padding-top: 0.85rem;
+    }
+
+    .etiqueta-modificado {
+      display: inline-block;
+      margin-left: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--aviso);
+      background: #fff3c4;
+      border-radius: 999px;
+      padding: 0.1rem 0.45rem;
+    }
+
+    .cabecera-seccion {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .cabecera-seccion h2 {
+      margin: 0;
+    }
+
     .acciones {
       margin-top: 1.5rem;
     }
 
-    a.boton {
+    a.boton, button.boton {
       display: inline-block;
       text-decoration: none;
+      border: 0;
       border-radius: 8px;
       background: var(--acento);
       color: #fff;
+      font: inherit;
       font-weight: 600;
       padding: 0.7rem 1.1rem;
+      cursor: pointer;
     }
 
-    a.boton:hover { background: #095c42; }
+    a.boton:hover, button.boton:hover { background: #095c42; }
+
+    .boton-secundario {
+      background: #486581;
+    }
+
+    .boton-secundario:hover {
+      background: #334e68;
+    }
 
     .vacio {
       color: #829ab1;
@@ -121,72 +182,69 @@
   </style>
 </head>
 <body>
+  {% load dimanno_extras %}
   <main>
     <h1>Resultado de validación</h1>
+
+    {% if messages %}
+      <ul class="mensajes">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
 
     <section class="tarjeta">
       <div class="resumen">
         <div class="dato">
           <strong>Estado</strong>
           <span class="estado estado-{{ procesamiento.estado }}">
-            {% if procesamiento.estado == "listo" %}
-              Listo
-            {% elif procesamiento.estado == "requiere_destino" %}
-              Requiere definir destino
-            {% elif procesamiento.estado == "invalido" %}
-              Con errores
-            {% else %}
-              {{ procesamiento.estado|capfirst }}
-            {% endif %}
+            {{ procesamiento.estado }}
           </span>
         </div>
         <div class="dato">
           <strong>Factura corta</strong>
-          {{ procesamiento.liquidacion.factura_corta }}
+          {{ procesamiento.factura_corta }}
         </div>
         <div class="dato">
           <strong>Semana</strong>
-          {{ procesamiento.liquidacion.semana }}
+          {{ procesamiento.semana }}
         </div>
         <div class="dato">
           <strong>Año</strong>
-          {{ procesamiento.despachos.anio_buscado }}
+          {{ procesamiento.anio }}
         </div>
         <div class="dato">
           <strong>Destino liquidación</strong>
-          {{ procesamiento.validacion.destino_liquidacion }}
+          {{ procesamiento.destino_liquidacion|default:"—" }}
         </div>
         <div class="dato">
           <strong>Destinos Despachos</strong>
-          {% if procesamiento.validacion.destinos_despachos %}
-            {{ procesamiento.validacion.destinos_despachos|join:", " }}
+          {% if procesamiento.destinos_despachos %}
+            {{ procesamiento.destinos_despachos|join:", " }}
           {% else %}
             —
           {% endif %}
         </div>
         <div class="dato">
           <strong>Destino final</strong>
-          {% if procesamiento.destino_final %}
-            {{ procesamiento.destino_final }}
-          {% else %}
-            —
-          {% endif %}
+          {{ procesamiento.destino_final|default:"—" }}
         </div>
         <div class="dato">
           <strong>Contenedores</strong>
-          {{ procesamiento.liquidacion.contenedores|length }}
+          {{ procesamiento.cantidad_contenedores }}
         </div>
         <div class="dato">
           <strong>Total cajas (liquidación)</strong>
-          {{ procesamiento.validacion.total_cajas_liquidacion }}
+          {{ procesamiento.total_cajas_liquidacion|decimal_es }}
         </div>
         <div class="dato">
           <strong>Total cajas (despachos)</strong>
-          {{ procesamiento.validacion.total_cajas_despachos }}
+          {{ procesamiento.total_cajas_despachos|decimal_es }}
         </div>
         <div class="dato">
           <strong>Líneas preparadas</strong>
-          {{ procesamiento.validacion.lineas_preparadas|length }}
+          {{ procesamiento.lineas_preparadas|length }}
         </div>
         <div class="dato">
           <strong>Listo para escribir</strong>
@@ -194,20 +252,16 @@
         </div>
         <div class="dato">
           <strong>Requiere resolución de destino</strong>
-          {% if procesamiento.validacion.requiere_resolver_destino %}
-            Sí
-          {% else %}
-            No
-          {% endif %}
+          {% if procesamiento.requiere_resolver_destino %}Sí{% else %}No{% endif %}
         </div>
       </div>
     </section>
 
     <h2>Errores</h2>
     <section class="tarjeta">
-      {% if procesamiento.validacion.errores %}
+      {% if procesamiento.errores %}
         <ul class="lista errores">
-          {% for incidencia in procesamiento.validacion.errores %}
+          {% for incidencia in procesamiento.errores %}
             <li>{{ incidencia.mensaje }}</li>
           {% endfor %}
         </ul>
@@ -218,9 +272,9 @@
 
     <h2>Advertencias</h2>
     <section class="tarjeta">
-      {% if procesamiento.validacion.advertencias %}
+      {% if procesamiento.advertencias %}
         <ul class="lista advertencias">
-          {% for incidencia in procesamiento.validacion.advertencias %}
+          {% for incidencia in procesamiento.advertencias %}
             <li>{{ incidencia.mensaje }}</li>
           {% endfor %}
         </ul>
@@ -231,7 +285,7 @@
 
     <h2>Líneas preparadas</h2>
     <section class="tarjeta">
-      {% if procesamiento.validacion.lineas_preparadas %}
+      {% if procesamiento.lineas_preparadas %}
         <table>
           <thead>
             <tr>
@@ -243,12 +297,12 @@
             </tr>
           </thead>
           <tbody>
-            {% for linea in procesamiento.validacion.lineas_preparadas %}
+            {% for linea in procesamiento.lineas_preparadas %}
               <tr>
-                <td>{{ linea.despacho.contenedor }}</td>
+                <td>{{ linea.contenedor }}</td>
                 <td>{{ linea.tipo_fruta }}</td>
                 <td>{{ linea.calibre }}</td>
-                <td>{{ linea.despacho.total_cajas }}</td>
+                <td>{{ linea.total_cajas }}</td>
                 <td>{{ linea.precio_venta_eur }}</td>
               </tr>
             {% endfor %}
@@ -259,24 +313,51 @@
       {% endif %}
     </section>
 
-    <h2>Gastos extraídos</h2>
+    <div class="cabecera-seccion">
+      <h2>Gastos extraídos</h2>
+      <a
+        class="boton"
+        href="{% url 'procesamientos:dimanno_gastos_editar' procesamiento.id %}"
+      >
+        Modificar gastos
+      </a>
+    </div>
     <section class="tarjeta">
-      {% if gastos_extraidos %}
+      {% if gastos %}
         <table>
           <thead>
             <tr>
               <th>Rubro</th>
-              <th>Valor extraído (EUR)</th>
+              <th class="num">Valor extraído (EUR)</th>
+              <th class="num">Valor aplicado (EUR)</th>
             </tr>
           </thead>
           <tbody>
-            {% for gasto in gastos_extraidos %}
+            {% for gasto in gastos %}
               <tr>
-                <td>{{ gasto.rubro }}</td>
-                <td>{{ gasto.valor }}</td>
+                <td>{{ gasto.nombre }}</td>
+                <td class="num">{{ gasto.valor_original|decimal_es }}</td>
+                <td class="num">
+                  {{ gasto.valor_aplicado|decimal_es }}
+                  {% if gasto.fue_modificado %}
+                    <span class="etiqueta-modificado">Modificado</span>
+                  {% endif %}
+                </td>
               </tr>
             {% endfor %}
           </tbody>
+          <tfoot>
+            <tr>
+              <td>Total gastos extraídos</td>
+              <td class="num">{{ total_gastos_originales|decimal_es }} EUR</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Total gastos aplicados</td>
+              <td></td>
+              <td class="num">{{ total_gastos_aplicados|decimal_es }} EUR</td>
+            </tr>
+          </tfoot>
         </table>
       {% else %}
         <p class="vacio">
@@ -286,7 +367,7 @@
     </section>
 
     <div class="acciones">
-      <a class="boton" href="{% url 'procesamientos:dimanno_cargar' %}">
+      <a class="boton boton-secundario" href="{% url 'procesamientos:dimanno_cargar' %}">
         Volver al formulario
       </a>
     </div>
