@@ -6,47 +6,66 @@
   <title>Cargar liquidación Di Manno</title>
   <style>
     :root {
-      --texto: #1f2933;
-      --borde: #d9e2ec;
-      --fondo: #f5f7fa;
-      --acento: #0b6e4f;
-      --error: #9b1c1c;
+      --fondo: #f8f9f5;
       --tarjeta: #ffffff;
+      --suave: #e2e5de;
+      --acento: #6d8b74;
+      --acento-oscuro: #557360;
+      --texto: #333333;
+      --muted: #6b7368;
+      --borde: #d5dbd1;
+      --error: #9b1c1c;
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: "Segoe UI", Tahoma, sans-serif;
       color: var(--texto);
-      background: linear-gradient(180deg, #eef2f6 0%, var(--fondo) 100%);
-      min-height: 100vh;
+      background: var(--fondo);
     }
 
     main {
       max-width: 720px;
-      margin: 2.5rem auto;
-      padding: 0 1rem 3rem;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
+    }
+
+    .nav-volver {
+      margin: 0 0 1.25rem;
+    }
+
+    .nav-volver a {
+      color: var(--acento-oscuro);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .nav-volver a:hover {
+      text-decoration: underline;
     }
 
     h1 {
-      margin: 0 0 0.5rem;
-      font-size: 1.75rem;
+      margin: 0 0 0.4rem;
+      font-size: 1.9rem;
     }
 
     .intro {
       margin: 0 0 1.5rem;
-      color: #52606d;
+      color: var(--muted);
     }
 
     form {
       background: var(--tarjeta);
       border: 1px solid var(--borde);
-      border-radius: 12px;
-      padding: 1.5rem;
+      border-radius: 18px;
+      padding: 1.5rem 1.4rem;
       display: grid;
       gap: 1rem;
+      box-shadow: 0 8px 24px rgba(109, 139, 116, 0.06);
     }
 
     label {
@@ -59,17 +78,23 @@
     input[type="text"],
     input[type="file"] {
       width: 100%;
-      padding: 0.65rem 0.75rem;
+      padding: 0.75rem 0.9rem;
       border: 1px solid var(--borde);
-      border-radius: 8px;
+      border-radius: 999px;
       font: inherit;
-      background: #fff;
+      background: var(--suave);
+      color: var(--texto);
+    }
+
+    input[type="file"] {
+      border-radius: 14px;
+      background: var(--tarjeta);
     }
 
     .ayuda {
       margin: 0.35rem 0 0;
       font-size: 0.9rem;
-      color: #627d98;
+      color: var(--muted);
     }
 
     .errores,
@@ -77,7 +102,7 @@
       background: #fff5f5;
       border: 1px solid #feb2b2;
       color: var(--error);
-      border-radius: 8px;
+      border-radius: 14px;
       padding: 0.85rem 1rem;
       margin: 0 0 1rem;
     }
@@ -96,52 +121,26 @@
     button {
       justify-self: start;
       border: 0;
-      border-radius: 8px;
+      border-radius: 999px;
       background: var(--acento);
       color: #fff;
       font: inherit;
       font-weight: 600;
-      padding: 0.75rem 1.25rem;
+      padding: 0.75rem 1.35rem;
       cursor: pointer;
     }
 
     button:hover {
-      background: #095c42;
-    }
-
-    .barra-sesion {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.25rem;
-      padding: 0.65rem 0.9rem;
-      background: #fff;
-      border: 1px solid var(--borde);
-      border-radius: 10px;
-      font-size: 0.92rem;
-      color: #486581;
-    }
-
-    .barra-sesion form { margin: 0; }
-
-    .barra-sesion button {
-      border: 0;
-      border-radius: 8px;
-      background: #486581;
-      color: #fff;
-      font: inherit;
-      font-weight: 600;
-      padding: 0.45rem 0.85rem;
-      cursor: pointer;
-      justify-self: auto;
+      background: var(--acento-oscuro);
     }
   </style>
 </head>
 <body>
   <main>
-    {% include "procesamientos/_sesion.html" %}
+    <p class="nav-volver">
+      <a href="{% url 'procesamientos:panel' %}">← Volver al panel</a>
+    </p>
+
     <h1>Di Manno — Validar liquidación</h1>
     <p class="intro">
       Cargue los archivos y valide la liquidación antes de generar

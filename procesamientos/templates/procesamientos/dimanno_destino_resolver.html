@@ -6,14 +6,17 @@
   <title>Definir destino Di Manno</title>
   <style>
     :root {
-      --texto: #1f2933;
-      --borde: #d9e2ec;
-      --fondo: #f5f7fa;
-      --acento: #0b6e4f;
+      --fondo: #f8f9f5;
+      --tarjeta: #ffffff;
+      --suave: #e2e5de;
+      --acento: #6d8b74;
+      --acento-oscuro: #557360;
+      --texto: #333333;
+      --muted: #6b7368;
+      --borde: #d5dbd1;
       --error: #9b1c1c;
       --aviso: #8a6116;
-      --ok: #05603a;
-      --tarjeta: #ffffff;
+      --ok: #557360;
     }
 
     * { box-sizing: border-box; }
@@ -22,24 +25,34 @@
       margin: 0;
       font-family: "Segoe UI", Tahoma, sans-serif;
       color: var(--texto);
-      background: linear-gradient(180deg, #eef2f6 0%, var(--fondo) 100%);
+      background: var(--fondo);
       min-height: 100vh;
     }
 
     main {
       max-width: 900px;
-      margin: 2.5rem auto;
-      padding: 0 1rem 3rem;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
     }
 
-    h1 { margin: 0 0 0.75rem; font-size: 1.75rem; }
+    .nav-volver { margin: 0 0 1.25rem; }
+
+    .nav-volver a {
+      color: var(--acento-oscuro);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    h1 { margin: 0 0 0.75rem; font-size: 1.9rem; }
 
     .resumen, .tarjeta {
       background: var(--tarjeta);
       border: 1px solid var(--borde);
-      border-radius: 12px;
+      border-radius: 18px;
       padding: 1.25rem 1.5rem;
       margin-bottom: 1rem;
+      box-shadow: 0 8px 24px rgba(109, 139, 116, 0.06);
     }
 
     .resumen {
@@ -51,7 +64,7 @@
     .dato strong {
       display: block;
       font-size: 0.85rem;
-      color: #627d98;
+      color: var(--muted);
       margin-bottom: 0.2rem;
     }
 
@@ -63,24 +76,25 @@
       font-size: 0.9rem;
     }
 
-    .estado-listo { background: #e3f9e5; color: var(--ok); }
+    .estado-listo { background: #dce8df; color: var(--ok); }
     .estado-requiere_destino { background: #fff3c4; color: var(--aviso); }
     .estado-invalido { background: #ffe3e3; color: var(--error); }
 
     input[type="text"],
     textarea {
       width: 100%;
-      padding: 0.55rem 0.65rem;
+      padding: 0.7rem 0.85rem;
       border: 1px solid var(--borde);
-      border-radius: 8px;
+      border-radius: 14px;
       font: inherit;
+      background: var(--suave);
     }
 
     .errores {
       background: #fff5f5;
       border: 1px solid #feb2b2;
       color: var(--error);
-      border-radius: 8px;
+      border-radius: 14px;
       padding: 0.85rem 1rem;
       margin-bottom: 1rem;
     }
@@ -97,9 +111,7 @@
       padding: 0;
     }
 
-    .opciones li {
-      margin: 0.55rem 0;
-    }
+    .opciones li { margin: 0.55rem 0; }
 
     .opciones label {
       font-weight: 500;
@@ -119,7 +131,7 @@
       display: inline-block;
       text-decoration: none;
       border: 0;
-      border-radius: 8px;
+      border-radius: 999px;
       background: var(--acento);
       color: #fff;
       font: inherit;
@@ -128,9 +140,9 @@
       cursor: pointer;
     }
 
-    a.boton {
-      background: #486581;
-    }
+    a.boton { background: var(--muted); }
+    a.boton:hover { background: #555e53; }
+    button:hover { background: var(--acento-oscuro); }
 
     label.campo {
       display: block;
@@ -138,48 +150,22 @@
       margin: 0.85rem 0 0.35rem;
     }
 
-    .barra-sesion {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.25rem;
-      padding: 0.65rem 0.9rem;
-      background: #fff;
-      border: 1px solid var(--borde);
-      border-radius: 10px;
-      font-size: 0.92rem;
-      color: #486581;
-    }
-
-    .barra-sesion form { margin: 0; }
-
-    .barra-sesion button {
-      border: 0;
-      border-radius: 8px;
-      background: #486581;
-      color: #fff;
-      font: inherit;
-      font-weight: 600;
-      padding: 0.45rem 0.85rem;
-      cursor: pointer;
-    }
-
     .aviso-registro {
       margin: 0 0 1rem;
       padding: 0.75rem 1rem;
-      background: #e8f5ef;
-      border: 1px solid #b8e6bf;
-      border-radius: 8px;
-      color: #05603a;
+      background: #dce8df;
+      border: 1px solid #c5d4c8;
+      border-radius: 14px;
+      color: var(--acento-oscuro);
       font-size: 0.95rem;
     }
   </style>
 </head>
 <body>
   <main>
-    {% include "procesamientos/_sesion.html" %}
+    <p class="nav-volver">
+      <a href="{% url 'procesamientos:panel' %}">← Volver al panel</a>
+    </p>
     <h1>Definir destino</h1>
 
     <p class="aviso-registro">

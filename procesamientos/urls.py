@@ -6,6 +6,11 @@ app_name = "procesamientos"
 
 urlpatterns = [
     path(
+        "",
+        views.panel_control,
+        name="panel",
+    ),
+    path(
         "dimanno/",
         views.cargar_dimanno,
         name="dimanno_cargar",

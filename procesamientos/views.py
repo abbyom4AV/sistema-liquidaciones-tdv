@@ -41,6 +41,26 @@ def obtener_nombre_usuario(usuario) -> str:
     return nombre_completo or usuario.get_username()
 
 
+@login_required
+def panel_control(request):
+    recientes = list(
+        ProcesamientoDimanno.objects.order_by("-creado_en")[:5]
+    )
+    return render(
+        request,
+        "procesamientos/panel.html",
+        {
+            "nombre_usuario_sesion": obtener_nombre_usuario(
+                request.user
+            ),
+            "procesamientos_recientes": recientes,
+            "total_procesamientos": (
+                ProcesamientoDimanno.objects.count()
+            ),
+        },
+    )
+
+
 def _decimal_a_str(valor: Decimal | int | str) -> str:
     if isinstance(valor, Decimal):
         return format(valor, "f")

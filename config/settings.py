@@ -85,7 +85,7 @@ TEMPLATES = [
 ]
 
 LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "procesamientos:dimanno_cargar"
+LOGIN_REDIRECT_URL = "procesamientos:panel"
 LOGOUT_REDIRECT_URL = "login"
 
 WSGI_APPLICATION = 'config.wsgi.application'
