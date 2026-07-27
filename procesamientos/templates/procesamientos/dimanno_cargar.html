@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cargar liquidación Di Manno</title>
+  <style>
+    :root {
+      --texto: #1f2933;
+      --borde: #d9e2ec;
+      --fondo: #f5f7fa;
+      --acento: #0b6e4f;
+      --error: #9b1c1c;
+      --tarjeta: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--texto);
+      background: linear-gradient(180deg, #eef2f6 0%, var(--fondo) 100%);
+      min-height: 100vh;
+    }
+
+    main {
+      max-width: 720px;
+      margin: 2.5rem auto;
+      padding: 0 1rem 3rem;
+    }
+
+    h1 {
+      margin: 0 0 0.5rem;
+      font-size: 1.75rem;
+    }
+
+    .intro {
+      margin: 0 0 1.5rem;
+      color: #52606d;
+    }
+
+    form {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    input[type="file"] {
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+      font: inherit;
+      background: #fff;
+    }
+
+    .ayuda {
+      margin: 0.35rem 0 0;
+      font-size: 0.9rem;
+      color: #627d98;
+    }
+
+    .errores,
+    .error-proceso {
+      background: #fff5f5;
+      border: 1px solid #feb2b2;
+      color: var(--error);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin: 0 0 1rem;
+    }
+
+    .errores ul {
+      margin: 0.4rem 0 0;
+      padding-left: 1.2rem;
+    }
+
+    .campo-error {
+      color: var(--error);
+      font-size: 0.9rem;
+      margin-top: 0.35rem;
+    }
+
+    button {
+      justify-self: start;
+      border: 0;
+      border-radius: 8px;
+      background: var(--acento);
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #095c42;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Di Manno — Validar liquidación</h1>
+    <p class="intro">
+      Cargue los archivos y valide la liquidación antes de generar
+      el archivo acumulativo.
+    </p>
+
+    {% if error_proceso %}
+      <div class="error-proceso">{{ error_proceso }}</div>
+    {% endif %}
+
+    {% if formulario.non_field_errors %}
+      <div class="errores">
+        <strong>Revise el formulario</strong>
+        <ul>
+          {% for error in formulario.non_field_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      <div>
+        <label for="{{ formulario.anio.id_for_label }}">
+          {{ formulario.anio.label }}
+        </label>
+        {{ formulario.anio }}
+        {% for error in formulario.anio.errors %}
+          <div class="campo-error">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      <div>
+        <label for="{{ formulario.nombre_hoja.id_for_label }}">
+          {{ formulario.nombre_hoja.label }}
+        </label>
+        {{ formulario.nombre_hoja }}
+        {% if formulario.nombre_hoja.help_text %}
+          <p class="ayuda">{{ formulario.nombre_hoja.help_text }}</p>
+        {% endif %}
+        {% for error in formulario.nombre_hoja.errors %}
+          <div class="campo-error">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      <div>
+        <label for="{{ formulario.archivo_despachos.id_for_label }}">
+          {{ formulario.archivo_despachos.label }}
+        </label>
+        {{ formulario.archivo_despachos }}
+        {% for error in formulario.archivo_despachos.errors %}
+          <div class="campo-error">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      <div>
+        <label for="{{ formulario.archivo_liquidacion.id_for_label }}">
+          {{ formulario.archivo_liquidacion.label }}
+        </label>
+        {{ formulario.archivo_liquidacion }}
+        {% for error in formulario.archivo_liquidacion.errors %}
+          <div class="campo-error">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      <div>
+        <label for="{{ formulario.archivo_cliente.id_for_label }}">
+          {{ formulario.archivo_cliente.label }}
+        </label>
+        {{ formulario.archivo_cliente }}
+        {% for error in formulario.archivo_cliente.errors %}
+          <div class="campo-error">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      <button type="submit">Validar archivos</button>
+    </form>
+  </main>
+</body>
+</html>

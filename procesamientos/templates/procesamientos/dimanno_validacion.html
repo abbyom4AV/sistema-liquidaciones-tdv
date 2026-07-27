@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resultado de validación Di Manno</title>
+  <style>
+    :root {
+      --texto: #1f2933;
+      --borde: #d9e2ec;
+      --fondo: #f5f7fa;
+      --acento: #0b6e4f;
+      --error: #9b1c1c;
+      --aviso: #8a6116;
+      --ok: #05603a;
+      --tarjeta: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--texto);
+      background: linear-gradient(180deg, #eef2f6 0%, var(--fondo) 100%);
+      min-height: 100vh;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 2.5rem auto;
+      padding: 0 1rem 3rem;
+    }
+
+    h1, h2 {
+      margin: 0 0 0.75rem;
+    }
+
+    h1 { font-size: 1.75rem; }
+    h2 { font-size: 1.15rem; margin-top: 1.75rem; }
+
+    .tarjeta {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .resumen {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.85rem 1.25rem;
+    }
+
+    .dato strong {
+      display: block;
+      font-size: 0.85rem;
+      color: #627d98;
+      margin-bottom: 0.2rem;
+    }
+
+    .estado {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .estado-listo { background: #e3f9e5; color: var(--ok); }
+    .estado-requiere_destino { background: #fff3c4; color: var(--aviso); }
+    .estado-invalido { background: #ffe3e3; color: var(--error); }
+
+    .lista {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+
+    .errores { color: var(--error); }
+    .advertencias { color: var(--aviso); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--borde);
+      text-align: left;
+      padding: 0.55rem 0.4rem;
+      vertical-align: top;
+    }
+
+    th {
+      color: #486581;
+      font-weight: 600;
+    }
+
+    .acciones {
+      margin-top: 1.5rem;
+    }
+
+    a.boton {
+      display: inline-block;
+      text-decoration: none;
+      border-radius: 8px;
+      background: var(--acento);
+      color: #fff;
+      font-weight: 600;
+      padding: 0.7rem 1.1rem;
+    }
+
+    a.boton:hover { background: #095c42; }
+
+    .vacio {
+      color: #829ab1;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Resultado de validación</h1>
+
+    <section class="tarjeta">
+      <div class="resumen">
+        <div class="dato">
+          <strong>Estado</strong>
+          <span class="estado estado-{{ procesamiento.estado }}">
+            {% if procesamiento.estado == "listo" %}
+              Listo
+            {% elif procesamiento.estado == "requiere_destino" %}
+              Requiere definir destino
+            {% elif procesamiento.estado == "invalido" %}
+              Con errores
+            {% else %}
+              {{ procesamiento.estado|capfirst }}
+            {% endif %}
+          </span>
+        </div>
+        <div class="dato">
+          <strong>Factura corta</strong>
+          {{ procesamiento.liquidacion.factura_corta }}
+        </div>
+        <div class="dato">
+          <strong>Semana</strong>
+          {{ procesamiento.liquidacion.semana }}
+        </div>
+        <div class="dato">
+          <strong>Año</strong>
+          {{ procesamiento.despachos.anio_buscado }}
+        </div>
+        <div class="dato">
+          <strong>Destino liquidación</strong>
+          {{ procesamiento.validacion.destino_liquidacion }}
+        </div>
+        <div class="dato">
+          <strong>Destinos Despachos</strong>
+          {% if procesamiento.validacion.destinos_despachos %}
+            {{ procesamiento.validacion.destinos_despachos|join:", " }}
+          {% else %}
+            —
+          {% endif %}
+        </div>
+        <div class="dato">
+          <strong>Destino final</strong>
+          {% if procesamiento.destino_final %}
+            {{ procesamiento.destino_final }}
+          {% else %}
+            —
+          {% endif %}
+        </div>
+        <div class="dato">
+          <strong>Contenedores</strong>
+          {{ procesamiento.liquidacion.contenedores|length }}
+        </div>
+        <div class="dato">
+          <strong>Total cajas (liquidación)</strong>
+          {{ procesamiento.validacion.total_cajas_liquidacion }}
+        </div>
+        <div class="dato">
+          <strong>Total cajas (despachos)</strong>
+          {{ procesamiento.validacion.total_cajas_despachos }}
+        </div>
+        <div class="dato">
+          <strong>Líneas preparadas</strong>
+          {{ procesamiento.validacion.lineas_preparadas|length }}
+        </div>
+        <div class="dato">
+          <strong>Listo para escribir</strong>
+          {% if procesamiento.puede_escribir %}Sí{% else %}No{% endif %}
+        </div>
+        <div class="dato">
+          <strong>Requiere resolución de destino</strong>
+          {% if procesamiento.validacion.requiere_resolver_destino %}
+            Sí
+          {% else %}
+            No
+          {% endif %}
+        </div>
+      </div>
+    </section>
+
+    <h2>Errores</h2>
+    <section class="tarjeta">
+      {% if procesamiento.validacion.errores %}
+        <ul class="lista errores">
+          {% for incidencia in procesamiento.validacion.errores %}
+            <li>{{ incidencia.mensaje }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="vacio">Sin errores.</p>
+      {% endif %}
+    </section>
+
+    <h2>Advertencias</h2>
+    <section class="tarjeta">
+      {% if procesamiento.validacion.advertencias %}
+        <ul class="lista advertencias">
+          {% for incidencia in procesamiento.validacion.advertencias %}
+            <li>{{ incidencia.mensaje }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="vacio">Sin advertencias.</p>
+      {% endif %}
+    </section>
+
+    <h2>Líneas preparadas</h2>
+    <section class="tarjeta">
+      {% if procesamiento.validacion.lineas_preparadas %}
+        <table>
+          <thead>
+            <tr>
+              <th>Contenedor</th>
+              <th>Tipo de fruta</th>
+              <th>Calibre</th>
+              <th>Cajas</th>
+              <th>Precio EUR</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for linea in procesamiento.validacion.lineas_preparadas %}
+              <tr>
+                <td>{{ linea.despacho.contenedor }}</td>
+                <td>{{ linea.tipo_fruta }}</td>
+                <td>{{ linea.calibre }}</td>
+                <td>{{ linea.despacho.total_cajas }}</td>
+                <td>{{ linea.precio_venta_eur }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="vacio">No hay líneas preparadas.</p>
+      {% endif %}
+    </section>
+
+    <h2>Gastos extraídos</h2>
+    <section class="tarjeta">
+      {% if gastos_extraidos %}
+        <table>
+          <thead>
+            <tr>
+              <th>Rubro</th>
+              <th>Valor extraído (EUR)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for gasto in gastos_extraidos %}
+              <tr>
+                <td>{{ gasto.rubro }}</td>
+                <td>{{ gasto.valor }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="vacio">
+          No se extrajeron gastos de la liquidación.
+        </p>
+      {% endif %}
+    </section>
+
+    <div class="acciones">
+      <a class="boton" href="{% url 'procesamientos:dimanno_cargar' %}">
+        Volver al formulario
+      </a>
+    </div>
+  </main>
+</body>
+</html>
