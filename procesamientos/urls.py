@@ -20,4 +20,9 @@ urlpatterns = [
         views.editar_gastos_dimanno,
         name="dimanno_gastos_editar",
     ),
+    path(
+        "dimanno/<uuid:procesamiento_id>/destino/resolver/",
+        views.resolver_destino_dimanno,
+        name="dimanno_destino_resolver",
+    ),
 ]

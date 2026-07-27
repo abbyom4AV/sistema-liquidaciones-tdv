@@ -43,6 +43,19 @@ NOMBRE_POR_CODIGO = {
     for codigo, nombre, _orden in RUBROS_GASTOS_DEFINICION
 }
 
+ETIQUETAS_ESTADO = {
+    "listo": "Listo",
+    "requiere_destino": "Requiere definir destino",
+    "invalido": "Con errores",
+}
+
+ETIQUETAS_ORIGEN_DESTINO = {
+    "coincidente": "Coincidencia automática",
+    "liquidacion": "Liquidación",
+    "despachos": "Despachos",
+    "manual": "Ingresado manualmente",
+}
+
 
 class ProcesamientoDimanno(models.Model):
     id = models.UUIDField(
@@ -65,6 +78,10 @@ class ProcesamientoDimanno(models.Model):
     )
     destino_final = models.CharField(
         max_length=150,
+        blank=True,
+    )
+    origen_destino_final = models.CharField(
+        max_length=30,
         blank=True,
     )
     cantidad_contenedores = models.PositiveIntegerField(
@@ -99,6 +116,17 @@ class ProcesamientoDimanno(models.Model):
     archivo_cliente = models.FileField(
         upload_to=ruta_archivo_cliente,
     )
+    creado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="procesamientos_dimanno_creados",
+    )
+    creado_por_nombre = models.CharField(
+        max_length=150,
+        blank=True,
+    )
     creado_en = models.DateTimeField(auto_now_add=True)
     actualizado_en = models.DateTimeField(auto_now=True)
 
@@ -118,6 +146,19 @@ class ProcesamientoDimanno(models.Model):
             / "procesamientos"
             / "dimanno"
             / str(self.id)
+        )
+
+    @property
+    def estado_legible(self) -> str:
+        return ETIQUETAS_ESTADO.get(self.estado, self.estado)
+
+    @property
+    def origen_destino_legible(self) -> str:
+        if not self.origen_destino_final:
+            return "—"
+        return ETIQUETAS_ORIGEN_DESTINO.get(
+            self.origen_destino_final,
+            self.origen_destino_final,
         )
 
     @property
@@ -225,4 +266,53 @@ class CorreccionGastoDimanno(models.Model):
         return (
             f"Corrección {self.gasto.nombre}: "
             f"{self.valor_anterior} → {self.valor_nuevo}"
+        )
+
+
+class ResolucionDestinoDimanno(models.Model):
+    class OrigenSeleccion(models.TextChoices):
+        LIQUIDACION = "liquidacion", "Liquidación"
+        DESPACHOS = "despachos", "Despachos"
+        MANUAL = "manual", "Manual"
+
+    procesamiento = models.ForeignKey(
+        ProcesamientoDimanno,
+        related_name="resoluciones_destino",
+        on_delete=models.CASCADE,
+    )
+    destino_anterior = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+    destino_nuevo = models.CharField(max_length=150)
+    origen_seleccionado = models.CharField(
+        max_length=30,
+        choices=OrigenSeleccion.choices,
+    )
+    destino_liquidacion = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+    destinos_despachos = models.JSONField(
+        default=list,
+        blank=True,
+    )
+    motivo = models.TextField()
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+    usuario_nombre = models.CharField(max_length=150)
+    creado_en = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-creado_en"]
+
+    def __str__(self) -> str:
+        return (
+            f"Resolución destino "
+            f"{self.destino_anterior or '—'} → "
+            f"{self.destino_nuevo}"
         )

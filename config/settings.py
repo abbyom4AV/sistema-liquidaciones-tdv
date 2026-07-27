@@ -72,7 +72,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,6 +83,10 @@ TEMPLATES = [
         },
     },
 ]
+
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "procesamientos:dimanno_cargar"
+LOGOUT_REDIRECT_URL = "login"
 
 WSGI_APPLICATION = 'config.wsgi.application'
 

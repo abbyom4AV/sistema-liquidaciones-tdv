@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iniciar sesión — Sistema TDV</title>
+  {% load static %}
+  <style>
+    :root {
+      --acento: #1f3a56;
+      --acento-oscuro: #15293d;
+      --texto: #ffffff;
+      --error: #ffe0e0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--texto);
+      background:
+        linear-gradient(180deg, rgba(15, 28, 42, 0.42) 0%, rgba(15, 28, 42, 0.58) 100%),
+        url("{% static 'procesamientos/img/login-fondo.png' %}") center / cover no-repeat fixed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .tarjeta {
+      width: min(100%, 420px);
+      padding: 2.25rem 1.85rem 2rem;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+    }
+
+    .marca {
+      margin: 0 0 0.35rem;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.9;
+      font-weight: 600;
+    }
+
+    h1 {
+      margin: 0 0 0.4rem;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .intro {
+      margin: 0 0 1.5rem;
+      opacity: 0.92;
+      font-size: 0.98rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin: 0.85rem 0 0.35rem;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      background: rgba(0, 0, 0, 0.28);
+      color: #fff;
+      font: inherit;
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    input:focus {
+      outline: 2px solid rgba(160, 190, 220, 0.75);
+      outline-offset: 1px;
+    }
+
+    .errores {
+      background: rgba(155, 28, 28, 0.55);
+      border: 1px solid rgba(255, 200, 200, 0.55);
+      color: var(--error);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .campo-error {
+      color: #ffe0e0;
+      font-size: 0.9rem;
+      margin-top: 0.35rem;
+    }
+
+    button {
+      margin-top: 1.35rem;
+      width: 100%;
+      border: 0;
+      border-radius: 999px;
+      padding: 0.9rem 1.1rem;
+      font: inherit;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      background: linear-gradient(
+        90deg,
+        var(--acento) 0%,
+        var(--acento-oscuro) 100%
+      );
+    }
+
+    button:hover {
+      filter: brightness(1.08);
+    }
+  </style>
+</head>
+<body>
+  <main class="tarjeta">
+    <p class="marca">Sistema TDV</p>
+    <h1>Iniciar sesión</h1>
+    <p class="intro">Acceda con su cuenta institucional.</p>
+
+    {% if form.non_field_errors %}
+      <div class="errores">
+        {% for error in form.non_field_errors %}
+          <div>{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+      {% endif %}
+
+      <label for="{{ form.username.id_for_label }}">Usuario</label>
+      {{ form.username }}
+      {% if form.username.errors %}
+        <div class="campo-error">{{ form.username.errors|striptags }}</div>
+      {% endif %}
+
+      <label for="{{ form.password.id_for_label }}">Contraseña</label>
+      {{ form.password }}
+      {% if form.password.errors %}
+        <div class="campo-error">{{ form.password.errors|striptags }}</div>
+      {% endif %}
+
+      <button type="submit">Iniciar sesión</button>
+    </form>
+  </main>
+</body>
+</html>

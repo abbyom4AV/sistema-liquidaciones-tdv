@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Modificar gastos Di Manno</title>
+  <title>Definir destino Di Manno</title>
   <style>
     :root {
       --texto: #1f2933;
@@ -11,6 +11,8 @@
       --fondo: #f5f7fa;
       --acento: #0b6e4f;
       --error: #9b1c1c;
+      --aviso: #8a6116;
+      --ok: #05603a;
       --tarjeta: #ffffff;
     }
 
@@ -53,23 +55,19 @@
       margin-bottom: 0.2rem;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.95rem;
+    .estado {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.9rem;
     }
 
-    th, td {
-      border-bottom: 1px solid var(--borde);
-      text-align: left;
-      padding: 0.6rem 0.4rem;
-      vertical-align: middle;
-    }
-
-    th { color: #486581; }
+    .estado-listo { background: #e3f9e5; color: var(--ok); }
+    .estado-requiere_destino { background: #fff3c4; color: var(--aviso); }
+    .estado-invalido { background: #ffe3e3; color: var(--error); }
 
     input[type="text"],
-    input[type="number"],
     textarea {
       width: 100%;
       padding: 0.55rem 0.65rem;
@@ -91,6 +89,23 @@
       color: var(--error);
       font-size: 0.9rem;
       margin-top: 0.3rem;
+    }
+
+    .opciones {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .opciones li {
+      margin: 0.55rem 0;
+    }
+
+    .opciones label {
+      font-weight: 500;
+      display: flex;
+      gap: 0.55rem;
+      align-items: flex-start;
     }
 
     .acciones {
@@ -117,7 +132,7 @@
       background: #486581;
     }
 
-    label {
+    label.campo {
       display: block;
       font-weight: 600;
       margin: 0.85rem 0 0.35rem;
@@ -163,13 +178,12 @@
   </style>
 </head>
 <body>
-  {% load dimanno_extras %}
   <main>
     {% include "procesamientos/_sesion.html" %}
-    <h1>Modificar gastos</h1>
+    <h1>Definir destino</h1>
 
     <p class="aviso-registro">
-      La corrección quedará registrada a nombre de:
+      La decisión quedará registrada a nombre de:
       <strong>{{ nombre_usuario_sesion }}</strong>
     </p>
 
@@ -188,13 +202,31 @@
       </div>
       <div class="dato">
         <strong>Estado</strong>
-        {{ procesamiento.estado_legible }}
+        <span class="estado estado-{{ procesamiento.estado }}">
+          {{ procesamiento.estado_legible }}
+        </span>
+      </div>
+      <div class="dato">
+        <strong>Destino de liquidación</strong>
+        {{ procesamiento.destino_liquidacion|default:"—" }}
+      </div>
+      <div class="dato">
+        <strong>Destinos de Despachos</strong>
+        {% if procesamiento.destinos_despachos %}
+          {{ procesamiento.destinos_despachos|join:", " }}
+        {% else %}
+          —
+        {% endif %}
+      </div>
+      <div class="dato">
+        <strong>Destino final actual</strong>
+        {{ procesamiento.destino_final|default:"—" }}
       </div>
     </section>
 
-    {% if formulario_motivo.non_field_errors %}
+    {% if formulario.non_field_errors %}
       <div class="errores">
-        {% for error in formulario_motivo.non_field_errors %}
+        {% for error in formulario.non_field_errors %}
           <div>{{ error }}</div>
         {% endfor %}
       </div>
@@ -202,52 +234,43 @@
 
     <form method="post" novalidate>
       {% csrf_token %}
-      {{ formset.management_form }}
 
       <section class="tarjeta">
-        <table>
-          <thead>
-            <tr>
-              <th>Rubro</th>
-              <th>Valor original (EUR)</th>
-              <th>Valor aplicado (EUR)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for formulario in formset %}
-              <tr>
-                <td>
-                  {{ formulario.instance.nombre }}
-                  {% for campo_oculto in formulario.hidden_fields %}
-                    {{ campo_oculto }}
-                  {% endfor %}
-                  {{ formulario.id }}
-                </td>
-                <td>{{ formulario.instance.valor_original|decimal_es }}</td>
-                <td>
-                  {{ formulario.valor_aplicado }}
-                  {% for error in formulario.valor_aplicado.errors %}
-                    <div class="campo-error">{{ error }}</div>
-                  {% endfor %}
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </section>
+        <label class="campo">{{ formulario.opcion_destino.label }}</label>
+        <ul class="opciones">
+          {% for radio in formulario.opcion_destino %}
+            <li>{{ radio }}</li>
+          {% endfor %}
+        </ul>
+        {% if formulario.opcion_destino.errors %}
+          <div class="campo-error">
+            {{ formulario.opcion_destino.errors|striptags }}
+          </div>
+        {% endif %}
 
-      <section class="tarjeta">
-        <label for="{{ formulario_motivo.motivo.id_for_label }}">
-          {{ formulario_motivo.motivo.label }}
+        <label class="campo" for="{{ formulario.destino_manual.id_for_label }}">
+          {{ formulario.destino_manual.label }}
         </label>
-        {{ formulario_motivo.motivo }}
-        {% for error in formulario_motivo.motivo.errors %}
-          <div class="campo-error">{{ error }}</div>
-        {% endfor %}
+        {{ formulario.destino_manual }}
+        {% if formulario.destino_manual.errors %}
+          <div class="campo-error">
+            {{ formulario.destino_manual.errors|striptags }}
+          </div>
+        {% endif %}
+
+        <label class="campo" for="{{ formulario.motivo.id_for_label }}">
+          {{ formulario.motivo.label }}
+        </label>
+        {{ formulario.motivo }}
+        {% if formulario.motivo.errors %}
+          <div class="campo-error">
+            {{ formulario.motivo.errors|striptags }}
+          </div>
+        {% endif %}
       </section>
 
       <div class="acciones">
-        <button type="submit">Guardar correcciones</button>
+        <button type="submit">Guardar destino</button>
         <a
           class="boton"
           href="{% url 'procesamientos:dimanno_detalle' procesamiento.id %}"

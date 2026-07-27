@@ -8,12 +8,14 @@ from pathlib import Path
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 
 from procesamientos.forms import (
     FormularioCargaDimanno,
     FormularioMotivoCorreccion,
+    FormularioResolucionDestinoDimanno,
     FormsetGastosDimanno,
 )
 from procesamientos.models import (
@@ -21,6 +23,7 @@ from procesamientos.models import (
     CorreccionGastoDimanno,
     GastoProcesamientoDimanno,
     ProcesamientoDimanno,
+    ResolucionDestinoDimanno,
 )
 from services.dimanno.extractor import ErrorExtraccionDimanno
 from services.dimanno.matcher import ErrorMatcherDimanno
@@ -31,6 +34,11 @@ from services.dimanno.processor import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def obtener_nombre_usuario(usuario) -> str:
+    nombre_completo = usuario.get_full_name().strip()
+    return nombre_completo or usuario.get_username()
 
 
 def _decimal_a_str(valor: Decimal | int | str) -> str:
@@ -83,6 +91,9 @@ def _aplicar_resultado_a_procesamiento(
     )
     procesamiento.destino_final = (
         resultado.destino_final or ""
+    )
+    procesamiento.origen_destino_final = (
+        getattr(resultado, "origen_destino", None) or ""
     )
     procesamiento.cantidad_contenedores = len(
         liquidacion.contenedores
@@ -165,12 +176,19 @@ def _eliminar_procesamiento_y_archivos(
         shutil.rmtree(carpeta, ignore_errors=True)
 
 
+@login_required
 def cargar_dimanno(request):
+    contexto_base = {
+        "nombre_usuario_sesion": obtener_nombre_usuario(
+            request.user
+        ),
+    }
     if request.method != "POST":
         return render(
             request,
             "procesamientos/dimanno_cargar.html",
             {
+                **contexto_base,
                 "formulario": FormularioCargaDimanno(),
             },
         )
@@ -185,6 +203,7 @@ def cargar_dimanno(request):
             request,
             "procesamientos/dimanno_cargar.html",
             {
+                **contexto_base,
                 "formulario": formulario,
             },
             status=400,
@@ -192,6 +211,7 @@ def cargar_dimanno(request):
 
     datos = formulario.cleaned_data
     procesamiento: ProcesamientoDimanno | None = None
+    nombre_visible = obtener_nombre_usuario(request.user)
 
     try:
         with transaction.atomic():
@@ -202,6 +222,8 @@ def cargar_dimanno(request):
                 factura_corta="",
                 semana=0,
                 estado="procesando",
+                creado_por=request.user,
+                creado_por_nombre=nombre_visible,
             )
             procesamiento.archivo_despachos = datos[
                 "archivo_despachos"
@@ -253,6 +275,7 @@ def cargar_dimanno(request):
             request,
             "procesamientos/dimanno_cargar.html",
             {
+                **contexto_base,
                 "formulario": formulario,
                 "error_proceso": str(error),
             },
@@ -268,6 +291,7 @@ def cargar_dimanno(request):
             request,
             "procesamientos/dimanno_cargar.html",
             {
+                **contexto_base,
                 "formulario": formulario,
                 "error_proceso": (
                     "Ocurrió un error inesperado al validar "
@@ -279,6 +303,7 @@ def cargar_dimanno(request):
         )
 
 
+@login_required
 def detalle_dimanno(request, procesamiento_id):
     procesamiento = get_object_or_404(
         ProcesamientoDimanno.objects.prefetch_related(
@@ -302,10 +327,14 @@ def detalle_dimanno(request, procesamiento_id):
             "total_gastos_aplicados": (
                 procesamiento.total_gastos_aplicados
             ),
+            "nombre_usuario_sesion": obtener_nombre_usuario(
+                request.user
+            ),
         },
     )
 
 
+@login_required
 def editar_gastos_dimanno(request, procesamiento_id):
     procesamiento = get_object_or_404(
         ProcesamientoDimanno,
@@ -314,7 +343,7 @@ def editar_gastos_dimanno(request, procesamiento_id):
     queryset = GastoProcesamientoDimanno.objects.filter(
         procesamiento=procesamiento
     ).order_by("orden")
-    autenticado = request.user.is_authenticated
+    nombre_visible = obtener_nombre_usuario(request.user)
 
     if request.method == "POST":
         formset = FormsetGastosDimanno(
@@ -323,19 +352,12 @@ def editar_gastos_dimanno(request, procesamiento_id):
         )
         formulario_motivo = FormularioMotivoCorreccion(
             request.POST,
-            usuario_autenticado=autenticado,
         )
 
         if formset.is_valid() and formulario_motivo.is_valid():
             motivo = formulario_motivo.cleaned_data["motivo"]
-            if autenticado:
-                usuario = request.user
-                usuario_nombre = request.user.get_username()
-            else:
-                usuario = None
-                usuario_nombre = formulario_motivo.cleaned_data[
-                    "responsable"
-                ]
+            usuario = request.user
+            usuario_nombre = nombre_visible
 
             hay_cambios = False
             for formulario_gasto in formset:
@@ -412,15 +434,13 @@ def editar_gastos_dimanno(request, procesamiento_id):
                 "procesamiento": procesamiento,
                 "formset": formset,
                 "formulario_motivo": formulario_motivo,
-                "usuario_autenticado": autenticado,
+                "nombre_usuario_sesion": nombre_visible,
             },
             status=400,
         )
 
     formset = FormsetGastosDimanno(queryset=queryset)
-    formulario_motivo = FormularioMotivoCorreccion(
-        usuario_autenticado=autenticado,
-    )
+    formulario_motivo = FormularioMotivoCorreccion()
 
     return render(
         request,
@@ -429,6 +449,138 @@ def editar_gastos_dimanno(request, procesamiento_id):
             "procesamiento": procesamiento,
             "formset": formset,
             "formulario_motivo": formulario_motivo,
-            "usuario_autenticado": autenticado,
+            "nombre_usuario_sesion": nombre_visible,
+        },
+    )
+
+
+@login_required
+def resolver_destino_dimanno(request, procesamiento_id):
+    nombre_visible = obtener_nombre_usuario(request.user)
+
+    if request.method == "POST":
+        formulario_invalido = None
+        procesamiento_vista = None
+
+        with transaction.atomic():
+            procesamiento = get_object_or_404(
+                ProcesamientoDimanno.objects.select_for_update(),
+                pk=procesamiento_id,
+            )
+            formulario = FormularioResolucionDestinoDimanno(
+                request.POST,
+                procesamiento=procesamiento,
+            )
+
+            if not formulario.is_valid():
+                formulario_invalido = formulario
+                procesamiento_vista = procesamiento
+            else:
+                destino_nuevo = formulario.cleaned_data[
+                    "destino_nuevo"
+                ]
+                origen_seleccionado = formulario.cleaned_data[
+                    "origen_seleccionado"
+                ]
+                destino_anterior = (
+                    procesamiento.destino_final or ""
+                )
+
+                if (
+                    destino_nuevo
+                    == (procesamiento.destino_final or "")
+                    and origen_seleccionado
+                    == (
+                        procesamiento.origen_destino_final
+                        or ""
+                    )
+                ):
+                    messages.info(
+                        request,
+                        (
+                            "No se realizó ningún cambio "
+                            "en el destino."
+                        ),
+                    )
+                    return redirect(
+                        "procesamientos:dimanno_detalle",
+                        procesamiento_id=procesamiento.id,
+                    )
+
+                ResolucionDestinoDimanno.objects.create(
+                    procesamiento=procesamiento,
+                    destino_anterior=destino_anterior,
+                    destino_nuevo=destino_nuevo,
+                    origen_seleccionado=origen_seleccionado,
+                    destino_liquidacion=(
+                        procesamiento.destino_liquidacion
+                        or ""
+                    ),
+                    destinos_despachos=list(
+                        procesamiento.destinos_despachos
+                        or []
+                    ),
+                    motivo=formulario.cleaned_data["motivo"],
+                    usuario=request.user,
+                    usuario_nombre=nombre_visible,
+                )
+
+                procesamiento.destino_final = destino_nuevo
+                procesamiento.origen_destino_final = (
+                    origen_seleccionado
+                )
+                procesamiento.requiere_resolver_destino = False
+
+                if not procesamiento.errores:
+                    procesamiento.estado = "listo"
+                    procesamiento.puede_escribir = True
+                else:
+                    procesamiento.puede_escribir = False
+
+                procesamiento.save(
+                    update_fields=[
+                        "destino_final",
+                        "origen_destino_final",
+                        "requiere_resolver_destino",
+                        "estado",
+                        "puede_escribir",
+                        "actualizado_en",
+                    ]
+                )
+
+                messages.success(
+                    request,
+                    "El destino se definió correctamente.",
+                )
+                return redirect(
+                    "procesamientos:dimanno_detalle",
+                    procesamiento_id=procesamiento.id,
+                )
+
+        return render(
+            request,
+            "procesamientos/dimanno_destino_resolver.html",
+            {
+                "procesamiento": procesamiento_vista,
+                "formulario": formulario_invalido,
+                "nombre_usuario_sesion": nombre_visible,
+            },
+            status=400,
+        )
+
+    procesamiento = get_object_or_404(
+        ProcesamientoDimanno,
+        pk=procesamiento_id,
+    )
+    formulario = FormularioResolucionDestinoDimanno(
+        procesamiento=procesamiento,
+    )
+    return render(
+        request,
+        "procesamientos/dimanno_destino_resolver.html",
+        {
+            "procesamiento": procesamiento,
+            "formulario": formulario,
+            "nombre_usuario_sesion": nombre_visible,
         },
     )

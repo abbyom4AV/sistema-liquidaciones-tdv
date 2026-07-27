@@ -5,7 +5,10 @@ from decimal import Decimal, InvalidOperation
 from django import forms
 from django.forms import BaseModelFormSet, modelformset_factory
 
-from procesamientos.models import GastoProcesamientoDimanno
+from procesamientos.models import (
+    GastoProcesamientoDimanno,
+    ProcesamientoDimanno,
+)
 
 
 class FormularioCargaDimanno(forms.Form):
@@ -107,36 +110,6 @@ class FormularioMotivoCorreccion(forms.Form):
             "required": "Indique el motivo de la corrección.",
         },
     )
-    responsable = forms.CharField(
-        label="Responsable",
-        required=False,
-        max_length=150,
-        help_text=(
-            "Obligatorio si no ha iniciado sesión."
-        ),
-    )
-
-    def __init__(self, *args, usuario_autenticado=False, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.usuario_autenticado = usuario_autenticado
-        if usuario_autenticado:
-            self.fields["responsable"].widget = forms.HiddenInput()
-            self.fields["responsable"].required = False
-        else:
-            self.fields["responsable"].required = True
-            self.fields["responsable"].error_messages = {
-                "required": (
-                    "Indique el nombre del responsable."
-                ),
-            }
-
-    def clean_responsable(self):
-        valor = (self.cleaned_data.get("responsable") or "").strip()
-        if not self.usuario_autenticado and not valor:
-            raise forms.ValidationError(
-                "Indique el nombre del responsable."
-            )
-        return valor
 
     def clean_motivo(self):
         valor = (self.cleaned_data.get("motivo") or "").strip()
@@ -191,3 +164,150 @@ FormsetGastosDimanno = modelformset_factory(
     extra=0,
     can_delete=False,
 )
+
+
+PREFIJO_OPCION_DESPACHOS = "despachos|"
+
+
+class FormularioResolucionDestinoDimanno(forms.Form):
+    opcion_destino = forms.ChoiceField(
+        label="Destino a aplicar",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Seleccione una opción de destino.",
+            "invalid_choice": (
+                "La opción de destino no es válida."
+            ),
+        },
+    )
+    destino_manual = forms.CharField(
+        label="Otro destino",
+        required=False,
+        max_length=150,
+    )
+    motivo = forms.CharField(
+        label="Motivo de la elección o corrección",
+        widget=forms.Textarea(attrs={"rows": 3}),
+        error_messages={
+            "required": (
+                "Indique el motivo de la elección o corrección."
+            ),
+        },
+    )
+
+    def __init__(
+        self,
+        *args,
+        procesamiento: ProcesamientoDimanno,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        self.procesamiento = procesamiento
+
+        destino_liq = (
+            procesamiento.destino_liquidacion or ""
+        ).strip()
+        destinos_desp = []
+        vistos: set[str] = set()
+        for destino in procesamiento.destinos_despachos or []:
+            texto = str(destino).strip()
+            if not texto or texto in vistos:
+                continue
+            vistos.add(texto)
+            destinos_desp.append(texto)
+        self.destinos_despachos_unicos = destinos_desp
+
+        opciones: list[tuple[str, str]] = []
+        if destino_liq:
+            opciones.append(
+                (
+                    "liquidacion",
+                    (
+                        "Usar destino de la liquidación: "
+                        f"{destino_liq}"
+                    ),
+                )
+            )
+        for destino in destinos_desp:
+            opciones.append(
+                (
+                    f"{PREFIJO_OPCION_DESPACHOS}{destino}",
+                    f"Usar destino de Despachos: {destino}",
+                )
+            )
+        opciones.append(
+            ("manual", "Ingresar otro destino")
+        )
+        self.fields["opcion_destino"].choices = opciones
+
+    def clean_destino_manual(self):
+        valor = self.cleaned_data.get("destino_manual") or ""
+        normalizado = " ".join(valor.split()).upper()
+        return normalizado
+
+    def clean_motivo(self):
+        valor = (self.cleaned_data.get("motivo") or "").strip()
+        if not valor:
+            raise forms.ValidationError(
+                "Indique el motivo de la elección o corrección."
+            )
+        return valor
+
+    def clean(self):
+        cleaned = super().clean()
+        opcion = cleaned.get("opcion_destino")
+        if not opcion:
+            return cleaned
+
+        destino_liq = (
+            self.procesamiento.destino_liquidacion or ""
+        ).strip()
+        destinos_permitidos = {
+            str(d).strip()
+            for d in (self.procesamiento.destinos_despachos or [])
+            if str(d).strip()
+        }
+
+        if opcion == "liquidacion":
+            if not destino_liq:
+                self.add_error(
+                    "opcion_destino",
+                    "No hay destino de liquidación disponible.",
+                )
+                return cleaned
+            cleaned["destino_nuevo"] = destino_liq
+            cleaned["origen_seleccionado"] = "liquidacion"
+            return cleaned
+
+        if opcion.startswith(PREFIJO_OPCION_DESPACHOS):
+            destino = opcion[len(PREFIJO_OPCION_DESPACHOS):]
+            if destino not in destinos_permitidos:
+                self.add_error(
+                    "opcion_destino",
+                    (
+                        "El destino de Despachos seleccionado "
+                        "no pertenece a la lista persistida."
+                    ),
+                )
+                return cleaned
+            cleaned["destino_nuevo"] = destino
+            cleaned["origen_seleccionado"] = "despachos"
+            return cleaned
+
+        if opcion == "manual":
+            destino_manual = cleaned.get("destino_manual") or ""
+            if not destino_manual:
+                self.add_error(
+                    "destino_manual",
+                    "Indique el destino manual.",
+                )
+                return cleaned
+            cleaned["destino_nuevo"] = destino_manual
+            cleaned["origen_seleccionado"] = "manual"
+            return cleaned
+
+        self.add_error(
+            "opcion_destino",
+            "La opción de destino no es válida.",
+        )
+        return cleaned
