@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Definir destino Di Manno</title>
+  <style>
+    :root {
+      --texto: #1f2933;
+      --borde: #d9e2ec;
+      --fondo: #f5f7fa;
+      --acento: #0b6e4f;
+      --error: #9b1c1c;
+      --aviso: #8a6116;
+      --ok: #05603a;
+      --tarjeta: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--texto);
+      background: linear-gradient(180deg, #eef2f6 0%, var(--fondo) 100%);
+      min-height: 100vh;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 2.5rem auto;
+      padding: 0 1rem 3rem;
+    }
+
+    h1 { margin: 0 0 0.75rem; font-size: 1.75rem; }
+
+    .resumen, .tarjeta {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .resumen {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.75rem 1rem;
+    }
+
+    .dato strong {
+      display: block;
+      font-size: 0.85rem;
+      color: #627d98;
+      margin-bottom: 0.2rem;
+    }
+
+    .estado {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .estado-listo { background: #e3f9e5; color: var(--ok); }
+    .estado-requiere_destino { background: #fff3c4; color: var(--aviso); }
+    .estado-invalido { background: #ffe3e3; color: var(--error); }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 0.55rem 0.65rem;
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    .errores {
+      background: #fff5f5;
+      border: 1px solid #feb2b2;
+      color: var(--error);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .campo-error {
+      color: var(--error);
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
+    }
+
+    .opciones {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .opciones li {
+      margin: 0.55rem 0;
+    }
+
+    .opciones label {
+      font-weight: 500;
+      display: flex;
+      gap: 0.55rem;
+      align-items: flex-start;
+    }
+
+    .acciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    button, a.boton {
+      display: inline-block;
+      text-decoration: none;
+      border: 0;
+      border-radius: 8px;
+      background: var(--acento);
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      padding: 0.7rem 1.1rem;
+      cursor: pointer;
+    }
+
+    a.boton {
+      background: #486581;
+    }
+
+    label.campo {
+      display: block;
+      font-weight: 600;
+      margin: 0.85rem 0 0.35rem;
+    }
+
+    .barra-sesion {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+      padding: 0.65rem 0.9rem;
+      background: #fff;
+      border: 1px solid var(--borde);
+      border-radius: 10px;
+      font-size: 0.92rem;
+      color: #486581;
+    }
+
+    .barra-sesion form { margin: 0; }
+
+    .barra-sesion button {
+      border: 0;
+      border-radius: 8px;
+      background: #486581;
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      padding: 0.45rem 0.85rem;
+      cursor: pointer;
+    }
+
+    .aviso-registro {
+      margin: 0 0 1rem;
+      padding: 0.75rem 1rem;
+      background: #e8f5ef;
+      border: 1px solid #b8e6bf;
+      border-radius: 8px;
+      color: #05603a;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    {% include "procesamientos/_sesion.html" %}
+    <h1>Definir destino</h1>
+
+    <p class="aviso-registro">
+      La decisión quedará registrada a nombre de:
+      <strong>{{ nombre_usuario_sesion }}</strong>
+    </p>
+
+    <section class="resumen">
+      <div class="dato">
+        <strong>Factura</strong>
+        {{ procesamiento.factura_corta }}
+      </div>
+      <div class="dato">
+        <strong>Semana</strong>
+        {{ procesamiento.semana }}
+      </div>
+      <div class="dato">
+        <strong>Año</strong>
+        {{ procesamiento.anio }}
+      </div>
+      <div class="dato">
+        <strong>Estado</strong>
+        <span class="estado estado-{{ procesamiento.estado }}">
+          {{ procesamiento.estado_legible }}
+        </span>
+      </div>
+      <div class="dato">
+        <strong>Destino de liquidación</strong>
+        {{ procesamiento.destino_liquidacion|default:"—" }}
+      </div>
+      <div class="dato">
+        <strong>Destinos de Despachos</strong>
+        {% if procesamiento.destinos_despachos %}
+          {{ procesamiento.destinos_despachos|join:", " }}
+        {% else %}
+          —
+        {% endif %}
+      </div>
+      <div class="dato">
+        <strong>Destino final actual</strong>
+        {{ procesamiento.destino_final|default:"—" }}
+      </div>
+    </section>
+
+    {% if formulario.non_field_errors %}
+      <div class="errores">
+        {% for error in formulario.non_field_errors %}
+          <div>{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <section class="tarjeta">
+        <label class="campo">{{ formulario.opcion_destino.label }}</label>
+        <ul class="opciones">
+          {% for radio in formulario.opcion_destino %}
+            <li>{{ radio }}</li>
+          {% endfor %}
+        </ul>
+        {% if formulario.opcion_destino.errors %}
+          <div class="campo-error">
+            {{ formulario.opcion_destino.errors|striptags }}
+          </div>
+        {% endif %}
+
+        <label class="campo" for="{{ formulario.destino_manual.id_for_label }}">
+          {{ formulario.destino_manual.label }}
+        </label>
+        {{ formulario.destino_manual }}
+        {% if formulario.destino_manual.errors %}
+          <div class="campo-error">
+            {{ formulario.destino_manual.errors|striptags }}
+          </div>
+        {% endif %}
+
+        <label class="campo" for="{{ formulario.motivo.id_for_label }}">
+          {{ formulario.motivo.label }}
+        </label>
+        {{ formulario.motivo }}
+        {% if formulario.motivo.errors %}
+          <div class="campo-error">
+            {{ formulario.motivo.errors|striptags }}
+          </div>
+        {% endif %}
+      </section>
+
+      <div class="acciones">
+        <button type="submit">Guardar destino</button>
+        <a
+          class="boton"
+          href="{% url 'procesamientos:dimanno_detalle' procesamiento.id %}"
+        >
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </main>
+</body>
+</html>
