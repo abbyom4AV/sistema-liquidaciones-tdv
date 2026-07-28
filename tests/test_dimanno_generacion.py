@@ -549,15 +549,20 @@ class PruebasGeneracionDimanno(TestCase):
                 f"{generacion.id}/descargar/"
             )
         )
-        self.assertEqual(respuesta.status_code, 200)
-        self.assertEqual(
-            generacion.nombre_descarga,
-            "DIMANNO Liquidaciones v2.1.xlsx",
-        )
-        self.assertIn(
-            "DIMANNO Liquidaciones v2.1.xlsx",
-            respuesta.get("Content-Disposition", ""),
-        )
+        try:
+            self.assertEqual(respuesta.status_code, 200)
+            self.assertEqual(
+                generacion.nombre_descarga,
+                "DIMANNO Liquidaciones v2.1.xlsx",
+            )
+            self.assertIn(
+                "DIMANNO Liquidaciones v2.1.xlsx",
+                respuesta.get("Content-Disposition", ""),
+            )
+            _ = b"".join(respuesta.streaming_content)
+        finally:
+            respuesta.close()
+
         self.assertTrue(ruta.name == "resultado.xlsx")
         self.assertNotContains(
             self.cliente.get(
