@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panel de control — Sistema TDV</title>
+  <style>
+    :root {
+      --fondo: #f8f9f5;
+      --tarjeta: #ffffff;
+      --suave: #e2e5de;
+      --acento: #6d8b74;
+      --acento-oscuro: #557360;
+      --texto: #333333;
+      --muted: #6b7368;
+      --borde: #d5dbd1;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--texto);
+      background: var(--fondo);
+    }
+
+    .barra-superior {
+      background: var(--tarjeta);
+      border-bottom: 1px solid var(--borde);
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .marca {
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--acento-oscuro);
+      font-size: 0.95rem;
+    }
+
+    .sesion {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .sesion form { margin: 0; }
+
+    .sesion button {
+      border: 0;
+      border-radius: 999px;
+      background: var(--acento);
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+
+    .sesion button:hover {
+      background: var(--acento-oscuro);
+    }
+
+    main {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
+    }
+
+    h1 {
+      margin: 0 0 0.4rem;
+      font-size: 1.9rem;
+    }
+
+    .intro {
+      margin: 0 0 1.75rem;
+      color: var(--muted);
+    }
+
+    .resumen {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .dato {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 16px;
+      padding: 1rem 1.15rem;
+    }
+
+    .dato strong {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+    }
+
+    .dato span {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--acento-oscuro);
+    }
+
+    h2 {
+      margin: 0 0 0.85rem;
+      font-size: 1.15rem;
+    }
+
+    .modulos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .modulo {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 18px;
+      padding: 1.35rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      min-height: 180px;
+    }
+
+    .modulo.disponible {
+      border-color: #c5d4c8;
+      box-shadow: 0 8px 24px rgba(109, 139, 116, 0.08);
+    }
+
+    .modulo.proximo {
+      background: var(--suave);
+      opacity: 0.92;
+    }
+
+    .etiqueta {
+      display: inline-block;
+      align-self: flex-start;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      padding: 0.25rem 0.65rem;
+    }
+
+    .etiqueta-ok {
+      background: #dce8df;
+      color: var(--acento-oscuro);
+    }
+
+    .etiqueta-prox {
+      background: #eceee9;
+      color: var(--muted);
+    }
+
+    .modulo h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .modulo p {
+      margin: 0;
+      color: var(--muted);
+      flex: 1;
+      line-height: 1.45;
+    }
+
+    a.boton {
+      display: inline-block;
+      text-decoration: none;
+      align-self: flex-start;
+      border-radius: 999px;
+      background: var(--acento);
+      color: #fff;
+      font-weight: 600;
+      padding: 0.65rem 1.1rem;
+    }
+
+    a.boton:hover {
+      background: var(--acento-oscuro);
+    }
+
+    .boton-deshabilitado {
+      display: inline-block;
+      align-self: flex-start;
+      border-radius: 999px;
+      background: #c8cec4;
+      color: #fff;
+      font-weight: 600;
+      padding: 0.65rem 1.1rem;
+      cursor: default;
+    }
+
+    .tarjeta {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 18px;
+      padding: 1.2rem 1.35rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.7rem 0.35rem;
+      border-bottom: 1px solid var(--borde);
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    a.enlace {
+      color: var(--acento-oscuro);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    a.enlace:hover {
+      text-decoration: underline;
+    }
+
+    .vacio {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .estado {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: var(--suave);
+      color: var(--acento-oscuro);
+    }
+  </style>
+</head>
+<body>
+  <header class="barra-superior">
+    <div class="marca">Sistema TDV</div>
+    <div class="sesion">
+      <span>Sesión iniciada: {{ nombre_usuario_sesion }}</span>
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Cerrar sesión</button>
+      </form>
+    </div>
+  </header>
+
+  <main>
+    <h1>Panel de control</h1>
+    <p class="intro">
+      Seleccione el módulo con el que desea trabajar.
+    </p>
+
+    <section class="resumen">
+      <div class="dato">
+        <strong>Procesamientos Di Manno</strong>
+        <span>{{ total_procesamientos }}</span>
+      </div>
+      <div class="dato">
+        <strong>Usuario</strong>
+        <span style="font-size: 1.05rem;">{{ nombre_usuario_sesion }}</span>
+      </div>
+    </section>
+
+    <h2>Módulos</h2>
+    <section class="modulos">
+      <article class="modulo disponible">
+        <span class="etiqueta etiqueta-ok">Disponible</span>
+        <h3>Di Manno</h3>
+        <p>
+          Cargar liquidaciones, validar archivos, corregir gastos
+          y definir destino.
+        </p>
+        <a class="boton" href="{% url 'procesamientos:dimanno_cargar' %}">
+          Abrir módulo
+        </a>
+      </article>
+
+      <article class="modulo proximo">
+        <span class="etiqueta etiqueta-prox">Próximamente</span>
+        <h3>Otros clientes</h3>
+        <p>
+          Módulos adicionales de liquidación se habilitarán
+          en etapas posteriores.
+        </p>
+        <span class="boton-deshabilitado">No disponible</span>
+      </article>
+
+      <article class="modulo proximo">
+        <span class="etiqueta etiqueta-prox">Próximamente</span>
+        <h3>Bitácora general</h3>
+        <p>
+          Consulta unificada de correcciones y resoluciones
+          de destino.
+        </p>
+        <span class="boton-deshabilitado">No disponible</span>
+      </article>
+    </section>
+
+    <h2>Actividad reciente — Di Manno</h2>
+    <section class="tarjeta">
+      {% if procesamientos_recientes %}
+        <table>
+          <thead>
+            <tr>
+              <th>Factura</th>
+              <th>Semana</th>
+              <th>Año</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in procesamientos_recientes %}
+              <tr>
+                <td>{{ item.factura_corta|default:"—" }}</td>
+                <td>{{ item.semana }}</td>
+                <td>{{ item.anio }}</td>
+                <td>
+                  <span class="estado">{{ item.estado_legible }}</span>
+                </td>
+                <td>
+                  <a
+                    class="enlace"
+                    href="{% url 'procesamientos:dimanno_detalle' item.id %}"
+                  >
+                    Abrir
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="vacio">
+          Aún no hay procesamientos. Abra el módulo Di Manno
+          para cargar una liquidación.
+        </p>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>

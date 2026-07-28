@@ -85,7 +85,7 @@ TEMPLATES = [
 ]
 
 LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "procesamientos:dimanno_cargar"
+LOGIN_REDIRECT_URL = "procesamientos:panel"
 LOGOUT_REDIRECT_URL = "login"
 
 WSGI_APPLICATION = 'config.wsgi.application'
@@ -138,6 +138,13 @@ STATIC_URL = 'static/'
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# Di Manno: por defecto no recalcula en el trabajador.
+# Las fórmulas quedan intactas y Excel calcula al abrir.
+# Activar solo si se requieren valores cacheados en el .xlsx.
+DIMANNO_RECALCULAR_AL_FINAL = (
+    os.getenv("DIMANNO_RECALCULAR_AL_FINAL", "0") == "1"
+)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

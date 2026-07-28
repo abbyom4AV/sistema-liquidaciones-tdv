@@ -1,6 +1,10 @@
 {% if user.is_authenticated %}
   <div class="barra-sesion">
-    <span>Sesión iniciada: {{ nombre_usuario_sesion|default:user.get_username }}</span>
+    <span>
+      Sesión iniciada: {{ nombre_usuario_sesion|default:user.get_username }}
+      ·
+      <a href="{% url 'procesamientos:panel' %}" style="color:#557360;font-weight:600;text-decoration:none;">Panel</a>
+    </span>
     <form method="post" action="{% url 'logout' %}">
       {% csrf_token %}
       <button type="submit">Cerrar sesión</button>

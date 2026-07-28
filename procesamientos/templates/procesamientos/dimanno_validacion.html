@@ -6,14 +6,17 @@
   <title>Resultado de validación Di Manno</title>
   <style>
     :root {
-      --texto: #1f2933;
-      --borde: #d9e2ec;
-      --fondo: #f5f7fa;
-      --acento: #0b6e4f;
+      --fondo: #f8f9f5;
+      --tarjeta: #ffffff;
+      --suave: #e2e5de;
+      --acento: #6d8b74;
+      --acento-oscuro: #557360;
+      --texto: #333333;
+      --muted: #6b7368;
+      --borde: #d5dbd1;
       --error: #9b1c1c;
       --aviso: #8a6116;
-      --ok: #05603a;
-      --tarjeta: #ffffff;
+      --ok: #557360;
     }
 
     * { box-sizing: border-box; }
@@ -22,21 +25,34 @@
       margin: 0;
       font-family: "Segoe UI", Tahoma, sans-serif;
       color: var(--texto);
-      background: linear-gradient(180deg, #eef2f6 0%, var(--fondo) 100%);
+      background: var(--fondo);
       min-height: 100vh;
     }
 
     main {
       max-width: 960px;
-      margin: 2.5rem auto;
-      padding: 0 1rem 3rem;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
     }
+
+    .nav-volver {
+      margin: 0 0 1.25rem;
+    }
+
+    .nav-volver a {
+      color: var(--acento-oscuro);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .nav-volver a:hover { text-decoration: underline; }
 
     h1, h2 {
       margin: 0 0 0.75rem;
     }
 
-    h1 { font-size: 1.75rem; }
+    h1 { font-size: 1.9rem; }
     h2 { font-size: 1.15rem; margin-top: 1.75rem; }
 
     .mensajes {
@@ -46,10 +62,10 @@
     }
 
     .mensajes li {
-      background: #e3f9e5;
-      border: 1px solid #b8e6bf;
-      color: var(--ok);
-      border-radius: 8px;
+      background: #dce8df;
+      border: 1px solid #c5d4c8;
+      color: var(--acento-oscuro);
+      border-radius: 14px;
       padding: 0.75rem 1rem;
       margin-bottom: 0.5rem;
     }
@@ -57,8 +73,9 @@
     .tarjeta {
       background: var(--tarjeta);
       border: 1px solid var(--borde);
-      border-radius: 12px;
+      border-radius: 18px;
       padding: 1.25rem 1.5rem;
+      box-shadow: 0 8px 24px rgba(109, 139, 116, 0.06);
     }
 
     .resumen {
@@ -70,7 +87,7 @@
     .dato strong {
       display: block;
       font-size: 0.85rem;
-      color: #627d98;
+      color: var(--muted);
       margin-bottom: 0.2rem;
     }
 
@@ -82,7 +99,7 @@
       font-size: 0.9rem;
     }
 
-    .estado-listo { background: #e3f9e5; color: var(--ok); }
+    .estado-listo { background: #dce8df; color: var(--ok); }
     .estado-requiere_destino { background: #fff3c4; color: var(--aviso); }
     .estado-invalido { background: #ffe3e3; color: var(--error); }
 
@@ -109,7 +126,7 @@
     }
 
     th {
-      color: #486581;
+      color: var(--muted);
       font-weight: 600;
     }
 
@@ -150,13 +167,16 @@
 
     .acciones {
       margin-top: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
     }
 
     a.boton, button.boton {
       display: inline-block;
       text-decoration: none;
       border: 0;
-      border-radius: 8px;
+      border-radius: 999px;
       background: var(--acento);
       color: #fff;
       font: inherit;
@@ -165,69 +185,25 @@
       cursor: pointer;
     }
 
-    a.boton:hover, button.boton:hover { background: #095c42; }
+    a.boton:hover, button.boton:hover { background: var(--acento-oscuro); }
 
     .boton-secundario {
-      background: #486581;
+      background: var(--muted);
     }
 
     .boton-secundario:hover {
-      background: #334e68;
+      background: #555e53;
     }
 
     .vacio {
-      color: #829ab1;
+      color: var(--muted);
       margin: 0;
-    }
-
-    .barra-sesion {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.25rem;
-      padding: 0.65rem 0.9rem;
-      background: #fff;
-      border: 1px solid var(--borde);
-      border-radius: 10px;
-      font-size: 0.92rem;
-      color: #486581;
-    }
-
-    .barra-sesion form {
-      margin: 0;
-    }
-
-    .barra-sesion button {
-      border: 0;
-      border-radius: 8px;
-      background: #486581;
-      color: #fff;
-      font: inherit;
-      font-weight: 600;
-      padding: 0.45rem 0.85rem;
-      cursor: pointer;
-    }
-
-    .barra-sesion button:hover {
-      background: #334e68;
-    }
-
-    .aviso-registro {
-      margin: 0 0 1rem;
-      padding: 0.75rem 1rem;
-      background: #e8f5ef;
-      border: 1px solid #b8e6bf;
-      border-radius: 8px;
-      color: var(--ok, #05603a);
-      font-size: 0.95rem;
     }
 
     .alerta-destino {
       background: #fff8e6;
       border: 1px solid #f0d58a;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 1.1rem 1.35rem;
       margin: 1rem 0 0;
     }
@@ -260,7 +236,9 @@
 <body>
   {% load dimanno_extras %}
   <main>
-    {% include "procesamientos/_sesion.html" %}
+    <p class="nav-volver">
+      <a href="{% url 'procesamientos:panel' %}">← Volver al panel</a>
+    </p>
     <h1>Resultado de validación</h1>
 
     {% if messages %}
@@ -497,9 +475,69 @@
       {% endif %}
     </section>
 
+    <h2>Generación del archivo</h2>
+    <section class="tarjeta">
+      {% if generacion_activa %}
+        <p>
+          Hay una generación en curso
+          ({{ generacion_activa.estado_legible }}).
+        </p>
+        <div class="acciones" style="margin-top: 0.85rem;">
+          <a
+            class="boton"
+            href="{% url 'procesamientos:dimanno_generacion_detalle' generacion_activa.id %}"
+          >
+            Ver generación en curso
+          </a>
+        </div>
+      {% elif puede_solicitar_generacion %}
+        <p>
+          El procesamiento está listo. Puede generar el
+          archivo acumulativo Di Manno.
+        </p>
+        <div class="acciones" style="margin-top: 0.85rem;">
+          <form
+            method="post"
+            action="{% url 'procesamientos:dimanno_generar' procesamiento.id %}"
+          >
+            {% csrf_token %}
+            <button class="boton" type="submit">
+              Generar archivo Di Manno
+            </button>
+          </form>
+          {% if ultima_completada %}
+            <a
+              class="boton boton-secundario"
+              href="{% url 'procesamientos:dimanno_generacion_descargar' ultima_completada.id %}"
+            >
+              Descargar último archivo
+            </a>
+          {% endif %}
+        </div>
+      {% else %}
+        <p class="vacio">
+          No es posible generar el archivo todavía.
+          Revise el estado, los errores y el destino.
+        </p>
+        {% if ultima_completada %}
+          <div class="acciones" style="margin-top: 0.85rem;">
+            <a
+              class="boton"
+              href="{% url 'procesamientos:dimanno_generacion_descargar' ultima_completada.id %}"
+            >
+              Descargar último archivo
+            </a>
+          </div>
+        {% endif %}
+      {% endif %}
+    </section>
+
     <div class="acciones">
-      <a class="boton boton-secundario" href="{% url 'procesamientos:dimanno_cargar' %}">
-        Volver al formulario
+      <a class="boton boton-secundario" href="{% url 'procesamientos:panel' %}">
+        Volver al panel
+      </a>
+      <a class="boton" href="{% url 'procesamientos:dimanno_cargar' %}">
+        Nueva carga
       </a>
     </div>
   </main>

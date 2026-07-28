@@ -1289,10 +1289,13 @@ class PruebasAutenticacionDimanno(TestCase):
             },
         )
         self.assertEqual(ok.status_code, 302)
-        self.assertIn(
-            "/procesamientos/dimanno/",
-            ok["Location"],
+        # Tras login debe ir al panel (/procesamientos/), no a Di Manno.
+        location = ok["Location"]
+        self.assertTrue(
+            location.rstrip("/").endswith("/procesamientos")
+            or location.endswith("/procesamientos/")
         )
+        self.assertNotIn("/dimanno/", location)
 
         self.cliente.logout()
         malo = self.cliente.post(
@@ -1318,6 +1321,7 @@ class PruebasAutenticacionDimanno(TestCase):
             media_dir=self.media_dir,
         )
         rutas = [
+            "/procesamientos/",
             "/procesamientos/dimanno/",
             f"/procesamientos/dimanno/{procesamiento.id}/",
             (
@@ -1345,6 +1349,11 @@ class PruebasAutenticacionDimanno(TestCase):
         procesamiento = _crear_procesamiento_destino(
             media_dir=self.media_dir,
         )
+        panel = self.cliente.get("/procesamientos/")
+        self.assertEqual(panel.status_code, 200)
+        self.assertContains(panel, "Panel de control")
+        self.assertContains(panel, "Di Manno")
+        self.assertContains(panel, "Abrir módulo")
         self.assertEqual(
             self.cliente.get(
                 "/procesamientos/dimanno/"
