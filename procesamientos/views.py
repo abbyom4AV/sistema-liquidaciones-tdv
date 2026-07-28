@@ -1123,12 +1123,19 @@ def descargar_generacion_dimanno(request, generacion_id):
     nombre = generacion.nombre_descarga
     if nombre != NOMBRE_DESCARGA_DIMANNO:
         nombre = NOMBRE_DESCARGA_DIMANNO
-    return FileResponse(
-        ruta.open("rb"),
-        as_attachment=True,
-        filename=nombre,
-        content_type=(
-            "application/vnd.openxmlformats-officedocument"
-            ".spreadsheetml.sheet"
-        ),
-    )
+
+    archivo = ruta.open("rb")
+    try:
+        return FileResponse(
+            archivo,
+            as_attachment=True,
+            filename=nombre,
+            content_type=(
+                "application/vnd.openxmlformats-officedocument"
+                ".spreadsheetml.sheet"
+            ),
+        )
+    except Exception:
+        archivo.close()
+        raise
+
