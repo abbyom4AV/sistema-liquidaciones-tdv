@@ -4,16 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Panel de control — Sistema TDV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --fondo: #f8f9f5;
+      --fondo: #f3f6f2;
+      --sidebar: #ffffff;
       --tarjeta: #ffffff;
-      --suave: #e2e5de;
-      --acento: #6d8b74;
-      --acento-oscuro: #557360;
-      --texto: #333333;
-      --muted: #6b7368;
-      --borde: #d5dbd1;
+      --acento: #375a4d;
+      --acento-oscuro: #284e40;
+      --acento-suave: #e6f4ee;
+      --texto: #1f2a24;
+      --muted: #6b7a71;
+      --borde: #d9e3dc;
+      --proximo: #eef1ee;
     }
 
     * { box-sizing: border-box; }
@@ -21,75 +26,153 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: "Segoe UI", Tahoma, sans-serif;
+      font-family: "Outfit", "Segoe UI", sans-serif;
       color: var(--texto);
       background: var(--fondo);
+      display: grid;
+      grid-template-columns: 260px 1fr;
     }
 
-    .barra-superior {
-      background: var(--tarjeta);
-      border-bottom: 1px solid var(--borde);
-      padding: 0.85rem 1.25rem;
+    .sidebar {
+      background: var(--sidebar);
+      border-right: 1px solid var(--borde);
+      padding: 1.35rem 1.1rem;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 1.5rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
     }
 
     .marca {
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--acento-oscuro);
-      font-size: 0.95rem;
-    }
-
-    .sesion {
       display: flex;
       align-items: center;
-      gap: 0.85rem;
-      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding: 0.25rem 0.4rem;
+    }
+
+    .marca-iniciales {
+      width: 2.35rem;
+      height: 2.35rem;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #2a5243, var(--acento-oscuro));
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .marca strong {
+      display: block;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+    }
+
+    .marca span {
       color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .nav-grupo {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .nav-titulo {
+      margin: 0 0 0.35rem 0.55rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.7rem 0.85rem;
+      border-radius: 12px;
+      color: var(--texto);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .nav-item.activo {
+      background: var(--acento-suave);
+      color: var(--acento-oscuro);
+      font-weight: 600;
+    }
+
+    .sidebar-pie {
+      margin-top: auto;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .usuario-card {
+      background: var(--acento-suave);
+      border-radius: 14px;
+      padding: 0.85rem 1rem;
+    }
+
+    .usuario-card strong {
+      display: block;
       font-size: 0.95rem;
     }
 
-    .sesion form { margin: 0; }
+    .usuario-card span {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
 
-    .sesion button {
+    .cerrar-sesion {
       border: 0;
-      border-radius: 999px;
-      background: var(--acento);
+      border-radius: 12px;
+      background: var(--texto);
       color: #fff;
       font: inherit;
       font-weight: 600;
-      padding: 0.5rem 1rem;
+      padding: 0.7rem 1rem;
       cursor: pointer;
+      width: 100%;
     }
 
-    .sesion button:hover {
-      background: var(--acento-oscuro);
+    .cerrar-sesion:hover {
+      background: #000;
     }
 
-    main {
-      max-width: 1040px;
-      margin: 0 auto;
-      padding: 2rem 1.25rem 3rem;
+    .contenido {
+      padding: 1.75rem 1.75rem 2.5rem;
+      min-width: 0;
+    }
+
+    .cabecera {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
     }
 
     h1 {
-      margin: 0 0 0.4rem;
-      font-size: 1.9rem;
+      margin: 0 0 0.35rem;
+      font-size: 2rem;
     }
 
     .intro {
-      margin: 0 0 1.75rem;
+      margin: 0;
       color: var(--muted);
+      max-width: 42rem;
     }
 
     .resumen {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 1rem;
       margin-bottom: 1.75rem;
     }
@@ -97,32 +180,46 @@
     .dato {
       background: var(--tarjeta);
       border: 1px solid var(--borde);
-      border-radius: 16px;
-      padding: 1rem 1.15rem;
+      border-radius: 18px;
+      padding: 1.15rem 1.25rem;
+      box-shadow: 0 8px 20px rgba(36, 111, 83, 0.04);
+    }
+
+    .dato.destacado {
+      background: linear-gradient(145deg, var(--acento), var(--acento-oscuro));
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(36, 111, 83, 0.22);
+    }
+
+    .dato.destacado strong,
+    .dato.destacado span {
+      color: #fff;
     }
 
     .dato strong {
       display: block;
       font-size: 0.85rem;
       color: var(--muted);
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.4rem;
       font-weight: 600;
     }
 
     .dato span {
-      font-size: 1.35rem;
+      font-size: 1.7rem;
       font-weight: 700;
       color: var(--acento-oscuro);
+      line-height: 1.1;
     }
 
     h2 {
-      margin: 0 0 0.85rem;
+      margin: 0 0 0.9rem;
       font-size: 1.15rem;
     }
 
     .modulos {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 1rem;
       margin-bottom: 2rem;
     }
@@ -131,27 +228,26 @@
       background: var(--tarjeta);
       border: 1px solid var(--borde);
       border-radius: 18px;
-      padding: 1.35rem 1.4rem;
+      padding: 1.2rem 1.25rem;
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
-      min-height: 180px;
+      gap: 0.55rem;
+      min-height: 170px;
+      box-shadow: 0 8px 20px rgba(36, 111, 83, 0.04);
     }
 
     .modulo.disponible {
-      border-color: #c5d4c8;
-      box-shadow: 0 8px 24px rgba(109, 139, 116, 0.08);
+      border-color: #b7d9c8;
     }
 
     .modulo.proximo {
-      background: var(--suave);
-      opacity: 0.92;
+      background: var(--proximo);
     }
 
     .etiqueta {
       display: inline-block;
       align-self: flex-start;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.04em;
       text-transform: uppercase;
@@ -160,18 +256,18 @@
     }
 
     .etiqueta-ok {
-      background: #dce8df;
+      background: var(--acento-suave);
       color: var(--acento-oscuro);
     }
 
     .etiqueta-prox {
-      background: #eceee9;
+      background: #e4e8e5;
       color: var(--muted);
     }
 
     .modulo h3 {
       margin: 0;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
     }
 
     .modulo p {
@@ -179,6 +275,7 @@
       color: var(--muted);
       flex: 1;
       line-height: 1.45;
+      font-size: 0.92rem;
     }
 
     a.boton {
@@ -189,7 +286,7 @@
       background: var(--acento);
       color: #fff;
       font-weight: 600;
-      padding: 0.65rem 1.1rem;
+      padding: 0.6rem 1rem;
     }
 
     a.boton:hover {
@@ -200,18 +297,18 @@
       display: inline-block;
       align-self: flex-start;
       border-radius: 999px;
-      background: #c8cec4;
+      background: #c5ccc7;
       color: #fff;
       font-weight: 600;
-      padding: 0.65rem 1.1rem;
-      cursor: default;
+      padding: 0.6rem 1rem;
     }
 
     .tarjeta {
       background: var(--tarjeta);
       border: 1px solid var(--borde);
       border-radius: 18px;
-      padding: 1.2rem 1.35rem;
+      padding: 1.15rem 1.25rem;
+      box-shadow: 0 8px 20px rgba(36, 111, 83, 0.04);
     }
 
     table {
@@ -222,7 +319,7 @@
 
     th, td {
       text-align: left;
-      padding: 0.7rem 0.35rem;
+      padding: 0.75rem 0.4rem;
       border-bottom: 1px solid var(--borde);
       vertical-align: top;
     }
@@ -232,9 +329,7 @@
       font-weight: 600;
     }
 
-    tr:last-child td {
-      border-bottom: 0;
-    }
+    tr:last-child td { border-bottom: 0; }
 
     a.enlace {
       color: var(--acento-oscuro);
@@ -242,9 +337,7 @@
       text-decoration: none;
     }
 
-    a.enlace:hover {
-      text-decoration: underline;
-    }
+    a.enlace:hover { text-decoration: underline; }
 
     .vacio {
       margin: 0;
@@ -257,81 +350,82 @@
       border-radius: 999px;
       font-size: 0.85rem;
       font-weight: 600;
-      background: var(--suave);
+      background: var(--acento-suave);
       color: var(--acento-oscuro);
+    }
+
+    @media (max-width: 900px) {
+      body {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        height: auto;
+        position: static;
+      }
+
+      .resumen {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <header class="barra-superior">
-    <div class="marca">Sistema TDV</div>
-    <div class="sesion">
-      <span>Sesión iniciada: {{ nombre_usuario_sesion }}</span>
-      <form method="post" action="{% url 'logout' %}">
-        {% csrf_token %}
-        <button type="submit">Cerrar sesión</button>
-      </form>
-    </div>
-  </header>
+  {% include "procesamientos/_sidebar.html" %}
 
-  <main>
-    <h1>Panel de control</h1>
-    <p class="intro">
-      Seleccione el módulo con el que desea trabajar.
-    </p>
+  <div class="contenido">
+    <header class="cabecera">
+      <div>
+        <h1>Panel de control</h1>
+        <p class="intro">
+          Seleccione el módulo del cliente. Cada uno valida, corrige
+          y genera liquidaciones con su propio formato y rubros.
+        </p>
+      </div>
+    </header>
 
     <section class="resumen">
+      <div class="dato destacado">
+        <strong>Clientes en catálogo</strong>
+        <span>{{ total_clientes }}</span>
+      </div>
       <div class="dato">
-        <strong>Procesamientos Di Manno</strong>
+        <strong>Módulos disponibles</strong>
+        <span>{{ clientes_disponibles }}</span>
+      </div>
+      <div class="dato">
+        <strong>Procesamientos recientes</strong>
         <span>{{ total_procesamientos }}</span>
       </div>
-      <div class="dato">
-        <strong>Usuario</strong>
-        <span style="font-size: 1.05rem;">{{ nombre_usuario_sesion }}</span>
-      </div>
     </section>
 
-    <h2>Módulos</h2>
+    <h2>Módulos por cliente</h2>
     <section class="modulos">
-      <article class="modulo disponible">
-        <span class="etiqueta etiqueta-ok">Disponible</span>
-        <h3>Di Manno</h3>
-        <p>
-          Cargar liquidaciones, validar archivos, corregir gastos
-          y definir destino.
-        </p>
-        <a class="boton" href="{% url 'procesamientos:dimanno_cargar' %}">
-          Abrir módulo
-        </a>
-      </article>
-
-      <article class="modulo proximo">
-        <span class="etiqueta etiqueta-prox">Próximamente</span>
-        <h3>Otros clientes</h3>
-        <p>
-          Módulos adicionales de liquidación se habilitarán
-          en etapas posteriores.
-        </p>
-        <span class="boton-deshabilitado">No disponible</span>
-      </article>
-
-      <article class="modulo proximo">
-        <span class="etiqueta etiqueta-prox">Próximamente</span>
-        <h3>Bitácora general</h3>
-        <p>
-          Consulta unificada de correcciones y resoluciones
-          de destino.
-        </p>
-        <span class="boton-deshabilitado">No disponible</span>
-      </article>
+      {% for cliente in clientes_panel %}
+        <article class="modulo {% if cliente.disponible %}disponible{% else %}proximo{% endif %}">
+          {% if cliente.disponible %}
+            <span class="etiqueta etiqueta-ok">Disponible</span>
+          {% else %}
+            <span class="etiqueta etiqueta-prox">Próximamente</span>
+          {% endif %}
+          <h3>{{ cliente.nombre }}</h3>
+          <p>{{ cliente.descripcion }}</p>
+          {% if cliente.disponible and cliente.url_name %}
+            <a class="boton" href="{% url cliente.url_name %}">Abrir módulo</a>
+          {% else %}
+            <span class="boton-deshabilitado">No disponible</span>
+          {% endif %}
+        </article>
+      {% endfor %}
     </section>
 
-    <h2>Actividad reciente — Di Manno</h2>
+    <h2>Actividad reciente</h2>
     <section class="tarjeta">
       {% if procesamientos_recientes %}
         <table>
           <thead>
             <tr>
+              <th>Cliente</th>
               <th>Factura</th>
               <th>Semana</th>
               <th>Año</th>
@@ -342,6 +436,7 @@
           <tbody>
             {% for item in procesamientos_recientes %}
               <tr>
+                <td>Di Manno</td>
                 <td>{{ item.factura_corta|default:"—" }}</td>
                 <td>{{ item.semana }}</td>
                 <td>{{ item.anio }}</td>
@@ -362,11 +457,11 @@
         </table>
       {% else %}
         <p class="vacio">
-          Aún no hay procesamientos. Abra el módulo Di Manno
+          Aún no hay procesamientos. Abra un módulo disponible
           para cargar una liquidación.
         </p>
       {% endif %}
     </section>
-  </main>
+  </div>
 </body>
 </html>

@@ -1,0 +1,39 @@
+{% load static %}
+<aside class="sidebar">
+  <div class="marca">
+    <div class="marca-iniciales" aria-hidden="true">
+      {{ iniciales_usuario|default:"?" }}
+    </div>
+    <div>
+      <strong>Sistema TDV</strong>
+      <span>Liquidaciones</span>
+    </div>
+  </div>
+
+  <nav class="nav-grupo" aria-label="Menú principal">
+    <p class="nav-titulo">Menú</p>
+    <a
+      class="nav-item {% if nav_activo == 'panel' %}activo{% endif %}"
+      href="{% url 'procesamientos:panel' %}"
+    >
+      Panel de control
+    </a>
+    <a
+      class="nav-item {% if nav_activo == 'bitacoras' %}activo{% endif %}"
+      href="{% url 'procesamientos:bitacoras' %}"
+    >
+      Bitácoras
+    </a>
+  </nav>
+
+  <div class="sidebar-pie">
+    <div class="usuario-card">
+      <strong>{{ nombre_usuario_sesion }}</strong>
+      <span>Sesión activa</span>
+    </div>
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button class="cerrar-sesion" type="submit">Cerrar sesión</button>
+    </form>
+  </div>
+</aside>

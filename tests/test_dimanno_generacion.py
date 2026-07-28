@@ -619,9 +619,13 @@ class PruebasGeneracionDimanno(TestCase):
         detalle = self.cliente.get(
             f"/procesamientos/dimanno/{procesamiento.id}/"
         )
+        self.assertContains(detalle, "Generar archivo")
         self.assertContains(
             detalle,
-            "Generar archivo Di Manno",
+            (
+                f"/procesamientos/dimanno/"
+                f"{procesamiento.id}/generar/"
+            ),
         )
 
         procesamiento.puede_escribir = False
@@ -639,7 +643,7 @@ class PruebasGeneracionDimanno(TestCase):
         )
         self.assertNotContains(
             detalle,
-            "Generar archivo Di Manno",
+            "Generar archivo",
         )
 
     @patch(

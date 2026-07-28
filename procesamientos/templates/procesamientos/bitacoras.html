@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bitácoras — Sistema TDV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fondo: #f3f6f2;
+      --sidebar: #ffffff;
+      --tarjeta: #ffffff;
+      --acento: #375a4d;
+      --acento-oscuro: #284e40;
+      --acento-suave: #e6f4ee;
+      --texto: #1f2a24;
+      --muted: #6b7a71;
+      --borde: #d9e3dc;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Outfit", "Segoe UI", sans-serif;
+      color: var(--texto);
+      background: var(--fondo);
+      display: grid;
+      grid-template-columns: 260px 1fr;
+    }
+
+    .sidebar {
+      background: var(--sidebar);
+      border-right: 1px solid var(--borde);
+      padding: 1.35rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .marca {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.25rem 0.4rem;
+    }
+
+    .marca-iniciales {
+      width: 2.35rem;
+      height: 2.35rem;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #2a5243, var(--acento-oscuro));
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .marca strong { display: block; font-size: 1.05rem; }
+    .marca span { color: var(--muted); font-size: 0.8rem; }
+
+    .nav-grupo { display: grid; gap: 0.35rem; }
+
+    .nav-titulo {
+      margin: 0 0 0.35rem 0.55rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.7rem 0.85rem;
+      border-radius: 12px;
+      color: var(--texto);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .nav-item.activo {
+      background: var(--acento-suave);
+      color: var(--acento-oscuro);
+      font-weight: 600;
+    }
+
+    .sidebar-pie {
+      margin-top: auto;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .usuario-card {
+      background: var(--acento-suave);
+      border-radius: 14px;
+      padding: 0.85rem 1rem;
+    }
+
+    .usuario-card strong { display: block; font-size: 0.95rem; }
+    .usuario-card span { color: var(--muted); font-size: 0.82rem; }
+
+    .cerrar-sesion {
+      border: 0;
+      border-radius: 12px;
+      background: var(--texto);
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      padding: 0.7rem 1rem;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .cerrar-sesion:hover {
+      background: #000;
+    }
+
+    .contenido {
+      padding: 1.75rem 1.75rem 2.5rem;
+      min-width: 0;
+    }
+
+    .cabecera {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      margin: 0 0 0.3rem;
+      font-size: 1.85rem;
+    }
+
+    .intro {
+      margin: 0;
+      color: var(--muted);
+      max-width: 36rem;
+    }
+
+    .filtros {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 18px;
+      padding: 1rem 1.1rem;
+      margin-bottom: 1rem;
+      display: grid;
+      gap: 0.85rem;
+      box-shadow: 0 8px 20px rgba(36, 111, 83, 0.04);
+    }
+
+    .filtros-grid {
+      display: grid;
+      grid-template-columns: 1.4fr repeat(4, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .filtros label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .filtros input {
+      width: 100%;
+      border: 1px solid var(--borde);
+      border-radius: 10px;
+      padding: 0.65rem 0.75rem;
+      font: inherit;
+      background: #f7faf7;
+    }
+
+    .filtros-acciones {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .filtros button,
+    .filtros a.limpiar {
+      border: 0;
+      border-radius: 999px;
+      padding: 0.65rem 1.1rem;
+      font: inherit;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .filtros button {
+      background: var(--acento);
+      color: #fff;
+    }
+
+    .filtros button:hover {
+      background: var(--acento-oscuro);
+    }
+
+    .filtros a.limpiar {
+      background: #e4e8e5;
+      color: var(--texto);
+    }
+
+    .tarjeta {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 18px;
+      padding: 0.35rem 1rem 0.75rem;
+      box-shadow: 0 8px 20px rgba(36, 111, 83, 0.04);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.93rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.85rem 0.45rem;
+      border-bottom: 1px solid var(--borde);
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .tipo {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .estado {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .estado-completada {
+      background: var(--acento-suave);
+      color: var(--acento-oscuro);
+    }
+
+    .estado-error {
+      background: #fde8e8;
+      color: #9b1c1c;
+    }
+
+    .estado-proceso {
+      background: #fff3c4;
+      color: #8a6116;
+    }
+
+    .estado-cambiada {
+      background: #e8eef8;
+      color: #3a5a8c;
+    }
+
+    a.enlace {
+      color: var(--acento-oscuro);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    a.enlace:hover { text-decoration: underline; }
+
+    .vacio {
+      margin: 1rem 0;
+      color: var(--muted);
+    }
+
+    .muted { color: var(--muted); font-size: 0.88rem; }
+
+    @media (max-width: 1100px) {
+      .filtros-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      body { grid-template-columns: 1fr; }
+      .sidebar { height: auto; position: static; }
+      .filtros-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  {% include "procesamientos/_sidebar.html" %}
+
+  <div class="contenido">
+    <header class="cabecera">
+      <div>
+        <h1>Bitácoras</h1>
+        <p class="intro">
+          Movimientos de correcciones, destinos y generaciones.
+        </p>
+      </div>
+    </header>
+
+    <form class="filtros" method="get">
+      <div class="filtros-grid">
+        <div>
+          <label for="q">Buscar</label>
+          <input
+            id="q"
+            type="search"
+            name="q"
+            value="{{ filtros.q }}"
+            placeholder="Texto libre…"
+          >
+        </div>
+        <div>
+          <label for="fecha_desde">Desde</label>
+          <input
+            id="fecha_desde"
+            type="date"
+            name="fecha_desde"
+            value="{{ filtros.fecha_desde }}"
+          >
+        </div>
+        <div>
+          <label for="fecha_hasta">Hasta</label>
+          <input
+            id="fecha_hasta"
+            type="date"
+            name="fecha_hasta"
+            value="{{ filtros.fecha_hasta }}"
+          >
+        </div>
+        <div>
+          <label for="cliente">Cliente</label>
+          <input
+            id="cliente"
+            type="text"
+            name="cliente"
+            value="{{ filtros.cliente }}"
+            placeholder="Ej. Di Manno"
+          >
+        </div>
+        <div>
+          <label for="factura">Factura</label>
+          <input
+            id="factura"
+            type="text"
+            name="factura"
+            value="{{ filtros.factura }}"
+            placeholder="Ej. 5532"
+          >
+        </div>
+      </div>
+      <div class="filtros-grid" style="grid-template-columns: 1fr auto;">
+        <div>
+          <label for="usuario">Usuario</label>
+          <input
+            id="usuario"
+            type="text"
+            name="usuario"
+            value="{{ filtros.usuario }}"
+            placeholder="Quién realizó el movimiento"
+          >
+        </div>
+        <div class="filtros-acciones" style="align-self: end;">
+          <button type="submit">Buscar</button>
+          <a class="limpiar" href="{% url 'procesamientos:bitacoras' %}">Limpiar</a>
+        </div>
+      </div>
+    </form>
+
+    <section class="tarjeta">
+      {% if eventos %}
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Tipo</th>
+              <th>Cliente</th>
+              <th>Factura</th>
+              <th>Detalle</th>
+              <th>Usuario</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for evento in eventos %}
+              <tr>
+                <td class="muted">{{ evento.fecha }}</td>
+                <td>
+                  <span class="estado estado-{{ evento.estado_clase }}">
+                    {{ evento.estado }}
+                  </span>
+                </td>
+                <td class="tipo">{{ evento.tipo }}</td>
+                <td>{{ evento.cliente }}</td>
+                <td>{{ evento.factura }}</td>
+                <td>{{ evento.detalle }}</td>
+                <td>{{ evento.usuario }}</td>
+                <td>
+                  <a
+                    class="enlace"
+                    href="{% url evento.url_detalle.0 evento.url_detalle.1 %}"
+                  >
+                    Ver
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="vacio">
+          No hay movimientos con los filtros aplicados.
+        </p>
+      {% endif %}
+    </section>
+  </div>
+</body>
+</html>
