@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import argparse
+import contextvars
 import ctypes
 import gc
 import json
+import logging
 import re
 import shutil
+import tempfile
 from dataclasses import asdict, dataclass
 from decimal import Decimal
 from pathlib import Path
@@ -25,9 +28,27 @@ from services.dimanno.processor import (
     preparar_procesamiento_dimanno,
 )
 
+logger = logging.getLogger(__name__)
+
+_contexto_generacion: contextvars.ContextVar[str] = (
+    contextvars.ContextVar(
+        "dimanno_generacion_id",
+        default="-",
+    )
+)
 
 HOJA_RAW_DATA = "Raw Data"
 TABLA_RAW_DATA = "Tabla1"
+
+ERRORES_FORMULA_EXCEL = (
+    "#REF!",
+    "#VALUE!",
+    "#N/A",
+    "#DIV/0!",
+    "#NAME?",
+    "#NULL!",
+    "#NUM!",
+)
 
 
 COLUMNAS_ENTRADA = {
@@ -116,6 +137,17 @@ COLUMNAS_FORMULA = {
 
 COLUMNAS_ESPERADAS = COLUMNAS_ENTRADA | COLUMNAS_FORMULA
 
+# Subconjunto crítico para validar errores tras un recálculo dirigido.
+# Evita leer por COM todas las columnas de fórmula.
+COLUMNAS_FORMULA_CRITICAS: tuple[str, ...] = (
+    "Contar Fcls",
+    "Fact. 4 Digitos",
+    "Total Venta €",
+    "Comisión Eu",
+    "GED Total  €",
+    "Retorno  EXW €",
+)
+
 
 class ErrorEscrituraDimanno(Exception):
     """Error general al escribir el archivo Di Manno."""
@@ -131,6 +163,24 @@ class LiquidacionDuplicadaError(ErrorEscrituraDimanno):
 
 class ProcesamientoNoListoError(ErrorEscrituraDimanno):
     """El procesamiento todavía contiene errores pendientes."""
+
+
+def establecer_contexto_generacion(generacion_id: str):
+    return _contexto_generacion.set(str(generacion_id))
+
+
+def limpiar_contexto_generacion(token) -> None:
+    _contexto_generacion.reset(token)
+
+
+def _log_fase(fase: str, segundos: float) -> None:
+    logger.info(
+        "generacion=%s fase=%s segundos=%.3f",
+        _contexto_generacion.get(),
+        fase,
+        segundos,
+    )
+
 
 def esperar_excel_listo(
     aplicacion: xw.App,
@@ -190,6 +240,60 @@ def copiar_rango_con_reintentos(
     ) from ultimo_error
 
 
+def rellenar_hacia_abajo_con_reintentos(
+    rango: Any,
+    aplicacion: xw.App,
+    maximo_intentos: int = 8,
+) -> None:
+    """Propaga fórmulas y formatos hacia abajo en bloque."""
+    ultimo_error: com_error | None = None
+
+    for intento in range(1, maximo_intentos + 1):
+        try:
+            esperar_excel_listo(
+                aplicacion=aplicacion,
+                timeout_segundos=30,
+            )
+            rango.FillDown()
+            return
+        except com_error as error:
+            ultimo_error = error
+            time.sleep(0.5 * intento)
+
+    raise ErrorEscrituraDimanno(
+        "Excel no permitió propagar fórmulas "
+        f"después de {maximo_intentos} intentos."
+    ) from ultimo_error
+
+
+def agregar_listrow_con_reintentos(
+    tabla: Any,
+    aplicacion: xw.App,
+    maximo_intentos: int = 10,
+) -> Any:
+    """
+    Agrega una fila a Tabla1 reintentando si Excel está ocupado
+    (p. ej. 0x800AC472).
+    """
+    ultimo_error: com_error | None = None
+
+    for intento in range(1, maximo_intentos + 1):
+        try:
+            esperar_excel_listo(
+                aplicacion=aplicacion,
+                timeout_segundos=60,
+            )
+            return tabla.ListRows.Add()
+        except com_error as error:
+            ultimo_error = error
+            time.sleep(0.5 * intento)
+
+    raise ErrorEscrituraDimanno(
+        "Excel no permitió agregar filas a la tabla "
+        f"después de {maximo_intentos} intentos."
+    ) from ultimo_error
+
+
 def guardar_libro_con_reintentos(
     libro: xw.Book,
     aplicacion: xw.App,
@@ -197,9 +301,7 @@ def guardar_libro_con_reintentos(
 ) -> None:
     """
     Guarda el libro reintentando si Excel está ocupado.
-    Usa Save de COM directamente para evitar el contexto
-    de display_alerts de xlwings, que también falla
-    cuando Excel rechaza llamadas (0x800ac472).
+    Usa Save de COM directamente sobre el archivo en TEMP.
     """
     ultimo_error: com_error | None = None
 
@@ -216,7 +318,6 @@ def guardar_libro_con_reintentos(
                 aplicacion=aplicacion,
                 timeout_segundos=30,
             )
-
             return
 
         except com_error as error:
@@ -234,8 +335,10 @@ def calcular_con_reintentos(
     maximo_intentos: int = 10,
 ) -> None:
     """
-    Reactiva el cálculo automático y fuerza un recálculo
-    reintentando si Excel está ocupado.
+    Fuerza un recálculo completo manteniendo cálculo manual.
+
+    No activa el modo automatic: eso puede disparar trabajo extra
+    antes de guardar.
     """
     ultimo_error: com_error | None = None
 
@@ -246,7 +349,7 @@ def calcular_con_reintentos(
                 timeout_segundos=60,
             )
 
-            aplicacion.calculation = "automatic"
+            aplicacion.calculation = "manual"
             aplicacion.api.Calculate()
 
             esperar_excel_listo(
@@ -264,6 +367,168 @@ def calcular_con_reintentos(
         "Excel no permitió recalcular el libro "
         f"después de {maximo_intentos} intentos."
     ) from ultimo_error
+
+
+def _calculo_incompleto(aplicacion: xw.App) -> bool:
+    try:
+        # xlDone = 0, xlCalculating = 1, xlPending = 2
+        return int(aplicacion.api.CalculationState) != 0
+    except (com_error, TypeError, ValueError):
+        return True
+
+
+def _valores_como_lista(valor: Any, filas: int) -> list[Any]:
+    if filas <= 1:
+        return [valor]
+    resultado: list[Any] = []
+    for fila in valor:
+        if isinstance(fila, (list, tuple)):
+            resultado.append(fila[0] if fila else None)
+        else:
+            resultado.append(fila)
+    return resultado
+
+
+def _es_error_formula(valor: Any) -> bool:
+    if valor is None:
+        return False
+    texto = str(valor).strip().upper()
+    return any(
+        texto == error or texto.startswith(error)
+        for error in ERRORES_FORMULA_EXCEL
+    )
+
+
+def hay_errores_formula_en_filas(
+    hoja: Any,
+    fila_inicial: int,
+    fila_final: int,
+    posiciones: dict[str, int],
+    columnas: tuple[str, ...] | None = None,
+) -> bool:
+    filas = fila_final - fila_inicial + 1
+    columnas_a_revisar = columnas or COLUMNAS_FORMULA_CRITICAS
+    for nombre in columnas_a_revisar:
+        if nombre not in posiciones:
+            continue
+        indice = posiciones[nombre]
+        valores = hoja.Range(
+            hoja.Cells(fila_inicial, indice),
+            hoja.Cells(fila_final, indice),
+        ).Value2
+        for valor in _valores_como_lista(valores, filas):
+            if _es_error_formula(valor):
+                return True
+    return False
+
+
+def propagar_formulas_filas_nuevas(
+    fila_plantilla: Any,
+    rango_filas_nuevas: Any,
+    posiciones: dict[str, int],
+    aplicacion: xw.App,
+) -> None:
+    """
+    Propaga fórmulas y formatos de la fila plantilla a las filas nuevas.
+
+    Usa una sola copia + FillDown. Si falla, FormulaR1C1 por columna.
+    """
+    filas = int(rango_filas_nuevas.Rows.Count)
+    primera = (
+        rango_filas_nuevas
+        if filas == 1
+        else rango_filas_nuevas.Rows(1)
+    )
+
+    try:
+        copiar_rango_con_reintentos(
+            origen=fila_plantilla,
+            destino=primera,
+            aplicacion=aplicacion,
+        )
+        if filas > 1:
+            rellenar_hacia_abajo_con_reintentos(
+                rango=rango_filas_nuevas,
+                aplicacion=aplicacion,
+            )
+        return
+    except ErrorEscrituraDimanno:
+        logger.warning(
+            "generacion=%s Copy+FillDown falló; "
+            "usando FormulaR1C1",
+            _contexto_generacion.get(),
+        )
+
+    for nombre in COLUMNAS_FORMULA:
+        indice = posiciones[nombre]
+        formula = fila_plantilla.Cells(
+            1,
+            indice,
+        ).FormulaR1C1
+        if not formula:
+            continue
+        destino = rango_filas_nuevas.Cells(
+            1,
+            indice,
+        ).Resize(filas, 1)
+        destino.FormulaR1C1 = formula
+
+
+def recalcular_dirigido_con_fallback(
+    aplicacion: xw.App,
+    hoja: xw.Sheet,
+    rango_filas_nuevas: Any,
+    fila_inicial: int,
+    fila_final: int,
+    posiciones: dict[str, int],
+) -> str:
+    """
+    Recalcula solo el rango de filas nuevas; si no basta, recálculo completo.
+
+    Mantiene calculation=manual en todo momento.
+    Devuelve 'dirigido' o 'completo'.
+    """
+    try:
+        esperar_excel_listo(
+            aplicacion=aplicacion,
+            timeout_segundos=60,
+        )
+        aplicacion.calculation = "manual"
+        rango_filas_nuevas.Calculate()
+        esperar_excel_listo(
+            aplicacion=aplicacion,
+            timeout_segundos=120,
+        )
+
+        if _calculo_incompleto(aplicacion):
+            raise ErrorEscrituraDimanno(
+                "Quedaron fórmulas pendientes tras el "
+                "recálculo dirigido."
+            )
+
+        if hay_errores_formula_en_filas(
+            hoja.api,
+            fila_inicial,
+            fila_final,
+            posiciones,
+            columnas=COLUMNAS_FORMULA_CRITICAS,
+        ):
+            raise ErrorEscrituraDimanno(
+                "Se detectaron errores de fórmula en "
+                "filas nuevas."
+            )
+
+        return "dirigido"
+
+    except Exception:
+        logger.warning(
+            "generacion=%s recálculo dirigido insuficiente; "
+            "usando recálculo completo",
+            _contexto_generacion.get(),
+            exc_info=True,
+        )
+        calcular_con_reintentos(aplicacion=aplicacion)
+        return "completo"
 
 
 def _proceso_sigue_activo(pid: int) -> bool:
@@ -488,31 +753,30 @@ def existe_liquidacion_duplicada(
     factura_buscada = normalizar_factura_corta(
         factura_corta
     )
+    filas = int(cuerpo.Rows.Count)
+    if filas < 1:
+        return False
 
-    for indice_fila in range(
-        1,
-        cuerpo.Rows.Count + 1,
-    ):
-        fila = cuerpo.Rows(indice_fila)
+    def _columna(nombre: str) -> list[Any]:
+        indice = posiciones[nombre]
+        crudo = cuerpo.Columns(indice).Value2
+        return _valores_como_lista(crudo, filas)
 
-        valor_anio = fila.Cells(
-            1,
-            posiciones["Año"],
-        ).Value
+    valores_anio = _columna("Año")
+    valores_semana = _columna("Semana")
+    valores_factura = _columna("Fact. 4 Digitos")
+    valores_destino = _columna("Destino")
 
+    for indice in range(filas):
+        valor_anio = valores_anio[indice]
         try:
             anio_existente = int(float(valor_anio))
         except (TypeError, ValueError):
             continue
 
-        valor_semana = fila.Cells(
-            1,
-            posiciones["Semana"],
-        ).Value
-
         try:
             semana_existente, anio_en_semana = (
-                interpretar_semana(valor_semana)
+                interpretar_semana(valores_semana[indice])
             )
         except Exception:
             continue
@@ -524,17 +788,10 @@ def existe_liquidacion_duplicada(
             continue
 
         factura_existente = normalizar_factura_corta(
-            fila.Cells(
-                1,
-                posiciones["Fact. 4 Digitos"],
-            ).Value
+            valores_factura[indice]
         )
-
         destino_existente = normalizar_texto(
-            fila.Cells(
-                1,
-                posiciones["Destino"],
-            ).Value
+            valores_destino[indice]
         )
 
         if (
@@ -558,6 +815,31 @@ def escribir_valores_fila(
             1,
             posiciones[nombre_columna],
         ).Value = valor
+
+
+def escribir_valores_bloque(
+    hoja: Any,
+    fila_inicial: int,
+    fila_final: int,
+    posiciones: dict[str, int],
+    filas_valores: list[dict[str, Any]],
+) -> None:
+    """Asigna valores de entrada por columna con Value2."""
+    if not filas_valores:
+        return
+
+    columnas = list(filas_valores[0].keys())
+
+    for nombre_columna in columnas:
+        indice = posiciones[nombre_columna]
+        matriz = [
+            [fila[nombre_columna]]
+            for fila in filas_valores
+        ]
+        hoja.Range(
+            hoja.Cells(fila_inicial, indice),
+            hoja.Cells(fila_final, indice),
+        ).Value2 = matriz
 
 
 def construir_valores_fila(
@@ -620,7 +902,7 @@ def escribir_archivo_dimanno(
     procesamiento: ResultadoPreparacionDimanno,
     ruta_archivo_cliente: str | Path,
     ruta_salida: str | Path,
-    recalcular_al_final: bool = True,
+    recalcular_al_final: bool = False,
 ) -> ResultadoEscrituraDimanno:
     if not procesamiento.puede_escribir:
         raise ProcesamientoNoListoError(
@@ -635,6 +917,7 @@ def escribir_archivo_dimanno(
 
     origen = Path(ruta_archivo_cliente).resolve()
     salida = Path(ruta_salida).resolve()
+    inicio_total = time.perf_counter()
 
     if not origen.is_file():
         raise FileNotFoundError(
@@ -662,13 +945,22 @@ def escribir_archivo_dimanno(
         exist_ok=True,
     )
 
-    shutil.copy2(origen, salida)
+    # Trabajo Excel en disco local para evitar latencia de
+    # OneDrive/SharePoint sobre media/ del proyecto.
+    carpeta_trabajo = Path(
+        tempfile.mkdtemp(prefix="dimanno_write_")
+    )
+    salida_trabajo = carpeta_trabajo / "trabajo.xlsx"
 
     aplicacion: xw.App | None = None
     libro: xw.Book | None = None
     escritura_completada = False
+    resultado: ResultadoEscrituraDimanno | None = None
 
     try:
+        inicio = time.perf_counter()
+        shutil.copy2(origen, salida_trabajo)
+
         aplicacion = xw.App(
             visible=False,
             add_book=False,
@@ -678,7 +970,7 @@ def escribir_archivo_dimanno(
         aplicacion.screen_updating = False
 
         libro = aplicacion.books.open(
-            str(salida),
+            str(salida_trabajo),
             update_links=False,
             read_only=False,
             add_to_mru=False,
@@ -691,7 +983,12 @@ def escribir_archivo_dimanno(
             aplicacion=aplicacion,
             timeout_segundos=30,
         )
+        _log_fase(
+            "copiar_abrir_acumulativo",
+            time.perf_counter() - inicio,
+        )
 
+        inicio = time.perf_counter()
         nombres_hojas = [
             hoja.name
             for hoja in libro.sheets
@@ -738,61 +1035,122 @@ def escribir_archivo_dimanno(
                 "para el mismo año, semana, factura y "
                 "destino."
             )
-
-        cuerpo_inicial = tabla.DataBodyRange
-        ultima_fila_origen = cuerpo_inicial.Rows(
-            cuerpo_inicial.Rows.Count
+        _log_fase(
+            "localizar_hoja_tabla",
+            time.perf_counter() - inicio,
         )
 
+        cuerpo_inicial = tabla.DataBodyRange
+        filas_antes = int(cuerpo_inicial.Rows.Count)
+        cantidad_lineas = len(
+            procesamiento.validacion.lineas_preparadas
+        )
+
+        inicio = time.perf_counter()
         filas_excel_agregadas: list[int] = []
-
-        for indice_linea in range(
-            len(
-                procesamiento.validacion
-                .lineas_preparadas
-            )
-        ):
-            nueva_fila_tabla = tabla.ListRows.Add()
-            rango_nueva_fila = nueva_fila_tabla.Range
-
-            copiar_rango_con_reintentos(
-                origen=ultima_fila_origen,
-                destino=rango_nueva_fila,
+        for _ in range(cantidad_lineas):
+            list_row = agregar_listrow_con_reintentos(
+                tabla=tabla,
                 aplicacion=aplicacion,
             )
-
-            valores = construir_valores_fila(
-                procesamiento=procesamiento,
-                indice_linea=indice_linea,
-            )
-
-            escribir_valores_fila(
-                rango_fila=rango_nueva_fila,
-                posiciones=posiciones,
-                valores=valores,
-            )
-
             filas_excel_agregadas.append(
-                int(rango_nueva_fila.Row)
+                int(list_row.Range.Row)
             )
+        _log_fase(
+            "agregar_listrows",
+            time.perf_counter() - inicio,
+        )
 
-        aplicacion.api.CutCopyMode = False
+        fila_plantilla = tabla.ListRows(filas_antes).Range
+        fila_inicial_nueva = min(filas_excel_agregadas)
+        fila_final_nueva = max(filas_excel_agregadas)
+        columna_inicial = int(tabla.Range.Column)
+        columna_final = (
+            columna_inicial + int(tabla.Range.Columns.Count) - 1
+        )
+        rango_filas_nuevas = hoja.api.Range(
+            hoja.api.Cells(
+                fila_inicial_nueva,
+                columna_inicial,
+            ),
+            hoja.api.Cells(
+                fila_final_nueva,
+                columna_final,
+            ),
+        )
+
+        inicio = time.perf_counter()
+        propagar_formulas_filas_nuevas(
+            fila_plantilla=fila_plantilla,
+            rango_filas_nuevas=rango_filas_nuevas,
+            posiciones=posiciones,
+            aplicacion=aplicacion,
+        )
+        try:
+            aplicacion.api.CutCopyMode = False
+        except com_error:
+            pass
+        _log_fase(
+            "copiar_extender_formulas",
+            time.perf_counter() - inicio,
+        )
+
+        filas_valores = [
+            construir_valores_fila(
+                procesamiento=procesamiento,
+                indice_linea=indice,
+            )
+            for indice in range(cantidad_lineas)
+        ]
+
+        inicio = time.perf_counter()
+        escribir_valores_bloque(
+            hoja=hoja.api,
+            fila_inicial=fila_inicial_nueva,
+            fila_final=fila_final_nueva,
+            posiciones=posiciones,
+            filas_valores=filas_valores,
+        )
+        _log_fase(
+            "escribir_valores",
+            time.perf_counter() - inicio,
+        )
 
         if recalcular_al_final:
-            calcular_con_reintentos(
+            inicio = time.perf_counter()
+            modo = recalcular_dirigido_con_fallback(
                 aplicacion=aplicacion,
+                hoja=hoja,
+                rango_filas_nuevas=rango_filas_nuevas,
+                fila_inicial=fila_inicial_nueva,
+                fila_final=fila_final_nueva,
+                posiciones=posiciones,
             )
+            _log_fase(
+                f"recalcular_{modo}",
+                time.perf_counter() - inicio,
+            )
+        else:
+            _log_fase("recalcular_omitido", 0.0)
+            try:
+                aplicacion.calculation = "manual"
+            except com_error:
+                pass
 
         rango_tabla = str(tabla.Range.Address)
 
+        inicio = time.perf_counter()
         guardar_libro_con_reintentos(
             libro=libro,
             aplicacion=aplicacion,
         )
+        _log_fase(
+            "guardar",
+            time.perf_counter() - inicio,
+        )
 
         escritura_completada = True
-
-        return ResultadoEscrituraDimanno(
+        resultado = ResultadoEscrituraDimanno(
             archivo_origen=origen.name,
             archivo_salida=salida.name,
             filas_agregadas=len(
@@ -825,7 +1183,7 @@ def escribir_archivo_dimanno(
         raise
 
     finally:
-        # Una sola limpieza: éxito o error.
+        inicio_cierre = time.perf_counter()
         cerrar_aplicacion_excel(
             libro=libro,
             aplicacion=aplicacion,
@@ -833,12 +1191,48 @@ def escribir_archivo_dimanno(
         )
         libro = None
         aplicacion = None
+        _log_fase(
+            "cerrar_excel",
+            time.perf_counter() - inicio_cierre,
+        )
 
-        if not escritura_completada and salida.exists():
+        if escritura_completada and salida_trabajo.is_file():
+            inicio_copia = time.perf_counter()
+            try:
+                shutil.copy2(salida_trabajo, salida)
+                _log_fase(
+                    "copiar_resultado_final",
+                    time.perf_counter() - inicio_copia,
+                )
+            except OSError:
+                escritura_completada = False
+                resultado = None
+                if salida.exists():
+                    try:
+                        salida.unlink()
+                    except OSError:
+                        pass
+        elif salida.exists():
             try:
                 salida.unlink()
             except OSError:
                 pass
+
+        try:
+            shutil.rmtree(carpeta_trabajo, ignore_errors=True)
+        except OSError:
+            pass
+
+        _log_fase(
+            "total_writer",
+            time.perf_counter() - inicio_total,
+        )
+
+    if resultado is None:
+        raise ErrorEscrituraDimanno(
+            "El archivo de salida no fue creado."
+        )
+    return resultado
 
 
 def main() -> None:

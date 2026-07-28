@@ -24,6 +24,17 @@ def ruta_archivo_cliente(instance, filename: str) -> str:
     return f"{_ruta_base_procesamiento(instance)}/cliente.xlsx"
 
 
+def ruta_archivo_resultado_generacion(
+    instance: "GeneracionDimanno",
+    filename: str,
+) -> str:
+    return (
+        f"procesamientos/dimanno/"
+        f"{instance.procesamiento_id}/resultados/"
+        f"{instance.id}/resultado.xlsx"
+    )
+
+
 RUBROS_GASTOS_DEFINICION = (
     ("comision", "Comisión", 1),
     ("flete_eu", "Flete Eu", 2),
@@ -316,3 +327,121 @@ class ResolucionDestinoDimanno(models.Model):
             f"{self.destino_anterior or '—'} → "
             f"{self.destino_nuevo}"
         )
+
+
+ETIQUETAS_ESTADO_GENERACION = {
+    "pendiente": "Pendiente",
+    "procesando": "Procesando",
+    "completado": "Completado",
+    "error": "Error",
+}
+
+
+class GeneracionDimanno(models.Model):
+    class Estado(models.TextChoices):
+        PENDIENTE = "pendiente", "Pendiente"
+        PROCESANDO = "procesando", "Procesando"
+        COMPLETADO = "completado", "Completado"
+        ERROR = "error", "Error"
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    procesamiento = models.ForeignKey(
+        ProcesamientoDimanno,
+        related_name="generaciones",
+        on_delete=models.CASCADE,
+    )
+    estado = models.CharField(
+        max_length=20,
+        choices=Estado.choices,
+        default=Estado.PENDIENTE,
+    )
+    solicitado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="generaciones_dimanno_solicitadas",
+    )
+    solicitado_por_nombre = models.CharField(max_length=150)
+    solicitado_en = models.DateTimeField(auto_now_add=True)
+    iniciado_en = models.DateTimeField(null=True, blank=True)
+    finalizado_en = models.DateTimeField(null=True, blank=True)
+    archivo_resultado = models.FileField(
+        upload_to=ruta_archivo_resultado_generacion,
+        blank=True,
+    )
+    nombre_descarga = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+    mensaje_error = models.TextField(blank=True)
+    destino_aplicado = models.CharField(max_length=150)
+    origen_destino_aplicado = models.CharField(
+        max_length=30,
+        blank=True,
+    )
+    gastos_aplicados = models.JSONField(default=dict)
+    filas_agregadas = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+    )
+    fila_inicial = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+    )
+    fila_final = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+    )
+    rango_tabla = models.CharField(
+        max_length=100,
+        blank=True,
+    )
+    intentos = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["-solicitado_en"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["procesamiento"],
+                condition=models.Q(
+                    estado__in=["pendiente", "procesando"]
+                ),
+                name=(
+                    "uniq_generacion_dimanno_activa"
+                    "_por_procesamiento"
+                ),
+            ),
+        ]
+
+    def __str__(self) -> str:
+        return (
+            f"Generación {self.procesamiento_id} "
+            f"({self.estado})"
+        )
+
+    @property
+    def estado_legible(self) -> str:
+        return ETIQUETAS_ESTADO_GENERACION.get(
+            self.estado,
+            self.estado,
+        )
+
+    @property
+    def esta_activa(self) -> bool:
+        return self.estado in {
+            self.Estado.PENDIENTE,
+            self.Estado.PROCESANDO,
+        }
+
+    @property
+    def esta_completada(self) -> bool:
+        return self.estado == self.Estado.COMPLETADO
+
+    @property
+    def tiene_error(self) -> bool:
+        return self.estado == self.Estado.ERROR

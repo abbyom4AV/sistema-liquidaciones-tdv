@@ -9,8 +9,10 @@ from pathlib import Path
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db import transaction
+from django.db import IntegrityError, transaction
+from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_GET, require_POST
 
 from procesamientos.forms import (
     FormularioCargaDimanno,
@@ -22,8 +24,14 @@ from procesamientos.models import (
     RUBROS_GASTOS_DEFINICION,
     CorreccionGastoDimanno,
     GastoProcesamientoDimanno,
+    GeneracionDimanno,
     ProcesamientoDimanno,
     ResolucionDestinoDimanno,
+)
+from procesamientos.services.generacion_dimanno import (
+    NOMBRE_DESCARGA_DIMANNO,
+    ErrorConfirmacionGeneracionDimanno,
+    serializar_gastos_aplicados,
 )
 from services.dimanno.extractor import ErrorExtraccionDimanno
 from services.dimanno.matcher import ErrorMatcherDimanno
@@ -334,6 +342,23 @@ def detalle_dimanno(request, procesamiento_id):
     gastos = list(
         procesamiento.gastos.order_by("orden")
     )
+    generacion_activa = (
+        procesamiento.generaciones.filter(
+            estado__in=[
+                GeneracionDimanno.Estado.PENDIENTE,
+                GeneracionDimanno.Estado.PROCESANDO,
+            ]
+        )
+        .order_by("-solicitado_en")
+        .first()
+    )
+    ultima_completada = (
+        procesamiento.generaciones.filter(
+            estado=GeneracionDimanno.Estado.COMPLETADO
+        )
+        .order_by("-finalizado_en", "-solicitado_en")
+        .first()
+    )
 
     return render(
         request,
@@ -349,6 +374,14 @@ def detalle_dimanno(request, procesamiento_id):
             ),
             "nombre_usuario_sesion": obtener_nombre_usuario(
                 request.user
+            ),
+            "generacion_activa": generacion_activa,
+            "ultima_completada": ultima_completada,
+            "puede_solicitar_generacion": (
+                procesamiento.puede_escribir
+                and not procesamiento.requiere_resolver_destino
+                and not procesamiento.errores
+                and generacion_activa is None
             ),
         },
     )
@@ -603,4 +636,225 @@ def resolver_destino_dimanno(request, procesamiento_id):
             "formulario": formulario,
             "nombre_usuario_sesion": nombre_visible,
         },
+    )
+
+
+def _validar_procesamiento_para_generacion(
+    procesamiento: ProcesamientoDimanno,
+) -> str | None:
+    if not procesamiento.puede_escribir:
+        return (
+            "El procesamiento no está listo para generar "
+            "el archivo."
+        )
+    if procesamiento.errores:
+        return (
+            "El procesamiento tiene errores y no puede "
+            "generar el archivo."
+        )
+    if procesamiento.requiere_resolver_destino:
+        return (
+            "Debe definir el destino antes de generar "
+            "el archivo."
+        )
+    if not (procesamiento.destino_final or "").strip():
+        return "No hay un destino final confirmado."
+
+    for campo in (
+        procesamiento.archivo_despachos,
+        procesamiento.archivo_liquidacion,
+        procesamiento.archivo_cliente,
+    ):
+        try:
+            if not Path(campo.path).is_file():
+                return (
+                    "Los archivos de entrada ya no están "
+                    "disponibles."
+                )
+        except (ValueError, FileNotFoundError):
+            return (
+                "Los archivos de entrada ya no están "
+                "disponibles."
+            )
+
+    gastos = list(procesamiento.gastos.order_by("orden"))
+    if len(gastos) != 6:
+        return (
+            "Deben existir exactamente los seis gastos "
+            "esperados."
+        )
+    try:
+        serializar_gastos_aplicados(
+            procesamiento.obtener_gastos_aplicados()
+        )
+    except ErrorConfirmacionGeneracionDimanno as error:
+        return str(error)
+    return None
+
+
+@login_required
+@require_POST
+def solicitar_generacion_dimanno(request, procesamiento_id):
+    with transaction.atomic():
+        procesamiento = get_object_or_404(
+            ProcesamientoDimanno.objects.select_for_update(),
+            pk=procesamiento_id,
+        )
+
+        activa = (
+            GeneracionDimanno.objects.select_for_update()
+            .filter(
+                procesamiento=procesamiento,
+                estado__in=[
+                    GeneracionDimanno.Estado.PENDIENTE,
+                    GeneracionDimanno.Estado.PROCESANDO,
+                ],
+            )
+            .order_by("-solicitado_en")
+            .first()
+        )
+        if activa is not None:
+            messages.info(
+                request,
+                (
+                    "Ya existe una generación en curso "
+                    "para este procesamiento."
+                ),
+            )
+            return redirect(
+                "procesamientos:dimanno_generacion_detalle",
+                generacion_id=activa.id,
+            )
+
+        error = _validar_procesamiento_para_generacion(
+            procesamiento
+        )
+        if error:
+            messages.error(request, error)
+            return redirect(
+                "procesamientos:dimanno_detalle",
+                procesamiento_id=procesamiento.id,
+            )
+
+        try:
+            gastos_snapshot = serializar_gastos_aplicados(
+                procesamiento.obtener_gastos_aplicados()
+            )
+        except ErrorConfirmacionGeneracionDimanno as error:
+            messages.error(request, str(error))
+            return redirect(
+                "procesamientos:dimanno_detalle",
+                procesamiento_id=procesamiento.id,
+            )
+
+        try:
+            generacion = GeneracionDimanno.objects.create(
+                procesamiento=procesamiento,
+                estado=GeneracionDimanno.Estado.PENDIENTE,
+                solicitado_por=request.user,
+                solicitado_por_nombre=obtener_nombre_usuario(
+                    request.user
+                ),
+                destino_aplicado=procesamiento.destino_final,
+                origen_destino_aplicado=(
+                    procesamiento.origen_destino_final or ""
+                ),
+                gastos_aplicados=gastos_snapshot,
+            )
+        except IntegrityError:
+            activa = (
+                GeneracionDimanno.objects.filter(
+                    procesamiento=procesamiento,
+                    estado__in=[
+                        GeneracionDimanno.Estado.PENDIENTE,
+                        GeneracionDimanno.Estado.PROCESANDO,
+                    ],
+                )
+                .order_by("-solicitado_en")
+                .first()
+            )
+            messages.info(
+                request,
+                (
+                    "Ya existe una generación en curso "
+                    "para este procesamiento."
+                ),
+            )
+            if activa is None:
+                return redirect(
+                    "procesamientos:dimanno_detalle",
+                    procesamiento_id=procesamiento.id,
+                )
+            return redirect(
+                "procesamientos:dimanno_generacion_detalle",
+                generacion_id=activa.id,
+            )
+
+    messages.success(
+        request,
+        "La generación del archivo fue solicitada.",
+    )
+    return redirect(
+        "procesamientos:dimanno_generacion_detalle",
+        generacion_id=generacion.id,
+    )
+
+
+@login_required
+def detalle_generacion_dimanno(request, generacion_id):
+    generacion = get_object_or_404(
+        GeneracionDimanno.objects.select_related(
+            "procesamiento"
+        ),
+        pk=generacion_id,
+    )
+    return render(
+        request,
+        "procesamientos/dimanno_generacion_detalle.html",
+        {
+            "generacion": generacion,
+            "procesamiento": generacion.procesamiento,
+            "nombre_usuario_sesion": obtener_nombre_usuario(
+                request.user
+            ),
+            "recargar_automaticamente": generacion.esta_activa,
+        },
+    )
+
+
+@login_required
+@require_GET
+def descargar_generacion_dimanno(request, generacion_id):
+    generacion = get_object_or_404(
+        GeneracionDimanno,
+        pk=generacion_id,
+    )
+    if not generacion.esta_completada:
+        raise Http404(
+            "La generación no está disponible para descarga."
+        )
+    if not generacion.archivo_resultado:
+        raise Http404("El archivo de resultado no existe.")
+
+    try:
+        ruta = Path(generacion.archivo_resultado.path)
+    except (ValueError, FileNotFoundError) as error:
+        raise Http404(
+            "El archivo de resultado no existe."
+        ) from error
+
+    if not ruta.is_file():
+        raise Http404("El archivo de resultado no existe.")
+
+    nombre = generacion.nombre_descarga
+    if nombre != NOMBRE_DESCARGA_DIMANNO:
+        nombre = NOMBRE_DESCARGA_DIMANNO
+    return FileResponse(
+        ruta.open("rb"),
+        as_attachment=True,
+        filename=nombre,
+        content_type=(
+            "application/vnd.openxmlformats-officedocument"
+            ".spreadsheetml.sheet"
+        ),
     )

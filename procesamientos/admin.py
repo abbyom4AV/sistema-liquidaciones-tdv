@@ -3,6 +3,7 @@ from django.contrib import admin
 from procesamientos.models import (
     CorreccionGastoDimanno,
     GastoProcesamientoDimanno,
+    GeneracionDimanno,
     ProcesamientoDimanno,
     ResolucionDestinoDimanno,
 )
@@ -106,6 +107,54 @@ class ResolucionDestinoDimannoAdmin(admin.ModelAdmin):
         "usuario",
         "usuario_nombre",
         "creado_en",
+    )
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(GeneracionDimanno)
+class GeneracionDimannoAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "procesamiento",
+        "estado",
+        "solicitado_por_nombre",
+        "solicitado_en",
+        "iniciado_en",
+        "finalizado_en",
+        "destino_aplicado",
+        "intentos",
+    )
+    list_filter = ("estado",)
+    search_fields = (
+        "solicitado_por_nombre",
+        "procesamiento__factura_corta",
+        "destino_aplicado",
+    )
+    readonly_fields = (
+        "id",
+        "procesamiento",
+        "estado",
+        "solicitado_por",
+        "solicitado_por_nombre",
+        "solicitado_en",
+        "iniciado_en",
+        "finalizado_en",
+        "archivo_resultado",
+        "nombre_descarga",
+        "mensaje_error",
+        "destino_aplicado",
+        "origen_destino_aplicado",
+        "gastos_aplicados",
+        "filas_agregadas",
+        "fila_inicial",
+        "fila_final",
+        "rango_tabla",
+        "intentos",
     )
 
     def has_add_permission(self, request):
