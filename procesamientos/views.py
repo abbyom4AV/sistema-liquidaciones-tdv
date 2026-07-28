@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import shutil
 import uuid
+from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
 
@@ -49,22 +50,295 @@ def obtener_nombre_usuario(usuario) -> str:
     return nombre_completo or usuario.get_username()
 
 
+def obtener_iniciales_usuario(usuario) -> str:
+    nombre_completo = usuario.get_full_name().strip()
+    if nombre_completo:
+        partes = [p for p in nombre_completo.split() if p]
+        if len(partes) >= 2:
+            return (partes[0][0] + partes[-1][0]).upper()
+        return partes[0][:2].upper()
+    username = usuario.get_username().strip()
+    if not username:
+        return "?"
+    return username[:2].upper()
+
+
+def contexto_sesion(request, *, nav_activo: str | None = None) -> dict:
+    contexto = {
+        "nombre_usuario_sesion": obtener_nombre_usuario(
+            request.user
+        ),
+        "iniciales_usuario": obtener_iniciales_usuario(
+            request.user
+        ),
+    }
+    if nav_activo is not None:
+        contexto["nav_activo"] = nav_activo
+    return contexto
+
+
+CLIENTES_PANEL = (
+    {
+        "codigo": "dimanno",
+        "nombre": "Di Manno",
+        "descripcion": (
+            "Validar liquidaciones, corregir gastos "
+            "y generar el acumulativo."
+        ),
+        "disponible": True,
+        "url_name": "procesamientos:dimanno_cargar",
+    },
+    {
+        "codigo": "eurobanan",
+        "nombre": "EUROBANAN",
+        "descripcion": "Módulo de liquidaciones EUROBANAN.",
+        "disponible": False,
+        "url_name": None,
+    },
+    {
+        "codigo": "fruver",
+        "nombre": "FRU&VER",
+        "descripcion": "Módulo de liquidaciones FRU&VER.",
+        "disponible": False,
+        "url_name": None,
+    },
+    {
+        "codigo": "glamour",
+        "nombre": "Glamour",
+        "descripcion": "Módulo de liquidaciones Glamour.",
+        "disponible": False,
+        "url_name": None,
+    },
+    {
+        "codigo": "kraaijeveld",
+        "nombre": "Kraaijeveld",
+        "descripcion": "Módulo de liquidaciones Kraaijeveld.",
+        "disponible": False,
+        "url_name": None,
+    },
+    {
+        "codigo": "master",
+        "nombre": "Master",
+        "descripcion": "Módulo de liquidaciones Master.",
+        "disponible": False,
+        "url_name": None,
+    },
+    {
+        "codigo": "nufri",
+        "nombre": "NUFRI",
+        "descripcion": "Módulo de liquidaciones NUFRI.",
+        "disponible": False,
+        "url_name": None,
+    },
+    {
+        "codigo": "orsero",
+        "nombre": "ORSERO",
+        "descripcion": "Módulo de liquidaciones ORSERO.",
+        "disponible": False,
+        "url_name": None,
+    },
+    {
+        "codigo": "sifa",
+        "nombre": "SIFA",
+        "descripcion": "Módulo de liquidaciones SIFA.",
+        "disponible": False,
+        "url_name": None,
+    },
+    {
+        "codigo": "tdv_europa",
+        "nombre": "TDV Europa",
+        "descripcion": "Módulo de liquidaciones TDV Europa.",
+        "disponible": False,
+        "url_name": None,
+    },
+    {
+        "codigo": "tdv_usa",
+        "nombre": "TDV USA",
+        "descripcion": "Módulo de liquidaciones TDV USA.",
+        "disponible": False,
+        "url_name": None,
+    },
+    {
+        "codigo": "visafruits",
+        "nombre": "VISAFRUITS",
+        "descripcion": "Módulo de liquidaciones VISAFRUITS.",
+        "disponible": False,
+        "url_name": None,
+    },
+)
+
+
 @login_required
 def panel_control(request):
     recientes = list(
         ProcesamientoDimanno.objects.order_by("-creado_en")[:5]
     )
+    clientes_disponibles = sum(
+        1 for cliente in CLIENTES_PANEL if cliente["disponible"]
+    )
     return render(
         request,
         "procesamientos/panel.html",
         {
-            "nombre_usuario_sesion": obtener_nombre_usuario(
-                request.user
-            ),
+            **contexto_sesion(request, nav_activo="panel"),
             "procesamientos_recientes": recientes,
             "total_procesamientos": (
                 ProcesamientoDimanno.objects.count()
             ),
+            "clientes_panel": CLIENTES_PANEL,
+            "total_clientes": len(CLIENTES_PANEL),
+            "clientes_disponibles": clientes_disponibles,
+        },
+    )
+
+
+@login_required
+def bitacoras(request):
+    eventos: list[dict] = []
+
+    correcciones = CorreccionGastoDimanno.objects.select_related(
+        "gasto",
+        "gasto__procesamiento",
+    ).order_by("-creado_en")[:120]
+    for item in correcciones:
+        procesamiento = item.gasto.procesamiento
+        eventos.append(
+            {
+                "tipo": "Corrección de gasto",
+                "estado": "Cambiada",
+                "estado_clase": "cambiada",
+                "cliente": "Di Manno",
+                "detalle": (
+                    f"{item.gasto.nombre}: "
+                    f"{item.valor_anterior} → "
+                    f"{item.valor_nuevo}"
+                ),
+                "usuario": item.usuario_nombre or "—",
+                "fecha": item.creado_en,
+                "factura": procesamiento.factura_corta or "—",
+                "url_detalle": (
+                    "procesamientos:dimanno_detalle",
+                    procesamiento.id,
+                ),
+            }
+        )
+
+    resoluciones = ResolucionDestinoDimanno.objects.select_related(
+        "procesamiento",
+    ).order_by("-creado_en")[:120]
+    for item in resoluciones:
+        eventos.append(
+            {
+                "tipo": "Resolución de destino",
+                "estado": "Cambiada",
+                "estado_clase": "cambiada",
+                "cliente": "Di Manno",
+                "detalle": (
+                    f"Destino actualizado: "
+                    f"{item.destino_anterior or 'sin definir'} → "
+                    f"{item.destino_nuevo}"
+                ),
+                "usuario": item.usuario_nombre or "—",
+                "fecha": item.creado_en,
+                "factura": item.procesamiento.factura_corta or "—",
+                "url_detalle": (
+                    "procesamientos:dimanno_detalle",
+                    item.procesamiento_id,
+                ),
+            }
+        )
+
+    generaciones = GeneracionDimanno.objects.select_related(
+        "procesamiento",
+    ).order_by("-solicitado_en")[:120]
+    estados_generacion = {
+        "completado": ("Transacción completada", "completada"),
+        "error": ("Error en generación", "error"),
+        "procesando": ("En proceso", "proceso"),
+        "pendiente": ("Pendiente", "proceso"),
+    }
+    for item in generaciones:
+        estado_texto, estado_clase = estados_generacion.get(
+            item.estado,
+            (item.estado_legible, "proceso"),
+        )
+        eventos.append(
+            {
+                "tipo": "Generación de archivo",
+                "estado": estado_texto,
+                "estado_clase": estado_clase,
+                "cliente": "Di Manno",
+                "detalle": estado_texto,
+                "usuario": item.solicitado_por_nombre or "—",
+                "fecha": item.solicitado_en,
+                "factura": item.procesamiento.factura_corta or "—",
+                "url_detalle": (
+                    "procesamientos:dimanno_generacion_detalle",
+                    item.id,
+                ),
+            }
+        )
+
+    q = (request.GET.get("q") or "").strip().lower()
+    cliente = (request.GET.get("cliente") or "").strip().lower()
+    factura = (request.GET.get("factura") or "").strip().lower()
+    usuario = (request.GET.get("usuario") or "").strip().lower()
+    fecha_desde = (request.GET.get("fecha_desde") or "").strip()
+    fecha_hasta = (request.GET.get("fecha_hasta") or "").strip()
+
+    filtrados: list[dict] = []
+    for evento in eventos:
+        fecha = evento["fecha"]
+        if fecha_desde:
+            try:
+                desde = datetime.strptime(fecha_desde, "%Y-%m-%d").date()
+                if fecha.date() < desde:
+                    continue
+            except ValueError:
+                pass
+        if fecha_hasta:
+            try:
+                hasta = datetime.strptime(fecha_hasta, "%Y-%m-%d").date()
+                if fecha.date() > hasta:
+                    continue
+            except ValueError:
+                pass
+        if cliente and cliente not in evento["cliente"].lower():
+            continue
+        if factura and factura not in str(evento["factura"]).lower():
+            continue
+        if usuario and usuario not in evento["usuario"].lower():
+            continue
+        if q:
+            haystack = " ".join(
+                [
+                    evento["tipo"],
+                    evento["estado"],
+                    evento["cliente"],
+                    str(evento["factura"]),
+                    evento["detalle"],
+                    evento["usuario"],
+                ]
+            ).lower()
+            if q not in haystack:
+                continue
+        filtrados.append(evento)
+
+    filtrados.sort(key=lambda evento: evento["fecha"], reverse=True)
+    return render(
+        request,
+        "procesamientos/bitacoras.html",
+        {
+            **contexto_sesion(request, nav_activo="bitacoras"),
+            "eventos": filtrados[:80],
+            "filtros": {
+                "q": request.GET.get("q", ""),
+                "cliente": request.GET.get("cliente", ""),
+                "factura": request.GET.get("factura", ""),
+                "usuario": request.GET.get("usuario", ""),
+                "fecha_desde": fecha_desde,
+                "fecha_hasta": fecha_hasta,
+            },
         },
     )
 

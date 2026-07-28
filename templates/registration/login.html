@@ -5,10 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Iniciar sesión — Sistema TDV</title>
   {% load static %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --acento: #1f3a56;
-      --acento-oscuro: #15293d;
+      --acento: #375a4d;
+      --acento-oscuro: #284e40;
+      --acento-claro: #45695c;
       --texto: #ffffff;
       --error: #ffe0e0;
     }
@@ -18,7 +22,7 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: "Segoe UI", Tahoma, sans-serif;
+      font-family: "Outfit", "Segoe UI", sans-serif;
       color: var(--texto);
       background:
         linear-gradient(180deg, rgba(15, 28, 42, 0.42) 0%, rgba(15, 28, 42, 0.58) 100%),
@@ -83,7 +87,7 @@
     }
 
     input:focus {
-      outline: 2px solid rgba(160, 190, 220, 0.75);
+      outline: 2px solid rgba(92, 175, 140, 0.85);
       outline-offset: 1px;
     }
 
@@ -107,20 +111,23 @@
       width: 100%;
       border: 0;
       border-radius: 999px;
-      padding: 0.9rem 1.1rem;
+      padding: 0.95rem 1.1rem;
       font: inherit;
       font-weight: 700;
       color: #fff;
       cursor: pointer;
-      background: linear-gradient(
-        90deg,
-        var(--acento) 0%,
-        var(--acento-oscuro) 100%
-      );
+      background: var(--acento);
+      box-shadow:
+        0 10px 24px rgba(15, 36, 29, 0.35),
+        0 0 0 1px rgba(255, 255, 255, 0.12) inset;
     }
 
     button:hover {
-      filter: brightness(1.08);
+      background: var(--acento-claro);
+    }
+
+    button:active {
+      transform: translateY(1px);
     }
   </style>
 </head>
@@ -128,7 +135,9 @@
   <main class="tarjeta">
     <p class="marca">Sistema TDV</p>
     <h1>Iniciar sesión</h1>
-    <p class="intro">Acceda con su cuenta institucional.</p>
+    <p class="intro">
+      Ingrese su usuario y contraseña para continuar.
+    </p>
 
     {% if form.non_field_errors %}
       <div class="errores">

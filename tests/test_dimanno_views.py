@@ -361,8 +361,15 @@ class PruebasVistaCargaDimanno(TestCase):
 
         self.assertEqual(respuesta.status_code, 200)
         mock_preparar.assert_not_called()
-        self.assertContains(respuesta, "Modificar gastos")
-        self.assertContains(respuesta, "Gastos extraídos")
+        self.assertContains(respuesta, "Gastos")
+        self.assertContains(
+            respuesta,
+            (
+                f"/procesamientos/dimanno/"
+                f"{procesamiento.id}/gastos/editar/"
+            ),
+        )
+        self.assertContains(respuesta, "Modificar")
         for rubro in (
             "Comisión",
             "Flete Eu",
@@ -482,7 +489,11 @@ class PruebasVistaCargaDimanno(TestCase):
         detalle = self.cliente.get(
             f"/procesamientos/dimanno/{procesamiento.id}/"
         )
-        self.assertContains(detalle, "Modificado")
+        self.assertContains(detalle, "Mod.")
+        self.assertContains(
+            detalle,
+            'class="etiqueta-modificado"',
+        )
         self.assertContains(
             detalle,
             "Los gastos se actualizaron correctamente.",
@@ -1159,13 +1170,13 @@ class PruebasResolucionDestinoDimanno(TestCase):
         self.assertEqual(detalle.status_code, 200)
         self.assertContains(
             detalle,
-            "Destino pendiente de definición",
-        )
-        self.assertContains(detalle, "Definir destino")
-        self.assertContains(
-            detalle,
             "Requiere definir destino",
         )
+        self.assertContains(
+            detalle,
+            "Debe definir el destino antes de generar el archivo.",
+        )
+        self.assertContains(detalle, "Definir destino")
         self.assertNotContains(
             detalle,
             ">requiere_destino<",
@@ -1191,7 +1202,7 @@ class PruebasResolucionDestinoDimanno(TestCase):
         self.assertContains(detalle, "Listo")
         self.assertNotContains(
             detalle,
-            "Destino pendiente de definición",
+            "Debe definir el destino antes de generar el archivo.",
         )
         mock_preparar.assert_not_called()
         mock_writer.assert_not_called()
@@ -1240,7 +1251,7 @@ class PruebasResolucionDestinoDimanno(TestCase):
         self.assertContains(detalle, "Modificar destino")
         self.assertNotContains(
             detalle,
-            "Destino pendiente de definición",
+            "Debe definir el destino antes de generar el archivo.",
         )
 
 

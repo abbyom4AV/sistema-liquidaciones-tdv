@@ -3,17 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cargar liquidación Di Manno</title>
+  <title>Validar liquidación</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --fondo: #f8f9f5;
+      --fondo: #f3f6f2;
       --tarjeta: #ffffff;
-      --suave: #e2e5de;
-      --acento: #6d8b74;
-      --acento-oscuro: #557360;
-      --texto: #333333;
-      --muted: #6b7368;
-      --borde: #d5dbd1;
+      --suave: #eef3ef;
+      --acento: #375a4d;
+      --acento-oscuro: #284e40;
+      --acento-proceso: #1f3d32;
+      --panel: #1f3d32;
+      --panel-suave: #2a5243;
+      --texto: #1f2a24;
+      --muted: #6b7a71;
+      --borde: #d9e3dc;
       --error: #9b1c1c;
     }
 
@@ -22,79 +28,152 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: "Segoe UI", Tahoma, sans-serif;
+      font-family: "Outfit", "Segoe UI", sans-serif;
       color: var(--texto);
-      background: var(--fondo);
+      background:
+        radial-gradient(circle at top right, #e7f3ec 0%, transparent 42%),
+        var(--fondo);
     }
 
-    main {
-      max-width: 720px;
+    .envoltorio {
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 2rem 1.25rem 3rem;
+      padding: 1.75rem 1.5rem 3rem;
+    }
+
+    .cabecera {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
     }
 
     .nav-volver {
-      margin: 0 0 1.25rem;
+      margin: 0 0 0.85rem;
     }
 
     .nav-volver a {
-      color: var(--acento-oscuro);
+      color: var(--muted);
       font-weight: 600;
       text-decoration: none;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
     }
 
     .nav-volver a:hover {
+      color: var(--acento-oscuro);
       text-decoration: underline;
     }
 
     h1 {
-      margin: 0 0 0.4rem;
-      font-size: 1.9rem;
+      margin: 0;
+      font-size: clamp(1.7rem, 2.2vw, 2rem);
     }
 
-    .intro {
-      margin: 0 0 1.5rem;
+    .intro-corta {
+      margin: 0;
       color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 28rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    .tarjeta-formulario,
+    .tarjeta-guia {
+      border-radius: 22px;
+      box-shadow: 0 14px 36px rgba(31, 61, 50, 0.08);
+    }
+
+    .tarjeta-formulario {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      padding: 1.6rem 1.55rem 1.45rem;
+    }
+
+    .tarjeta-formulario h2 {
+      margin: 0 0 0.25rem;
+      font-size: 1.2rem;
+    }
+
+    .tarjeta-formulario .subtitulo {
+      margin: 0 0 1.35rem;
+      color: var(--muted);
+      font-size: 0.95rem;
     }
 
     form {
-      background: var(--tarjeta);
-      border: 1px solid var(--borde);
-      border-radius: 18px;
-      padding: 1.5rem 1.4rem;
       display: grid;
-      gap: 1rem;
-      box-shadow: 0 8px 24px rgba(109, 139, 116, 0.06);
+      gap: 1.1rem;
     }
 
-    label {
+    .fila-dos {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 1rem;
+    }
+
+    .campo label {
       display: block;
       font-weight: 600;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .campo .descripcion {
+      margin: 0 0 0.45rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.35;
     }
 
     input[type="number"],
     input[type="text"],
     input[type="file"] {
       width: 100%;
-      padding: 0.75rem 0.9rem;
+      padding: 0.8rem 0.95rem;
       border: 1px solid var(--borde);
-      border-radius: 999px;
+      border-radius: 14px;
       font: inherit;
       background: var(--suave);
       color: var(--texto);
     }
 
     input[type="file"] {
-      border-radius: 14px;
-      background: var(--tarjeta);
+      background: #fff;
+      padding: 0.7rem 0.85rem;
+    }
+
+    input:focus {
+      outline: 2px solid rgba(47, 143, 107, 0.35);
+      outline-offset: 1px;
     }
 
     .ayuda {
-      margin: 0.35rem 0 0;
-      font-size: 0.9rem;
+      margin: 0.4rem 0 0;
+      font-size: 0.88rem;
       color: var(--muted);
+    }
+
+    .bloque-archivos {
+      display: grid;
+      gap: 1rem;
+      padding-top: 0.25rem;
+      border-top: 1px dashed var(--borde);
+    }
+
+    .bloque-archivos > .titulo-bloque {
+      margin: 0.35rem 0 0;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
     }
 
     .errores,
@@ -118,34 +197,155 @@
       margin-top: 0.35rem;
     }
 
+    .acciones-form {
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 0.35rem;
+    }
+
     button {
-      justify-self: start;
       border: 0;
       border-radius: 999px;
       background: var(--acento);
       color: #fff;
       font: inherit;
-      font-weight: 600;
-      padding: 0.75rem 1.35rem;
+      font-weight: 700;
+      padding: 0.9rem 1.55rem;
       cursor: pointer;
+      min-width: 180px;
+      transition: background 0.15s ease, opacity 0.15s ease;
     }
 
     button:hover {
       background: var(--acento-oscuro);
     }
+
+    button.procesando {
+      background: var(--acento-proceso);
+      cursor: wait;
+      opacity: 0.95;
+    }
+
+    button:disabled {
+      cursor: wait;
+    }
+
+    .tarjeta-guia {
+      background: linear-gradient(165deg, var(--panel) 0%, var(--panel-suave) 100%);
+      color: #fff;
+      padding: 1.55rem 1.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tarjeta-guia::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 72px;
+      height: 72px;
+      background: rgba(255, 255, 255, 0.08);
+      clip-path: polygon(100% 0, 0 0, 100% 100%);
+    }
+
+    .tarjeta-guia h2 {
+      margin: 0 0 0.55rem;
+      font-size: 1.25rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tarjeta-guia > p {
+      margin: 0 0 1.25rem;
+      opacity: 0.88;
+      line-height: 1.45;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pasos {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.75rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pasos li {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 0.85rem 0.95rem;
+    }
+
+    .pasos strong {
+      display: block;
+      margin-bottom: 0.2rem;
+      font-size: 0.95rem;
+    }
+
+    .pasos span {
+      display: block;
+      font-size: 0.88rem;
+      opacity: 0.85;
+      line-height: 1.4;
+    }
+
+    .nota-guia {
+      margin: 1.25rem 0 0;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
+      font-size: 0.88rem;
+      opacity: 0.88;
+      line-height: 1.45;
+      position: relative;
+      z-index: 1;
+    }
+
+    .nota-guia a {
+      color: #b8ecd5;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .nota-guia a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .fila-dos {
+        grid-template-columns: 1fr;
+      }
+
+      .acciones-form {
+        justify-content: stretch;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
-  <main>
+  <div class="envoltorio">
     <p class="nav-volver">
-      <a href="{% url 'procesamientos:panel' %}">← Volver al panel</a>
+      <a href="{% url 'procesamientos:panel' %}">← Panel de control</a>
     </p>
 
-    <h1>Di Manno — Validar liquidación</h1>
-    <p class="intro">
-      Cargue los archivos y valide la liquidación antes de generar
-      el archivo acumulativo.
-    </p>
+    <header class="cabecera">
+      <h1>Validar liquidación</h1>
+      <p class="intro-corta">
+        Cargue los archivos y valide antes de generar el acumulativo.
+      </p>
+    </header>
 
     {% if error_proceso %}
       <div class="error-proceso">{{ error_proceso }}</div>
@@ -162,64 +362,130 @@
       </div>
     {% endif %}
 
-    <form method="post" enctype="multipart/form-data" novalidate>
-      {% csrf_token %}
+    <div class="layout">
+      <section class="tarjeta-formulario">
+        <h2>Datos de la liquidación</h2>
+        <p class="subtitulo">
+          Indique el periodo y los archivos fuente para iniciar la revisión.
+        </p>
 
-      <div>
-        <label for="{{ formulario.anio.id_for_label }}">
-          {{ formulario.anio.label }}
-        </label>
-        {{ formulario.anio }}
-        {% for error in formulario.anio.errors %}
-          <div class="campo-error">{{ error }}</div>
-        {% endfor %}
-      </div>
+        <form id="form-validar" method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
 
-      <div>
-        <label for="{{ formulario.nombre_hoja.id_for_label }}">
-          {{ formulario.nombre_hoja.label }}
-        </label>
-        {{ formulario.nombre_hoja }}
-        {% if formulario.nombre_hoja.help_text %}
-          <p class="ayuda">{{ formulario.nombre_hoja.help_text }}</p>
-        {% endif %}
-        {% for error in formulario.nombre_hoja.errors %}
-          <div class="campo-error">{{ error }}</div>
-        {% endfor %}
-      </div>
+          <div class="fila-dos">
+            <div class="campo">
+              <label for="{{ formulario.anio.id_for_label }}">
+                {{ formulario.anio.label }}
+              </label>
+              <p class="descripcion">Año fiscal de la liquidación.</p>
+              {{ formulario.anio }}
+              {% for error in formulario.anio.errors %}
+                <div class="campo-error">{{ error }}</div>
+              {% endfor %}
+            </div>
 
-      <div>
-        <label for="{{ formulario.archivo_despachos.id_for_label }}">
-          {{ formulario.archivo_despachos.label }}
-        </label>
-        {{ formulario.archivo_despachos }}
-        {% for error in formulario.archivo_despachos.errors %}
-          <div class="campo-error">{{ error }}</div>
-        {% endfor %}
-      </div>
+            <div class="campo">
+              <label for="{{ formulario.nombre_hoja.id_for_label }}">
+                {{ formulario.nombre_hoja.label }}
+              </label>
+              <p class="descripcion">Hoja exacta del archivo de liquidación.</p>
+              {{ formulario.nombre_hoja }}
+              {% if formulario.nombre_hoja.help_text %}
+                <p class="ayuda">{{ formulario.nombre_hoja.help_text }}</p>
+              {% endif %}
+              {% for error in formulario.nombre_hoja.errors %}
+                <div class="campo-error">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
 
-      <div>
-        <label for="{{ formulario.archivo_liquidacion.id_for_label }}">
-          {{ formulario.archivo_liquidacion.label }}
-        </label>
-        {{ formulario.archivo_liquidacion }}
-        {% for error in formulario.archivo_liquidacion.errors %}
-          <div class="campo-error">{{ error }}</div>
-        {% endfor %}
-      </div>
+          <div class="bloque-archivos">
+            <p class="titulo-bloque">Archivos requeridos</p>
 
-      <div>
-        <label for="{{ formulario.archivo_cliente.id_for_label }}">
-          {{ formulario.archivo_cliente.label }}
-        </label>
-        {{ formulario.archivo_cliente }}
-        {% for error in formulario.archivo_cliente.errors %}
-          <div class="campo-error">{{ error }}</div>
-        {% endfor %}
-      </div>
+            <div class="campo">
+              <label for="{{ formulario.archivo_despachos.id_for_label }}">
+                {{ formulario.archivo_despachos.label }}
+              </label>
+              <p class="descripcion">
+                Excel con contenedores y totales de cajas despachadas.
+              </p>
+              {{ formulario.archivo_despachos }}
+              {% for error in formulario.archivo_despachos.errors %}
+                <div class="campo-error">{{ error }}</div>
+              {% endfor %}
+            </div>
 
-      <button type="submit">Validar archivos</button>
-    </form>
-  </main>
+            <div class="campo">
+              <label for="{{ formulario.archivo_liquidacion.id_for_label }}">
+                {{ formulario.archivo_liquidacion.label }}
+              </label>
+              <p class="descripcion">
+                Liquidación del cliente con precios, gastos y hoja indicada.
+              </p>
+              {{ formulario.archivo_liquidacion }}
+              {% for error in formulario.archivo_liquidacion.errors %}
+                <div class="campo-error">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="campo">
+              <label for="{{ formulario.archivo_cliente.id_for_label }}">
+                {{ formulario.archivo_cliente.label }}
+              </label>
+              <p class="descripcion">
+                Acumulativo vigente sobre el que se agregarán las filas.
+              </p>
+              {{ formulario.archivo_cliente }}
+              {% for error in formulario.archivo_cliente.errors %}
+                <div class="campo-error">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="acciones-form">
+            <button type="submit" id="btn-validar">Validar archivos</button>
+          </div>
+        </form>
+      </section>
+
+      <aside class="tarjeta-guia">
+        <h2>Antes de continuar</h2>
+        <p>
+          Revise que los archivos coincidan en factura, semana y
+          contenedores para evitar reprocesos.
+        </p>
+        <ul class="pasos">
+          <li>
+            <strong>1. Datos del periodo</strong>
+            <span>Año y nombre de hoja deben coincidir con el Excel.</span>
+          </li>
+          <li>
+            <strong>2. Tres archivos fuente</strong>
+            <span>Despachos, liquidación y acumulativo del cliente.</span>
+          </li>
+          <li>
+            <strong>3. Validación</strong>
+            <span>Se contrastan cajas, destino y líneas preparadas.</span>
+          </li>
+        </ul>
+        <p class="nota-guia">
+          ¿Necesita consultar correcciones previas?
+          <a href="{% url 'procesamientos:bitacoras' %}">Abrir bitácoras</a>
+        </p>
+      </aside>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var form = document.getElementById("form-validar");
+      var btn = document.getElementById("btn-validar");
+      if (!form || !btn) return;
+      form.addEventListener("submit", function () {
+        btn.disabled = true;
+        btn.classList.add("procesando");
+        btn.textContent = "Validando…";
+      });
+    })();
+  </script>
 </body>
 </html>

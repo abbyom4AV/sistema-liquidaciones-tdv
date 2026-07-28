@@ -11,6 +11,11 @@ urlpatterns = [
         name="panel",
     ),
     path(
+        "bitacoras/",
+        views.bitacoras,
+        name="bitacoras",
+    ),
+    path(
         "dimanno/",
         views.cargar_dimanno,
         name="dimanno_cargar",

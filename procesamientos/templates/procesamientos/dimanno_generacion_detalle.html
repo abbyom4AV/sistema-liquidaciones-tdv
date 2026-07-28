@@ -3,23 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Generación Di Manno</title>
+  <title>Generación del archivo</title>
   {% if recargar_automaticamente %}
     <meta http-equiv="refresh" content="10">
   {% endif %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --fondo: #f8f9f5;
+      --fondo: #f3f6f2;
       --tarjeta: #ffffff;
-      --suave: #e2e5de;
-      --acento: #6d8b74;
-      --acento-oscuro: #557360;
-      --texto: #333333;
-      --muted: #6b7368;
-      --borde: #d5dbd1;
-      --error: #9b1c1c;
+      --texto: #1f2a24;
+      --muted: #6b7a71;
+      --borde: #d9e3dc;
+      --ok: #246f53;
       --aviso: #8a6116;
-      --ok: #557360;
+      --error: #9b1c1c;
+      --acento: #375a4d;
+      --acento-oscuro: #284e40;
     }
 
     * { box-sizing: border-box; }
@@ -27,26 +29,45 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: "Segoe UI", Tahoma, sans-serif;
+      font-family: "Outfit", "Segoe UI", sans-serif;
       color: var(--texto);
       background: var(--fondo);
     }
 
     main {
-      max-width: 900px;
+      max-width: 1180px;
       margin: 0 auto;
-      padding: 2rem 1.25rem 3rem;
+      padding: 1.75rem 1.5rem 3rem;
     }
 
-    .nav-volver { margin: 0 0 1.25rem; }
+    .nav-volver { margin: 0 0 1rem; }
 
     .nav-volver a {
-      color: var(--acento-oscuro);
+      color: var(--muted);
       font-weight: 600;
       text-decoration: none;
     }
 
-    h1 { margin: 0 0 0.75rem; font-size: 1.9rem; }
+    .nav-volver a:hover { color: var(--acento); }
+
+    .cabecera {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.85rem;
+    }
+
+    .meta-cabecera {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
 
     .mensajes {
       list-style: none;
@@ -55,129 +76,199 @@
     }
 
     .mensajes li {
-      background: #dce8df;
-      border: 1px solid #c5d4c8;
-      color: var(--acento-oscuro);
-      border-radius: 14px;
+      background: #f1f5f9;
+      border: 1px solid var(--borde);
+      color: var(--texto);
+      border-radius: 12px;
       padding: 0.75rem 1rem;
       margin-bottom: 0.5rem;
+    }
+
+    .aviso, .error-box {
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .aviso {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: var(--aviso);
+    }
+
+    .error-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: var(--error);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr);
+      gap: 1rem;
+      align-items: start;
     }
 
     .tarjeta {
       background: var(--tarjeta);
       border: 1px solid var(--borde);
-      border-radius: 18px;
-      padding: 1.25rem 1.4rem;
+      border-radius: 16px;
+      padding: 1.2rem 1.25rem;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
       margin-bottom: 1rem;
-      box-shadow: 0 8px 24px rgba(109, 139, 116, 0.06);
+    }
+
+    .tarjeta h2 {
+      margin: 0 0 0.85rem;
+      font-size: 1rem;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .resumen {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 0.85rem 1rem;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem 1rem;
     }
 
     .dato strong {
       display: block;
-      font-size: 0.85rem;
+      font-size: 0.78rem;
       color: var(--muted);
       margin-bottom: 0.2rem;
+      font-weight: 600;
     }
 
     .estado {
       display: inline-block;
       padding: 0.2rem 0.55rem;
       border-radius: 999px;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 0.85rem;
     }
 
     .estado-pendiente,
     .estado-procesando {
-      background: #fff3c4;
+      background: #fffbeb;
       color: var(--aviso);
     }
 
     .estado-completado {
-      background: #dce8df;
+      background: #ecfdf5;
       color: var(--ok);
     }
 
     .estado-error {
-      background: #ffe3e3;
+      background: #fef2f2;
       color: var(--error);
-    }
-
-    .aviso {
-      background: #fff8e6;
-      border: 1px solid #f0d58a;
-      border-radius: 14px;
-      padding: 0.9rem 1rem;
-      color: var(--aviso);
-      margin-bottom: 1rem;
-    }
-
-    .error-box {
-      background: #fff5f5;
-      border: 1px solid #feb2b2;
-      border-radius: 14px;
-      padding: 0.9rem 1rem;
-      color: var(--error);
-      margin-bottom: 1rem;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.95rem;
+      font-size: 0.93rem;
     }
 
     th, td {
       text-align: left;
-      padding: 0.55rem 0.35rem;
+      padding: 0.55rem 0.2rem;
       border-bottom: 1px solid var(--borde);
     }
 
-    th { color: var(--muted); }
+    th { color: var(--muted); font-size: 0.82rem; }
+    tr:last-child td { border-bottom: 0; }
+
+    .panel-resultado {
+      background: #fff;
+      border: 1px solid var(--borde);
+      border-radius: 16px;
+      padding: 1.25rem;
+      position: sticky;
+      top: 1rem;
+    }
+
+    .panel-resultado h2 {
+      margin: 0 0 0.35rem;
+      font-size: 1.15rem;
+      color: var(--texto);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .panel-resultado .intro {
+      margin: 0 0 1rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .metricas {
+      display: grid;
+      gap: 0.75rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .metrica {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 0.75rem 0.85rem;
+    }
+
+    .metrica strong {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 0.15rem;
+    }
 
     .acciones {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-top: 1rem;
-      align-items: center;
+      display: grid;
+      gap: 0.65rem;
     }
 
-    .tarjeta-acciones .acciones {
-      margin-top: 0;
-    }
-
-    a.boton, button.boton {
-      display: inline-block;
+    a.boton {
+      display: block;
+      text-align: center;
       text-decoration: none;
-      border: 0;
-      border-radius: 999px;
+      border-radius: 12px;
+      font-weight: 700;
+      padding: 0.8rem 1rem;
+    }
+
+    a.boton-primario {
       background: var(--acento);
       color: #fff;
-      font: inherit;
-      font-weight: 600;
-      padding: 0.7rem 1.1rem;
     }
 
     a.boton-secundario {
-      background: var(--muted);
+      background: #dfe4db;
+      color: var(--texto);
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .resumen { grid-template-columns: 1fr 1fr; }
+      .panel-resultado { position: static; }
     }
   </style>
 </head>
 <body>
   <main>
     <p class="nav-volver">
-      <a href="{% url 'procesamientos:dimanno_detalle' procesamiento.id %}">
-        ← Volver al detalle
+      <a href="{% url 'procesamientos:bitacoras' %}">
+        ← Volver a bitácoras
       </a>
     </p>
 
-    <h1>Generación del archivo</h1>
+    <header class="cabecera">
+      <div>
+        <h1>Generación del archivo</h1>
+      </div>
+      <div class="meta-cabecera">
+        Factura {{ procesamiento.factura_corta }} · Semana {{ procesamiento.semana }} · {{ procesamiento.anio }}
+      </div>
+    </header>
 
     {% if messages %}
       <ul class="mensajes">
@@ -201,124 +292,132 @@
       </div>
     {% endif %}
 
-    <section class="tarjeta">
-      <div class="resumen">
-        <div class="dato">
-          <strong>Estado</strong>
-          <span class="estado estado-{{ generacion.estado }}">
-            {{ generacion.estado_legible }}
-          </span>
-        </div>
-        <div class="dato">
-          <strong>Factura</strong>
-          {{ procesamiento.factura_corta }}
-        </div>
-        <div class="dato">
-          <strong>Semana</strong>
-          {{ procesamiento.semana }}
-        </div>
-        <div class="dato">
-          <strong>Año</strong>
-          {{ procesamiento.anio }}
-        </div>
-        <div class="dato">
-          <strong>Solicitado por</strong>
-          {{ generacion.solicitado_por_nombre }}
-        </div>
-        <div class="dato">
-          <strong>Solicitado en</strong>
-          {{ generacion.solicitado_en }}
-        </div>
-        <div class="dato">
-          <strong>Iniciado en</strong>
-          {{ generacion.iniciado_en|default:"—" }}
-        </div>
-        <div class="dato">
-          <strong>Finalizado en</strong>
-          {{ generacion.finalizado_en|default:"—" }}
-        </div>
-        <div class="dato">
-          <strong>Destino aplicado</strong>
-          {{ generacion.destino_aplicado }}
-        </div>
-        <div class="dato">
-          <strong>Intentos</strong>
-          {{ generacion.intentos }}
-        </div>
+    <div class="layout">
+      <div>
+        <section class="tarjeta">
+          <h2>Resumen de la solicitud</h2>
+          <div class="resumen">
+            <div class="dato">
+              <strong>Estado</strong>
+              <span class="estado estado-{{ generacion.estado }}">
+                {{ generacion.estado_legible }}
+              </span>
+            </div>
+            <div class="dato">
+              <strong>Solicitado por</strong>
+              {{ generacion.solicitado_por_nombre }}
+            </div>
+            <div class="dato">
+              <strong>Intentos</strong>
+              {{ generacion.intentos }}
+            </div>
+            <div class="dato">
+              <strong>Solicitado en</strong>
+              {{ generacion.solicitado_en }}
+            </div>
+            <div class="dato">
+              <strong>Iniciado en</strong>
+              {{ generacion.iniciado_en|default:"—" }}
+            </div>
+            <div class="dato">
+              <strong>Finalizado en</strong>
+              {{ generacion.finalizado_en|default:"—" }}
+            </div>
+            <div class="dato">
+              <strong>Destino aplicado</strong>
+              {{ generacion.destino_aplicado }}
+            </div>
+          </div>
+        </section>
+
+        <section class="tarjeta">
+          <h2>Gastos aplicados</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Rubro</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for rubro, valor in generacion.gastos_aplicados.items %}
+                <tr>
+                  <td>{{ rubro }}</td>
+                  <td>{{ valor }}</td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="2">Sin gastos.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </section>
       </div>
-    </section>
 
-    <h2>Gastos aplicados</h2>
-    <section class="tarjeta">
-      <table>
-        <thead>
-          <tr>
-            <th>Rubro</th>
-            <th>Valor</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for rubro, valor in generacion.gastos_aplicados.items %}
-            <tr>
-              <td>{{ rubro }}</td>
-              <td>{{ valor }}</td>
-            </tr>
-          {% empty %}
-            <tr>
-              <td colspan="2">Sin gastos.</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </section>
-
-    {% if generacion.esta_completada %}
-      <section class="tarjeta">
-        <div class="resumen">
-          <div class="dato">
-            <strong>Filas agregadas</strong>
-            {{ generacion.filas_agregadas|default:"—" }}
+      <aside class="panel-resultado">
+        {% if generacion.esta_completada %}
+          <h2>Archivo listo</h2>
+          <p class="intro">Descargue el acumulativo generado o vuelva a la bitácora.</p>
+          <div class="metricas">
+            <div class="metrica">
+              <strong>Filas agregadas</strong>
+              {{ generacion.filas_agregadas|default:"—" }}
+            </div>
+            <div class="metrica">
+              <strong>Filas</strong>
+              {{ generacion.fila_inicial|default:"—" }} – {{ generacion.fila_final|default:"—" }}
+            </div>
+            <div class="metrica">
+              <strong>Rango de tabla</strong>
+              {{ generacion.rango_tabla|default:"—" }}
+            </div>
           </div>
-          <div class="dato">
-            <strong>Fila inicial</strong>
-            {{ generacion.fila_inicial|default:"—" }}
+          <div class="acciones">
+            <a
+              class="boton boton-primario"
+              href="{% url 'procesamientos:dimanno_generacion_descargar' generacion.id %}"
+            >
+              Descargar archivo
+            </a>
+            <a
+              class="boton boton-secundario"
+              href="{% url 'procesamientos:bitacoras' %}"
+            >
+              Volver a bitácoras
+            </a>
           </div>
-          <div class="dato">
-            <strong>Fila final</strong>
-            {{ generacion.fila_final|default:"—" }}
+        {% else %}
+          <h2>Seguimiento</h2>
+          <p class="intro">
+            {% if generacion.esta_activa %}
+              Espere a que finalice el proceso. La página se actualizará sola.
+            {% else %}
+              Revise el estado o consulte la bitácora de movimientos.
+            {% endif %}
+          </p>
+          <div class="acciones">
+            <a
+              class="boton boton-secundario"
+              href="{% url 'procesamientos:bitacoras' %}"
+            >
+              Volver a bitácoras
+            </a>
           </div>
-          <div class="dato">
-            <strong>Rango de tabla</strong>
-            {{ generacion.rango_tabla|default:"—" }}
-          </div>
-        </div>
-        <div class="acciones">
-          <a
-            class="boton"
-            href="{% url 'procesamientos:dimanno_generacion_descargar' generacion.id %}"
-          >
-            Descargar archivo
-          </a>
-          <a
-            class="boton boton-secundario"
-            href="{% url 'procesamientos:dimanno_detalle' procesamiento.id %}"
-          >
-            Volver al detalle
-          </a>
-        </div>
-      </section>
-    {% else %}
-      <section class="tarjeta tarjeta-acciones">
-        <div class="acciones">
-          <a
-            class="boton boton-secundario"
-            href="{% url 'procesamientos:dimanno_detalle' procesamiento.id %}"
-          >
-            Volver al detalle
-          </a>
-        </div>
-      </section>
-    {% endif %}
+        {% endif %}
+      </aside>
+    </div>
   </main>
+  <script>
+    (function () {
+      var bitacorasUrl = "{% url 'procesamientos:bitacoras' %}";
+      if (!window.history || !history.pushState) return;
+      history.replaceState({ tdvCierre: true }, "", location.href);
+      history.pushState({ tdvFlujo: true }, "", location.href);
+      window.addEventListener("popstate", function () {
+        window.location.replace(bitacorasUrl);
+      });
+    })();
+  </script>
 </body>
 </html>
