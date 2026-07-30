@@ -436,7 +436,7 @@
           <tbody>
             {% for item in procesamientos_recientes %}
               <tr>
-                <td>Di Manno</td>
+                <td>{{ item.cliente }}</td>
                 <td>{{ item.factura_corta|default:"—" }}</td>
                 <td>{{ item.semana }}</td>
                 <td>{{ item.anio }}</td>
@@ -446,7 +446,7 @@
                 <td>
                   <a
                     class="enlace"
-                    href="{% url 'procesamientos:dimanno_detalle' item.id %}"
+                    href="{% url item.url_name item.id %}"
                   >
                     Abrir
                   </a>

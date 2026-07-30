@@ -1,6 +1,6 @@
 from django.urls import path
 
-from procesamientos import views
+from procesamientos import views, views_master
 
 app_name = "procesamientos"
 
@@ -52,5 +52,38 @@ urlpatterns = [
         ),
         views.descargar_generacion_dimanno,
         name="dimanno_generacion_descargar",
+    ),
+    path(
+        "master/",
+        views_master.cargar_master,
+        name="master_cargar",
+    ),
+    path(
+        "master/<uuid:procesamiento_id>/",
+        views_master.detalle_master,
+        name="master_detalle",
+    ),
+    path(
+        "master/<uuid:procesamiento_id>/gastos/editar/",
+        views_master.editar_gastos_master,
+        name="master_gastos_editar",
+    ),
+    path(
+        "master/<uuid:procesamiento_id>/generar/",
+        views_master.solicitar_generacion_master,
+        name="master_generar",
+    ),
+    path(
+        "master/generaciones/<uuid:generacion_id>/",
+        views_master.detalle_generacion_master,
+        name="master_generacion_detalle",
+    ),
+    path(
+        (
+            "master/generaciones/<uuid:generacion_id>/"
+            "descargar/"
+        ),
+        views_master.descargar_generacion_master,
+        name="master_generacion_descargar",
     ),
 ]

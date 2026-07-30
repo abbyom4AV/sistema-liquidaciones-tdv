@@ -7,6 +7,7 @@ from django.forms import BaseModelFormSet, modelformset_factory
 
 from procesamientos.models import (
     GastoProcesamientoDimanno,
+    GastoProcesamientoMaster,
     ProcesamientoDimanno,
 )
 
@@ -311,3 +312,109 @@ class FormularioResolucionDestinoDimanno(forms.Form):
             "La opción de destino no es válida.",
         )
         return cleaned
+
+
+class FormularioCargaMaster(forms.Form):
+    archivo_despachos = forms.FileField(
+        label="Archivo de despachos",
+        error_messages={
+            "required": "Seleccione el archivo de despachos.",
+            "invalid": "El archivo de despachos no es válido.",
+        },
+    )
+    archivo_liquidacion = forms.FileField(
+        label="Liquidación Master Fruits (PDF)",
+        error_messages={
+            "required": "Seleccione el PDF de liquidación.",
+            "invalid": "El archivo de liquidación no es válido.",
+        },
+    )
+    archivo_cliente = forms.FileField(
+        label="Archivo acumulativo del cliente",
+        error_messages={
+            "required": (
+                "Seleccione el archivo acumulativo del cliente."
+            ),
+            "invalid": (
+                "El archivo del cliente no es válido."
+            ),
+        },
+    )
+
+    def clean_archivo_despachos(self):
+        archivo = self.cleaned_data.get("archivo_despachos")
+        if archivo is None:
+            return archivo
+        nombre = getattr(archivo, "name", "") or ""
+        if not nombre.lower().endswith(".xlsx"):
+            raise forms.ValidationError(
+                "El archivo de despachos debe ser .xlsx."
+            )
+        return archivo
+
+    def clean_archivo_liquidacion(self):
+        archivo = self.cleaned_data.get("archivo_liquidacion")
+        if archivo is None:
+            return archivo
+        nombre = getattr(archivo, "name", "") or ""
+        if not nombre.lower().endswith(".pdf"):
+            raise forms.ValidationError(
+                "La liquidación Master Fruits debe ser .pdf."
+            )
+        return archivo
+
+    def clean_archivo_cliente(self):
+        archivo = self.cleaned_data.get("archivo_cliente")
+        if archivo is None:
+            return archivo
+        nombre = getattr(archivo, "name", "") or ""
+        if not nombre.lower().endswith(".xlsx"):
+            raise forms.ValidationError(
+                "El acumulativo del cliente debe ser .xlsx."
+            )
+        return archivo
+
+
+class FormularioValorGastoMaster(forms.ModelForm):
+    valor_aplicado = forms.DecimalField(
+        max_digits=18,
+        decimal_places=6,
+        localize=True,
+        error_messages={
+            "required": "Indique el valor aplicado.",
+            "invalid": "El valor aplicado no es numérico.",
+        },
+    )
+
+    class Meta:
+        model = GastoProcesamientoMaster
+        fields = ("valor_aplicado",)
+
+    def clean_valor_aplicado(self):
+        valor = self.cleaned_data.get("valor_aplicado")
+        if valor is None:
+            raise forms.ValidationError(
+                "Indique el valor aplicado."
+            )
+        try:
+            return Decimal(valor)
+        except (InvalidOperation, TypeError, ValueError) as error:
+            raise forms.ValidationError(
+                "El valor aplicado no es numérico."
+            ) from error
+
+
+class BaseFormsetGastosMaster(BaseModelFormSet):
+    def clean(self):
+        super().clean()
+        if any(self.errors):
+            return
+
+
+FormsetGastosMaster = modelformset_factory(
+    GastoProcesamientoMaster,
+    form=FormularioValorGastoMaster,
+    formset=BaseFormsetGastosMaster,
+    extra=0,
+    can_delete=False,
+)

@@ -24,9 +24,12 @@ from procesamientos.forms import (
 from procesamientos.models import (
     RUBROS_GASTOS_DEFINICION,
     CorreccionGastoDimanno,
+    CorreccionGastoMaster,
     GastoProcesamientoDimanno,
     GeneracionDimanno,
+    GeneracionMaster,
     ProcesamientoDimanno,
+    ProcesamientoMaster,
     ResolucionDestinoDimanno,
 )
 from procesamientos.services.generacion_dimanno import (
@@ -118,10 +121,13 @@ CLIENTES_PANEL = (
     },
     {
         "codigo": "master",
-        "nombre": "Master",
-        "descripcion": "Módulo de liquidaciones Master.",
-        "disponible": False,
-        "url_name": None,
+        "nombre": "Master Fruits",
+        "descripcion": (
+            "Validar liquidaciones PDF, cruzar Despachos "
+            "y generar el acumulativo."
+        ),
+        "disponible": True,
+        "url_name": "procesamientos:master_cargar",
     },
     {
         "codigo": "nufri",
@@ -170,9 +176,41 @@ CLIENTES_PANEL = (
 
 @login_required
 def panel_control(request):
-    recientes = list(
-        ProcesamientoDimanno.objects.order_by("-creado_en")[:5]
-    )
+    recientes_dimanno = [
+        {
+            "cliente": "Di Manno",
+            "factura_corta": item.factura_corta,
+            "semana": item.semana,
+            "anio": item.anio,
+            "estado_legible": item.estado_legible,
+            "creado_en": item.creado_en,
+            "url_name": "procesamientos:dimanno_detalle",
+            "id": item.id,
+        }
+        for item in ProcesamientoDimanno.objects.order_by(
+            "-creado_en"
+        )[:10]
+    ]
+    recientes_master = [
+        {
+            "cliente": "Master Fruits",
+            "factura_corta": item.factura_corta,
+            "semana": item.semana,
+            "anio": item.anio,
+            "estado_legible": item.estado_legible,
+            "creado_en": item.creado_en,
+            "url_name": "procesamientos:master_detalle",
+            "id": item.id,
+        }
+        for item in ProcesamientoMaster.objects.order_by(
+            "-creado_en"
+        )[:10]
+    ]
+    recientes = sorted(
+        recientes_dimanno + recientes_master,
+        key=lambda item: item["creado_en"],
+        reverse=True,
+    )[:5]
     clientes_disponibles = sum(
         1 for cliente in CLIENTES_PANEL if cliente["disponible"]
     )
@@ -184,6 +222,7 @@ def panel_control(request):
             "procesamientos_recientes": recientes,
             "total_procesamientos": (
                 ProcesamientoDimanno.objects.count()
+                + ProcesamientoMaster.objects.count()
             ),
             "clientes_panel": CLIENTES_PANEL,
             "total_clientes": len(CLIENTES_PANEL),
@@ -279,6 +318,58 @@ def bitacoras(request):
             }
         )
 
+    correcciones_master = CorreccionGastoMaster.objects.select_related(
+        "gasto",
+        "gasto__procesamiento",
+    ).order_by("-creado_en")[:120]
+    for item in correcciones_master:
+        procesamiento = item.gasto.procesamiento
+        eventos.append(
+            {
+                "tipo": "Corrección de gasto",
+                "estado": "Cambiada",
+                "estado_clase": "cambiada",
+                "cliente": "Master Fruits",
+                "detalle": (
+                    f"{item.gasto.nombre}: "
+                    f"{item.valor_anterior} → "
+                    f"{item.valor_nuevo}"
+                ),
+                "usuario": item.usuario_nombre or "—",
+                "fecha": item.creado_en,
+                "factura": procesamiento.factura_corta or "—",
+                "url_detalle": (
+                    "procesamientos:master_detalle",
+                    procesamiento.id,
+                ),
+            }
+        )
+
+    generaciones_master = GeneracionMaster.objects.select_related(
+        "procesamiento",
+    ).order_by("-solicitado_en")[:120]
+    for item in generaciones_master:
+        estado_texto, estado_clase = estados_generacion.get(
+            item.estado,
+            (item.estado_legible, "proceso"),
+        )
+        eventos.append(
+            {
+                "tipo": "Generación de archivo",
+                "estado": estado_texto,
+                "estado_clase": estado_clase,
+                "cliente": "Master Fruits",
+                "detalle": estado_texto,
+                "usuario": item.solicitado_por_nombre or "—",
+                "fecha": item.solicitado_en,
+                "factura": item.procesamiento.factura_corta or "—",
+                "url_detalle": (
+                    "procesamientos:master_generacion_detalle",
+                    item.id,
+                ),
+            }
+        )
+
     q = (request.GET.get("q") or "").strip().lower()
     cliente = (request.GET.get("cliente") or "").strip().lower()
     factura = (request.GET.get("factura") or "").strip().lower()
@@ -364,9 +455,17 @@ def _serializar_lineas(lineas) -> list[dict[str, str | int]]:
     return [
         {
             "contenedor": linea.despacho.contenedor,
+            "nave": linea.despacho.barco,
+            "cliente": linea.despacho.cliente,
+            "destino": linea.despacho.puerto_destino,
             "tipo_fruta": linea.tipo_fruta,
+            "carton": linea.despacho.carton,
             "calibre": linea.calibre,
             "total_cajas": linea.despacho.total_cajas,
+            "semana": linea.despacho.semana,
+            "anio": linea.despacho.anio,
+            "factura": linea.despacho.factura,
+            "factura_corta": linea.despacho.factura_corta,
             "precio_venta_eur": _decimal_a_str(
                 linea.precio_venta_eur
             ),

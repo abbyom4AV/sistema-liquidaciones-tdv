@@ -15,6 +15,8 @@ from procesamientos.services.generacion_dimanno import (
     ErrorConfirmacionGeneracionDimanno,
     aplicar_confirmaciones_a_procesamiento,
     construir_nombre_descarga,
+    lineas_completas_para_escritura,
+    reconstruir_resultado_para_escritura_dimanno,
 )
 from services.dimanno.processor import (
     ErrorProcesamientoDimanno,
@@ -164,13 +166,6 @@ def procesar_generacion(
     inicio_total = time.perf_counter()
 
     try:
-        if not _archivos_entrada_existen(generacion):
-            _marcar_error(
-                generacion,
-                "Los archivos de entrada ya no están disponibles.",
-            )
-            return
-
         if not (generacion.destino_aplicado or "").strip():
             _marcar_error(
                 generacion,
@@ -185,45 +180,112 @@ def procesar_generacion(
             )
             return
 
-        inicio = time.perf_counter()
-        resultado = preparar_procesamiento_dimanno(
-            ruta_liquidacion=(
-                procesamiento.archivo_liquidacion.path
-            ),
-            nombre_hoja=procesamiento.nombre_hoja,
-            ruta_despachos=(
-                procesamiento.archivo_despachos.path
-            ),
-            anio=procesamiento.anio,
-            destino_confirmado=generacion.destino_aplicado,
+        usar_reconstruccion = lineas_completas_para_escritura(
+            procesamiento.lineas_preparadas
         )
-        logger.info(
-            "generacion=%s fase=preparar_procesamiento "
-            "segundos=%.3f",
-            id_gen,
-            time.perf_counter() - inicio,
-        )
+        if usar_reconstruccion:
+            try:
+                ruta_cliente = Path(
+                    procesamiento.archivo_cliente.path
+                )
+            except (ValueError, FileNotFoundError):
+                ruta_cliente = Path()
+            if not ruta_cliente.is_file():
+                _marcar_error(
+                    generacion,
+                    "El acumulativo del cliente ya no está "
+                    "disponible.",
+                )
+                return
+        elif not _archivos_entrada_existen(generacion):
+            _marcar_error(
+                generacion,
+                "Los archivos de entrada ya no están disponibles.",
+            )
+            return
 
         inicio = time.perf_counter()
-        try:
-            resultado = aplicar_confirmaciones_a_procesamiento(
-                resultado,
-                destino_final=generacion.destino_aplicado,
-                gastos_aplicados=generacion.gastos_aplicados,
-                origen_destino=(
-                    generacion.origen_destino_aplicado or None
-                ),
-            )
-        except ErrorConfirmacionGeneracionDimanno as error:
-            _marcar_error(generacion, str(error))
-            return
-        finally:
+        if usar_reconstruccion:
+            try:
+                resultado = (
+                    reconstruir_resultado_para_escritura_dimanno(
+                        factura_corta=procesamiento.factura_corta,
+                        semana=procesamiento.semana,
+                        anio=procesamiento.anio,
+                        nombre_hoja=procesamiento.nombre_hoja,
+                        destino_final=generacion.destino_aplicado,
+                        origen_destino=(
+                            generacion.origen_destino_aplicado
+                            or None
+                        ),
+                        lineas_preparadas=(
+                            procesamiento.lineas_preparadas
+                        ),
+                        gastos_aplicados=(
+                            generacion.gastos_aplicados
+                        ),
+                        total_cajas_liquidacion=(
+                            procesamiento.total_cajas_liquidacion
+                        ),
+                        total_cajas_despachos=(
+                            procesamiento.total_cajas_despachos
+                        ),
+                        destino_liquidacion=(
+                            procesamiento.destino_liquidacion
+                        ),
+                        destinos_despachos=(
+                            procesamiento.destinos_despachos
+                        ),
+                    )
+                )
+            except ErrorConfirmacionGeneracionDimanno as error:
+                _marcar_error(generacion, str(error))
+                return
             logger.info(
-                "generacion=%s fase=aplicar_confirmaciones "
+                "generacion=%s fase=reconstruir_desde_bd "
                 "segundos=%.3f",
                 id_gen,
                 time.perf_counter() - inicio,
             )
+        else:
+            resultado = preparar_procesamiento_dimanno(
+                ruta_liquidacion=(
+                    procesamiento.archivo_liquidacion.path
+                ),
+                nombre_hoja=procesamiento.nombre_hoja,
+                ruta_despachos=(
+                    procesamiento.archivo_despachos.path
+                ),
+                anio=procesamiento.anio,
+                destino_confirmado=generacion.destino_aplicado,
+            )
+            logger.info(
+                "generacion=%s fase=preparar_procesamiento "
+                "segundos=%.3f",
+                id_gen,
+                time.perf_counter() - inicio,
+            )
+
+            inicio = time.perf_counter()
+            try:
+                resultado = aplicar_confirmaciones_a_procesamiento(
+                    resultado,
+                    destino_final=generacion.destino_aplicado,
+                    gastos_aplicados=generacion.gastos_aplicados,
+                    origen_destino=(
+                        generacion.origen_destino_aplicado or None
+                    ),
+                )
+            except ErrorConfirmacionGeneracionDimanno as error:
+                _marcar_error(generacion, str(error))
+                return
+            finally:
+                logger.info(
+                    "generacion=%s fase=aplicar_confirmaciones "
+                    "segundos=%.3f",
+                    id_gen,
+                    time.perf_counter() - inicio,
+                )
 
         if not resultado.puede_escribir:
             _marcar_error(
