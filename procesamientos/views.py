@@ -25,11 +25,14 @@ from procesamientos.models import (
     RUBROS_GASTOS_DEFINICION,
     CorreccionGastoDimanno,
     CorreccionGastoMaster,
+    CorreccionGastoOrsero,
     GastoProcesamientoDimanno,
     GeneracionDimanno,
     GeneracionMaster,
+    GeneracionOrsero,
     ProcesamientoDimanno,
     ProcesamientoMaster,
+    ProcesamientoOrsero,
     ResolucionDestinoDimanno,
 )
 from procesamientos.services.generacion_dimanno import (
@@ -139,9 +142,12 @@ CLIENTES_PANEL = (
     {
         "codigo": "orsero",
         "nombre": "ORSERO",
-        "descripcion": "Módulo de liquidaciones ORSERO.",
-        "disponible": False,
-        "url_name": None,
+        "descripcion": (
+            "Validar screenshots de liquidación, cruzar "
+            "Despachos y generar el acumulativo."
+        ),
+        "disponible": True,
+        "url_name": "procesamientos:orsero_cargar",
     },
     {
         "codigo": "sifa",
@@ -206,8 +212,23 @@ def panel_control(request):
             "-creado_en"
         )[:10]
     ]
+    recientes_orsero = [
+        {
+            "cliente": "ORSERO",
+            "factura_corta": item.nave_texto,
+            "semana": item.semana,
+            "anio": item.anio,
+            "estado_legible": item.estado_legible,
+            "creado_en": item.creado_en,
+            "url_name": "procesamientos:orsero_detalle",
+            "id": item.id,
+        }
+        for item in ProcesamientoOrsero.objects.order_by(
+            "-creado_en"
+        )[:10]
+    ]
     recientes = sorted(
-        recientes_dimanno + recientes_master,
+        recientes_dimanno + recientes_master + recientes_orsero,
         key=lambda item: item["creado_en"],
         reverse=True,
     )[:5]
@@ -223,6 +244,7 @@ def panel_control(request):
             "total_procesamientos": (
                 ProcesamientoDimanno.objects.count()
                 + ProcesamientoMaster.objects.count()
+                + ProcesamientoOrsero.objects.count()
             ),
             "clientes_panel": CLIENTES_PANEL,
             "total_clientes": len(CLIENTES_PANEL),
@@ -365,6 +387,58 @@ def bitacoras(request):
                 "factura": item.procesamiento.factura_corta or "—",
                 "url_detalle": (
                     "procesamientos:master_generacion_detalle",
+                    item.id,
+                ),
+            }
+        )
+
+    correcciones_orsero = CorreccionGastoOrsero.objects.select_related(
+        "gasto",
+        "gasto__procesamiento",
+    ).order_by("-creado_en")[:120]
+    for item in correcciones_orsero:
+        procesamiento = item.gasto.procesamiento
+        eventos.append(
+            {
+                "tipo": "Corrección de gasto",
+                "estado": "Cambiada",
+                "estado_clase": "cambiada",
+                "cliente": "ORSERO",
+                "detalle": (
+                    f"{item.gasto.nombre}: "
+                    f"{item.valor_anterior} → "
+                    f"{item.valor_nuevo}"
+                ),
+                "usuario": item.usuario_nombre or "—",
+                "fecha": item.creado_en,
+                "factura": procesamiento.nave_texto or "—",
+                "url_detalle": (
+                    "procesamientos:orsero_detalle",
+                    procesamiento.id,
+                ),
+            }
+        )
+
+    generaciones_orsero = GeneracionOrsero.objects.select_related(
+        "procesamiento",
+    ).order_by("-solicitado_en")[:120]
+    for item in generaciones_orsero:
+        estado_texto, estado_clase = estados_generacion.get(
+            item.estado,
+            (item.estado_legible, "proceso"),
+        )
+        eventos.append(
+            {
+                "tipo": "Generación de archivo",
+                "estado": estado_texto,
+                "estado_clase": estado_clase,
+                "cliente": "ORSERO",
+                "detalle": estado_texto,
+                "usuario": item.solicitado_por_nombre or "—",
+                "fecha": item.solicitado_en,
+                "factura": item.procesamiento.nave_texto or "—",
+                "url_detalle": (
+                    "procesamientos:orsero_generacion_detalle",
                     item.id,
                 ),
             }

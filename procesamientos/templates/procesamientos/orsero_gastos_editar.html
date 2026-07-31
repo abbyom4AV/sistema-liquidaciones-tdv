@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Modificar gastos ORSERO</title>
+  <style>
+    :root {
+      --fondo: #f8f9f5;
+      --tarjeta: #ffffff;
+      --suave: #e2e5de;
+      --acento: #375a4d;
+      --acento-oscuro: #284e40;
+      --texto: #333333;
+      --muted: #6b7368;
+      --borde: #d5dbd1;
+      --error: #9b1c1c;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--texto);
+      background: var(--fondo);
+      min-height: 100vh;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
+    }
+
+    .nav-volver { margin: 0 0 1.25rem; }
+
+    .nav-volver a {
+      color: var(--acento-oscuro);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    h1 { margin: 0 0 0.75rem; font-size: 1.9rem; }
+
+    .resumen, .tarjeta {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 18px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 8px 24px rgba(109, 139, 116, 0.06);
+    }
+
+    .resumen {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.75rem 1rem;
+    }
+
+    .dato strong {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--borde);
+      text-align: left;
+      padding: 0.6rem 0.4rem;
+      vertical-align: middle;
+    }
+
+    th { color: var(--muted); }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 0.7rem 0.85rem;
+      border: 1px solid var(--borde);
+      border-radius: 14px;
+      font: inherit;
+      background: var(--suave);
+    }
+
+    .errores {
+      background: #fff5f5;
+      border: 1px solid #feb2b2;
+      color: var(--error);
+      border-radius: 14px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .campo-error {
+      color: var(--error);
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
+    }
+
+    .acciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    button, a.boton {
+      display: inline-block;
+      text-decoration: none;
+      border: 0;
+      border-radius: 999px;
+      background: var(--acento);
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      padding: 0.7rem 1.1rem;
+      cursor: pointer;
+    }
+
+    a.boton {
+      background: var(--muted);
+    }
+
+    a.boton:hover { background: var(--acento-oscuro); }
+    button:hover { background: var(--acento-oscuro); }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin: 0.85rem 0 0.35rem;
+    }
+
+    .aviso-registro {
+      margin: 0 0 1rem;
+      padding: 0.75rem 1rem;
+      background: #dce8df;
+      border: 1px solid #c5d4c8;
+      border-radius: 14px;
+      color: var(--acento-oscuro);
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  {% load dimanno_extras %}
+  <main>
+    <p class="nav-volver">
+      <a href="{% url 'procesamientos:panel' %}">← Volver al panel</a>
+    </p>
+    <h1>Modificar gastos ORSERO</h1>
+
+    <p class="aviso-registro">
+      La corrección quedará registrada a nombre de:
+      <strong>{{ nombre_usuario_sesion }}</strong>
+    </p>
+
+    <section class="resumen">
+      <div class="dato">
+        <strong>Nave</strong>
+        {{ procesamiento.nave_texto|default:"—" }}
+      </div>
+      <div class="dato">
+        <strong>Semana</strong>
+        {{ procesamiento.semana }}
+      </div>
+      <div class="dato">
+        <strong>Año</strong>
+        {{ procesamiento.anio }}
+      </div>
+      <div class="dato">
+        <strong>Estado</strong>
+        {{ procesamiento.estado_legible }}
+      </div>
+    </section>
+
+    {% if formulario_motivo.non_field_errors %}
+      <div class="errores">
+        {% for error in formulario_motivo.non_field_errors %}
+          <div>{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ formset.management_form }}
+
+      <section class="tarjeta">
+        <table>
+          <thead>
+            <tr>
+              <th>Rubro</th>
+              <th>Valor original</th>
+              <th>Valor aplicado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for formulario in formset %}
+              <tr>
+                <td>
+                  {{ formulario.instance.nombre }}
+                  {% for campo_oculto in formulario.hidden_fields %}
+                    {{ campo_oculto }}
+                  {% endfor %}
+                  {{ formulario.id }}
+                </td>
+                <td>{{ formulario.instance.valor_original|decimal_es }}</td>
+                <td>
+                  {{ formulario.valor_aplicado }}
+                  {% for error in formulario.valor_aplicado.errors %}
+                    <div class="campo-error">{{ error }}</div>
+                  {% endfor %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+
+      <section class="tarjeta">
+        <label for="{{ formulario_motivo.motivo.id_for_label }}">
+          {{ formulario_motivo.motivo.label }}
+        </label>
+        {{ formulario_motivo.motivo }}
+        {% for error in formulario_motivo.motivo.errors %}
+          <div class="campo-error">{{ error }}</div>
+        {% endfor %}
+      </section>
+
+      <div class="acciones">
+        <button type="submit">Guardar correcciones</button>
+        <a
+          class="boton"
+          href="{% url 'procesamientos:orsero_detalle' procesamiento.id %}"
+        >
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </main>
+</body>
+</html>

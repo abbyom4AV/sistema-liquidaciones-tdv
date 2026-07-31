@@ -8,6 +8,7 @@ from django.forms import BaseModelFormSet, modelformset_factory
 from procesamientos.models import (
     GastoProcesamientoDimanno,
     GastoProcesamientoMaster,
+    GastoProcesamientoOrsero,
     ProcesamientoDimanno,
 )
 
@@ -415,6 +416,128 @@ FormsetGastosMaster = modelformset_factory(
     GastoProcesamientoMaster,
     form=FormularioValorGastoMaster,
     formset=BaseFormsetGastosMaster,
+    extra=0,
+    can_delete=False,
+)
+
+
+EXTENSIONES_IMAGEN_ORSERO = (".png", ".jpg", ".jpeg")
+
+
+class FormularioCargaOrsero(forms.Form):
+    anio = forms.IntegerField(
+        label="Año",
+        min_value=2024,
+        max_value=2100,
+        initial=2026,
+        error_messages={
+            "required": "Indique el año de la liquidación.",
+            "invalid": "El año debe ser un número entero.",
+            "min_value": "El año mínimo permitido es 2024.",
+            "max_value": "El año máximo permitido es 2100.",
+        },
+    )
+    archivo_despachos = forms.FileField(
+        label="Archivo de despachos",
+        error_messages={
+            "required": "Seleccione el archivo de despachos.",
+            "invalid": "El archivo de despachos no es válido.",
+        },
+    )
+    archivo_liquidacion = forms.FileField(
+        label="Screenshot de la liquidación ORSERO (PNG/JPG)",
+        error_messages={
+            "required": "Seleccione el screenshot de la liquidación.",
+            "invalid": "El archivo de liquidación no es válido.",
+        },
+    )
+    archivo_cliente = forms.FileField(
+        label="Acumulativo ORSERO Liquidaciones",
+        error_messages={
+            "required": (
+                "Seleccione el archivo acumulativo del cliente."
+            ),
+            "invalid": (
+                "El archivo del cliente no es válido."
+            ),
+        },
+    )
+
+    def clean_archivo_despachos(self):
+        archivo = self.cleaned_data.get("archivo_despachos")
+        if archivo is None:
+            return archivo
+        nombre = getattr(archivo, "name", "") or ""
+        if not nombre.lower().endswith(".xlsx"):
+            raise forms.ValidationError(
+                "El archivo de despachos debe ser .xlsx."
+            )
+        return archivo
+
+    def clean_archivo_liquidacion(self):
+        archivo = self.cleaned_data.get("archivo_liquidacion")
+        if archivo is None:
+            return archivo
+        nombre = (getattr(archivo, "name", "") or "").lower()
+        if not nombre.endswith(EXTENSIONES_IMAGEN_ORSERO):
+            raise forms.ValidationError(
+                "El screenshot de la liquidación debe ser "
+                "PNG o JPG."
+            )
+        return archivo
+
+    def clean_archivo_cliente(self):
+        archivo = self.cleaned_data.get("archivo_cliente")
+        if archivo is None:
+            return archivo
+        nombre = getattr(archivo, "name", "") or ""
+        if not nombre.lower().endswith(".xlsx"):
+            raise forms.ValidationError(
+                "El acumulativo del cliente debe ser .xlsx."
+            )
+        return archivo
+
+
+class FormularioValorGastoOrsero(forms.ModelForm):
+    valor_aplicado = forms.DecimalField(
+        max_digits=18,
+        decimal_places=6,
+        localize=True,
+        error_messages={
+            "required": "Indique el valor aplicado.",
+            "invalid": "El valor aplicado no es numérico.",
+        },
+    )
+
+    class Meta:
+        model = GastoProcesamientoOrsero
+        fields = ("valor_aplicado",)
+
+    def clean_valor_aplicado(self):
+        valor = self.cleaned_data.get("valor_aplicado")
+        if valor is None:
+            raise forms.ValidationError(
+                "Indique el valor aplicado."
+            )
+        try:
+            return Decimal(valor)
+        except (InvalidOperation, TypeError, ValueError) as error:
+            raise forms.ValidationError(
+                "El valor aplicado no es numérico."
+            ) from error
+
+
+class BaseFormsetGastosOrsero(BaseModelFormSet):
+    def clean(self):
+        super().clean()
+        if any(self.errors):
+            return
+
+
+FormsetGastosOrsero = modelformset_factory(
+    GastoProcesamientoOrsero,
+    form=FormularioValorGastoOrsero,
+    formset=BaseFormsetGastosOrsero,
     extra=0,
     can_delete=False,
 )

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from procesamientos import views, views_master
+from procesamientos import views, views_master, views_orsero
 
 app_name = "procesamientos"
 
@@ -85,5 +85,38 @@ urlpatterns = [
         ),
         views_master.descargar_generacion_master,
         name="master_generacion_descargar",
+    ),
+    path(
+        "orsero/",
+        views_orsero.cargar_orsero,
+        name="orsero_cargar",
+    ),
+    path(
+        "orsero/<uuid:procesamiento_id>/",
+        views_orsero.detalle_orsero,
+        name="orsero_detalle",
+    ),
+    path(
+        "orsero/<uuid:procesamiento_id>/gastos/editar/",
+        views_orsero.editar_gastos_orsero,
+        name="orsero_gastos_editar",
+    ),
+    path(
+        "orsero/<uuid:procesamiento_id>/generar/",
+        views_orsero.solicitar_generacion_orsero,
+        name="orsero_generar",
+    ),
+    path(
+        "orsero/generaciones/<uuid:generacion_id>/",
+        views_orsero.detalle_generacion_orsero,
+        name="orsero_generacion_detalle",
+    ),
+    path(
+        (
+            "orsero/generaciones/<uuid:generacion_id>/"
+            "descargar/"
+        ),
+        views_orsero.descargar_generacion_orsero,
+        name="orsero_generacion_descargar",
     ),
 ]
