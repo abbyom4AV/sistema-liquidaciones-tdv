@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resultado de validación ORSERO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fondo: #f3f6f2;
+      --tarjeta: #ffffff;
+      --texto: #1f2a24;
+      --muted: #6b7a71;
+      --borde: #d9e3dc;
+      --suave: #f0f3ef;
+      --acento: #375a4d;
+      --acento-oscuro: #284e40;
+      --acento-suave: #e6f4ee;
+      --aviso: #8a6116;
+      --error: #9b1c1c;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Outfit", "Segoe UI", sans-serif;
+      color: var(--texto);
+      background: var(--fondo);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.75rem 1.5rem 2.5rem;
+    }
+
+    .nav-volver { margin: 0 0 0.85rem; }
+
+    .nav-volver a {
+      color: var(--muted);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.92rem;
+    }
+
+    .nav-volver a:hover { color: var(--acento-oscuro); }
+
+    .cabecera {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      margin-bottom: 1.1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.85rem;
+    }
+
+    .meta-cabecera {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .mensajes {
+      list-style: none;
+      margin: 0 0 1rem;
+      padding: 0;
+    }
+
+    .mensajes li {
+      background: var(--acento-suave);
+      border: 1px solid #c5d4c8;
+      color: var(--acento-oscuro);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .grid-principal {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
+      gap: 1rem;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+
+    .col-principal {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .tarjeta {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 16px;
+      padding: 1.1rem 1.2rem;
+      box-shadow: 0 8px 20px rgba(36, 111, 83, 0.04);
+    }
+
+    .seccion-titulo {
+      margin: 0 0 0.75rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.65rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .metric {
+      background: var(--suave);
+      border-radius: 12px;
+      padding: 0.7rem 0.8rem;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 0.2rem;
+      font-weight: 600;
+    }
+
+    .metric span {
+      font-size: 1.02rem;
+      font-weight: 700;
+    }
+
+    .estado {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .estado-listo {
+      background: var(--acento-suave);
+      color: var(--acento-oscuro);
+    }
+
+    .estado-invalido {
+      background: #ffe3e3;
+      color: var(--error);
+    }
+
+    .detalle-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.65rem 1rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--borde);
+    }
+
+    .dato strong {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 0.15rem;
+    }
+
+    .panel-lateral {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 16px;
+      padding: 1.1rem 1.2rem;
+      box-shadow: 0 8px 20px rgba(36, 111, 83, 0.04);
+    }
+
+    .panel-lateral h2 {
+      margin: 0 0 0.3rem;
+      font-size: 1.1rem;
+    }
+
+    .panel-lateral .intro {
+      margin: 0 0 0.9rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .chips {
+      display: grid;
+      gap: 0.5rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .chip {
+      background: var(--suave);
+      border-radius: 10px;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    .chip strong {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 0.15rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .incidencias {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .lista {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.92rem;
+    }
+
+    .errores { color: var(--error); }
+    .advertencias { color: var(--aviso); }
+    .vacio { margin: 0; color: var(--muted); font-size: 0.92rem; }
+
+    .bloque-tablas {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1rem;
+      margin-bottom: 1.1rem;
+      align-items: start;
+    }
+
+    .cabecera-bloque {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .cabecera-bloque h2 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.5rem 0.3rem;
+      border-bottom: 1px solid var(--borde);
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    td.num, th.num { text-align: right; }
+
+    tfoot td {
+      font-weight: 700;
+      border-bottom: 0;
+      padding-top: 0.7rem;
+    }
+
+    .etiqueta-modificado {
+      display: inline-block;
+      margin-left: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--aviso);
+      background: #fff3c4;
+      border-radius: 999px;
+      padding: 0.1rem 0.4rem;
+    }
+
+    .etiqueta-sinprecio {
+      display: inline-block;
+      margin-left: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--error);
+      background: #ffe3e3;
+      border-radius: 999px;
+      padding: 0.1rem 0.4rem;
+    }
+
+    .acciones-finales {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+
+    a.boton, button.boton {
+      display: inline-block;
+      text-decoration: none;
+      border: 0;
+      border-radius: 12px;
+      background: var(--acento);
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      padding: 0.7rem 1.05rem;
+      cursor: pointer;
+    }
+
+    a.boton:hover, button.boton:hover {
+      background: var(--acento-oscuro);
+    }
+
+    a.boton-secundario, button.boton-secundario {
+      background: #dfe4db;
+      color: var(--texto);
+    }
+
+    a.boton-secundario:hover, button.boton-secundario:hover {
+      background: #d0d6cb;
+    }
+
+    a.boton-suave {
+      background: #fff;
+      color: var(--texto);
+      border: 1px solid var(--borde);
+    }
+
+    a.boton-suave:hover {
+      background: var(--suave);
+    }
+
+    .cta-generacion {
+      background: var(--suave);
+      border-radius: 12px;
+      padding: 0.85rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .cta-generacion strong {
+      display: block;
+      color: var(--texto);
+      margin-bottom: 0.2rem;
+    }
+
+    .panel-acciones {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .panel-acciones a.boton,
+    .panel-acciones button.boton {
+      width: 100%;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .grid-principal,
+      .bloque-tablas,
+      .incidencias,
+      .metrics,
+      .detalle-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  {% load dimanno_extras %}
+  <main>
+    <p class="nav-volver">
+      <a href="{% url 'procesamientos:panel' %}">← Panel de control</a>
+    </p>
+
+    <header class="cabecera">
+      <div>
+        <h1>Resultado de validación ORSERO</h1>
+      </div>
+      <div class="meta-cabecera">
+        Nave {{ procesamiento.nave_texto|default:"—" }} · Semana {{ procesamiento.semana }} · {{ procesamiento.anio }}
+      </div>
+    </header>
+
+    {% if messages %}
+      <ul class="mensajes">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <div class="grid-principal">
+      <div class="col-principal">
+        <section class="tarjeta">
+          <p class="seccion-titulo">Resumen</p>
+          <div class="metrics">
+            <div class="metric">
+              <strong>Estado</strong>
+              <span class="estado estado-{{ procesamiento.estado }}">
+                {{ procesamiento.estado_legible }}
+              </span>
+            </div>
+            <div class="metric">
+              <strong>Contenedores</strong>
+              <span>{{ procesamiento.cantidad_contenedores }}</span>
+            </div>
+            <div class="metric">
+              <strong>Cajas liq. / desp.</strong>
+              <span>
+                {{ procesamiento.total_cajas_liquidacion|floatformat:0 }}
+                /
+                {{ procesamiento.total_cajas_despachos|floatformat:0 }}
+              </span>
+            </div>
+            <div class="metric">
+              <strong>Líneas</strong>
+              <span>{{ procesamiento.lineas_preparadas|length }}</span>
+            </div>
+          </div>
+
+          <div class="detalle-grid">
+            <div class="dato">
+              <strong>Listo para escribir</strong>
+              {% if procesamiento.puede_escribir %}Sí{% else %}No{% endif %}
+            </div>
+            <div class="dato">
+              <strong>Tipo de cambio</strong>
+              {{ procesamiento.tipo_cambio|decimal_es }}
+            </div>
+            <div class="dato">
+              <strong>Semana OCR</strong>
+              {{ procesamiento.semana }}
+            </div>
+            <div class="dato">
+              <strong>Destinos despachos</strong>
+              {% if procesamiento.destinos_despachos %}
+                {{ procesamiento.destinos_despachos|join:", " }}
+              {% else %}
+                —
+              {% endif %}
+            </div>
+          </div>
+        </section>
+
+        <div class="incidencias">
+          <section class="tarjeta">
+            <p class="seccion-titulo">Errores</p>
+            {% if procesamiento.errores %}
+              <ul class="lista errores">
+                {% for incidencia in procesamiento.errores %}
+                  <li>{{ incidencia.mensaje }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="vacio">Sin errores.</p>
+            {% endif %}
+          </section>
+          <section class="tarjeta">
+            <p class="seccion-titulo">Advertencias</p>
+            {% if procesamiento.advertencias %}
+              <ul class="lista advertencias">
+                {% for incidencia in procesamiento.advertencias %}
+                  <li>{{ incidencia.mensaje }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="vacio">Sin advertencias.</p>
+            {% endif %}
+          </section>
+        </div>
+      </div>
+
+      <aside class="panel-lateral">
+        <h2>Nave y generación</h2>
+        <p class="intro">
+          Datos extraídos por OCR del screenshot y siguiente paso.
+        </p>
+
+        <div class="chips">
+          <div class="chip">
+            <strong>Nave</strong>
+            {{ procesamiento.nave_texto|default:"—" }}
+          </div>
+          <div class="chip">
+            <strong>Semana</strong>
+            {{ procesamiento.semana }}
+          </div>
+          <div class="chip">
+            <strong>Año</strong>
+            {{ procesamiento.anio }}
+          </div>
+          <div class="chip">
+            <strong>T.C Orser</strong>
+            {{ procesamiento.tipo_cambio|decimal_es }}
+          </div>
+        </div>
+
+        {% if generacion_activa %}
+          <div class="cta-generacion">
+            <strong>Generación en curso</strong>
+            {{ generacion_activa.estado_legible }}
+          </div>
+          <div class="panel-acciones">
+            <a
+              class="boton"
+              href="{% url 'procesamientos:orsero_generacion_detalle' generacion_activa.id %}"
+            >
+              Ver generación
+            </a>
+          </div>
+        {% elif puede_solicitar_generacion %}
+          <div class="cta-generacion">
+            <strong>Listo para generar</strong>
+            Puede crear el archivo acumulativo.
+          </div>
+          <div class="panel-acciones">
+            <form
+              method="post"
+              action="{% url 'procesamientos:orsero_generar' procesamiento.id %}"
+            >
+              {% csrf_token %}
+              <button class="boton" type="submit" style="width: 100%;">
+                Generar archivo
+              </button>
+            </form>
+            {% if ultima_completada %}
+              <a
+                class="boton boton-secundario"
+                href="{% url 'procesamientos:orsero_generacion_descargar' ultima_completada.id %}"
+              >
+                Descargar último
+              </a>
+            {% endif %}
+          </div>
+        {% else %}
+          <div class="cta-generacion">
+            <strong>Generación no disponible</strong>
+            Revise cajas liquidación vs Despachos, precios y gastos.
+          </div>
+          {% if ultima_completada %}
+            <div class="panel-acciones">
+              <a
+                class="boton boton-secundario"
+                href="{% url 'procesamientos:orsero_generacion_descargar' ultima_completada.id %}"
+              >
+                Descargar último
+              </a>
+            </div>
+          {% endif %}
+        {% endif %}
+      </aside>
+    </div>
+
+    <div class="bloque-tablas">
+      <section class="tarjeta">
+        <div class="cabecera-bloque">
+          <h2>Líneas preparadas</h2>
+        </div>
+        {% if procesamiento.lineas_preparadas %}
+          <table>
+            <thead>
+              <tr>
+                <th>Contenedor</th>
+                <th>Destino</th>
+                <th>Cartón</th>
+                <th>Calibre</th>
+                <th class="num">Cajas</th>
+                <th class="num">Precio €</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for linea in procesamiento.lineas_preparadas %}
+                <tr>
+                  <td>{{ linea.contenedor }}</td>
+                  <td>{{ linea.destino }}</td>
+                  <td>{{ linea.carton }}</td>
+                  <td>{{ linea.calibre }}</td>
+                  <td class="num">{{ linea.total_cajas }}</td>
+                  <td class="num">
+                    {% if linea.precio_encontrado %}
+                      {{ linea.precio_venta_eur|decimal_es }}
+                    {% else %}
+                      —
+                      <span class="etiqueta-sinprecio">Sin precio</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="vacio">No hay líneas preparadas.</p>
+        {% endif %}
+      </section>
+
+      <section class="tarjeta">
+        <div class="cabecera-bloque">
+          <h2>Gastos</h2>
+          <a
+            class="boton boton-suave"
+            href="{% url 'procesamientos:orsero_gastos_editar' procesamiento.id %}"
+            style="padding: 0.45rem 0.8rem; font-size: 0.88rem;"
+          >
+            Modificar
+          </a>
+        </div>
+        {% if gastos %}
+          <table>
+            <thead>
+              <tr>
+                <th>Rubro</th>
+                <th class="num">Extraído</th>
+                <th class="num">Aplicado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for gasto in gastos %}
+                <tr>
+                  <td>{{ gasto.nombre }}</td>
+                  <td class="num">{{ gasto.valor_original|decimal_es }}</td>
+                  <td class="num">
+                    {{ gasto.valor_aplicado|decimal_es }}
+                    {% if gasto.fue_modificado %}
+                      <span class="etiqueta-modificado">Mod.</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>Total</td>
+                <td class="num">{{ total_gastos_originales|decimal_es }}</td>
+                <td class="num">{{ total_gastos_aplicados|decimal_es }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        {% else %}
+          <p class="vacio">No se extrajeron gastos.</p>
+        {% endif %}
+      </section>
+    </div>
+
+    <div class="acciones-finales">
+      <a class="boton boton-secundario" href="{% url 'procesamientos:orsero_cargar' %}">
+        ← Volver a adjuntar archivos
+      </a>
+    </div>
+  </main>
+  <script>
+    (function () {
+      var destinoUrl = "{% url 'procesamientos:orsero_cargar' %}";
+      if (!window.history || !history.pushState) return;
+      history.replaceState({ tdvCierre: true }, "", location.href);
+      history.pushState({ tdvFlujo: true }, "", location.href);
+      window.addEventListener("popstate", function () {
+        window.location.replace(destinoUrl);
+      });
+    })();
+  </script>
+</body>
+</html>
