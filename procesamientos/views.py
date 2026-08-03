@@ -28,9 +28,11 @@ from procesamientos.models import (
     CorreccionGastoOrsero,
     GastoProcesamientoDimanno,
     GeneracionDimanno,
+    GeneracionKraaijeveld,
     GeneracionMaster,
     GeneracionOrsero,
     ProcesamientoDimanno,
+    ProcesamientoKraaijeveld,
     ProcesamientoMaster,
     ProcesamientoOrsero,
     ResolucionDestinoDimanno,
@@ -118,9 +120,12 @@ CLIENTES_PANEL = (
     {
         "codigo": "kraaijeveld",
         "nombre": "Kraaijeveld",
-        "descripcion": "Módulo de liquidaciones Kraaijeveld.",
-        "disponible": False,
-        "url_name": None,
+        "descripcion": (
+            "Validar liquidaciones PDF por contenedor, cruzar "
+            "Despachos y generar el acumulativo."
+        ),
+        "disponible": True,
+        "url_name": "procesamientos:kraaijeveld_cargar",
     },
     {
         "codigo": "master",
@@ -227,8 +232,26 @@ def panel_control(request):
             "-creado_en"
         )[:10]
     ]
+    recientes_kraaijeveld = [
+        {
+            "cliente": "KRAAIJEVELD",
+            "factura_corta": item.destino_ui,
+            "semana": item.semana,
+            "anio": item.anio,
+            "estado_legible": item.estado_legible,
+            "creado_en": item.creado_en,
+            "url_name": "procesamientos:kraaijeveld_detalle",
+            "id": item.id,
+        }
+        for item in ProcesamientoKraaijeveld.objects.order_by(
+            "-creado_en"
+        )[:10]
+    ]
     recientes = sorted(
-        recientes_dimanno + recientes_master + recientes_orsero,
+        recientes_dimanno
+        + recientes_master
+        + recientes_orsero
+        + recientes_kraaijeveld,
         key=lambda item: item["creado_en"],
         reverse=True,
     )[:5]
@@ -245,6 +268,7 @@ def panel_control(request):
                 ProcesamientoDimanno.objects.count()
                 + ProcesamientoMaster.objects.count()
                 + ProcesamientoOrsero.objects.count()
+                + ProcesamientoKraaijeveld.objects.count()
             ),
             "clientes_panel": CLIENTES_PANEL,
             "total_clientes": len(CLIENTES_PANEL),
@@ -439,6 +463,35 @@ def bitacoras(request):
                 "factura": item.procesamiento.nave_texto or "—",
                 "url_detalle": (
                     "procesamientos:orsero_generacion_detalle",
+                    item.id,
+                ),
+            }
+        )
+
+    generaciones_kraaijeveld = (
+        GeneracionKraaijeveld.objects.select_related(
+            "procesamiento",
+        ).order_by("-solicitado_en")[:120]
+    )
+    for item in generaciones_kraaijeveld:
+        estado_texto, estado_clase = estados_generacion.get(
+            item.estado,
+            (item.estado_legible, "proceso"),
+        )
+        eventos.append(
+            {
+                "tipo": "Generación de archivo",
+                "estado": estado_texto,
+                "estado_clase": estado_clase,
+                "cliente": "KRAAIJEVELD",
+                "detalle": estado_texto,
+                "usuario": item.solicitado_por_nombre or "—",
+                "fecha": item.solicitado_en,
+                "factura": (
+                    item.procesamiento.destino_ui or "—"
+                ),
+                "url_detalle": (
+                    "procesamientos:kraaijeveld_generacion_detalle",
                     item.id,
                 ),
             }

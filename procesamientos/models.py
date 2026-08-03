@@ -1134,3 +1134,289 @@ class GeneracionOrsero(models.Model):
     @property
     def tiene_error(self) -> bool:
         return self.estado == self.Estado.ERROR
+
+
+# ---------------------------------------------------------------------------
+# Kraaijeveld
+# ---------------------------------------------------------------------------
+
+
+def _ruta_base_procesamiento_kraaijeveld(
+    instance: "ProcesamientoKraaijeveld",
+) -> str:
+    return f"procesamientos/kraaijeveld/{instance.id}"
+
+
+def ruta_archivo_despachos_kraaijeveld(
+    instance,
+    filename: str,
+) -> str:
+    return (
+        f"{_ruta_base_procesamiento_kraaijeveld(instance)}"
+        "/despachos.xlsx"
+    )
+
+
+def ruta_archivo_cliente_kraaijeveld(
+    instance,
+    filename: str,
+) -> str:
+    return (
+        f"{_ruta_base_procesamiento_kraaijeveld(instance)}"
+        "/cliente.xlsx"
+    )
+
+
+def ruta_archivo_pdf_kraaijeveld(
+    instance: "ArchivoPdfKraaijeveld",
+    filename: str,
+) -> str:
+    nombre = Path(filename or "").name or (
+        f"liquidacion_{instance.orden}.pdf"
+    )
+    return (
+        f"procesamientos/kraaijeveld/"
+        f"{instance.procesamiento_id}/pdfs/"
+        f"{instance.orden:02d}_{nombre}"
+    )
+
+
+def ruta_archivo_resultado_generacion_kraaijeveld(
+    instance: "GeneracionKraaijeveld",
+    filename: str,
+) -> str:
+    return (
+        f"procesamientos/kraaijeveld/"
+        f"{instance.procesamiento_id}/resultados/"
+        f"{instance.id}/resultado.xlsx"
+    )
+
+
+ETIQUETAS_ESTADO_KRAAIJEVELD = {
+    "listo": "Listo",
+    "invalido": "Con errores",
+}
+
+
+class ProcesamientoKraaijeveld(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    anio = models.PositiveIntegerField(default=0)
+    semana = models.PositiveIntegerField(default=0)
+    semana_texto = models.CharField(max_length=20, blank=True)
+    destino_ui = models.CharField(max_length=150, blank=True)
+    estado = models.CharField(max_length=40)
+    destinos_despachos = models.JSONField(
+        default=list,
+        blank=True,
+    )
+    cantidad_contenedores = models.PositiveIntegerField(
+        default=0,
+    )
+    total_cajas_liquidacion = models.DecimalField(
+        max_digits=18,
+        decimal_places=6,
+        default=Decimal("0"),
+    )
+    total_cajas_despachos = models.DecimalField(
+        max_digits=18,
+        decimal_places=6,
+        default=Decimal("0"),
+    )
+    puede_escribir = models.BooleanField(default=False)
+    errores = models.JSONField(default=list, blank=True)
+    advertencias = models.JSONField(default=list, blank=True)
+    lineas_preparadas = models.JSONField(
+        default=list,
+        blank=True,
+    )
+    resumen_gastos_contenedores = models.JSONField(
+        default=list,
+        blank=True,
+    )
+    incluye_precio_fijo = models.BooleanField(default=False)
+    factura_corta_fijo = models.CharField(
+        max_length=10,
+        blank=True,
+    )
+    precio_fijo = models.DecimalField(
+        max_digits=18,
+        decimal_places=6,
+        null=True,
+        blank=True,
+    )
+    moneda_fijo = models.CharField(max_length=10, blank=True)
+    archivo_despachos = models.FileField(
+        upload_to=ruta_archivo_despachos_kraaijeveld,
+    )
+    archivo_cliente = models.FileField(
+        upload_to=ruta_archivo_cliente_kraaijeveld,
+    )
+    creado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="procesamientos_kraaijeveld_creados",
+    )
+    creado_por_nombre = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-creado_en"]
+
+    def __str__(self) -> str:
+        return (
+            f"KRAAIJEVELD {self.destino_ui} "
+            f"W{self.semana} ({self.anio})"
+        )
+
+    @property
+    def carpeta_media(self) -> Path:
+        return (
+            Path(settings.MEDIA_ROOT)
+            / "procesamientos"
+            / "kraaijeveld"
+            / str(self.id)
+        )
+
+    @property
+    def estado_legible(self) -> str:
+        return ETIQUETAS_ESTADO_KRAAIJEVELD.get(
+            self.estado,
+            self.estado,
+        )
+
+
+class ArchivoPdfKraaijeveld(models.Model):
+    procesamiento = models.ForeignKey(
+        ProcesamientoKraaijeveld,
+        related_name="pdfs",
+        on_delete=models.CASCADE,
+    )
+    archivo = models.FileField(
+        upload_to=ruta_archivo_pdf_kraaijeveld,
+    )
+    nombre_original = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+    orden = models.PositiveSmallIntegerField(default=0)
+    creado_en = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["orden"]
+
+    def __str__(self) -> str:
+        return self.nombre_original or f"PDF {self.orden}"
+
+
+class GeneracionKraaijeveld(models.Model):
+    class Estado(models.TextChoices):
+        PENDIENTE = "pendiente", "Pendiente"
+        PROCESANDO = "procesando", "Procesando"
+        COMPLETADO = "completado", "Completado"
+        ERROR = "error", "Error"
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    procesamiento = models.ForeignKey(
+        ProcesamientoKraaijeveld,
+        related_name="generaciones",
+        on_delete=models.CASCADE,
+    )
+    estado = models.CharField(
+        max_length=20,
+        choices=Estado.choices,
+        default=Estado.PENDIENTE,
+    )
+    solicitado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="generaciones_kraaijeveld_solicitadas",
+    )
+    solicitado_por_nombre = models.CharField(max_length=150)
+    solicitado_en = models.DateTimeField(auto_now_add=True)
+    iniciado_en = models.DateTimeField(null=True, blank=True)
+    finalizado_en = models.DateTimeField(null=True, blank=True)
+    archivo_resultado = models.FileField(
+        upload_to=ruta_archivo_resultado_generacion_kraaijeveld,
+        blank=True,
+    )
+    nombre_descarga = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+    mensaje_error = models.TextField(blank=True)
+    filas_agregadas = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+    )
+    fila_inicial = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+    )
+    fila_final = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+    )
+    rango_tabla = models.CharField(
+        max_length=100,
+        blank=True,
+    )
+    intentos = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["-solicitado_en"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["procesamiento"],
+                condition=models.Q(
+                    estado__in=["pendiente", "procesando"]
+                ),
+                name=(
+                    "uniq_generacion_kraaijeveld_activa"
+                    "_por_procesamiento"
+                ),
+            ),
+        ]
+
+    def __str__(self) -> str:
+        return (
+            f"Generación {self.procesamiento_id} "
+            f"({self.estado})"
+        )
+
+    @property
+    def estado_legible(self) -> str:
+        return ETIQUETAS_ESTADO_GENERACION.get(
+            self.estado,
+            self.estado,
+        )
+
+    @property
+    def esta_activa(self) -> bool:
+        return self.estado in {
+            self.Estado.PENDIENTE,
+            self.Estado.PROCESANDO,
+        }
+
+    @property
+    def esta_completada(self) -> bool:
+        return self.estado == self.Estado.COMPLETADO
+
+    @property
+    def tiene_error(self) -> bool:
+        return self.estado == self.Estado.ERROR

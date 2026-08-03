@@ -541,3 +541,193 @@ FormsetGastosOrsero = modelformset_factory(
     extra=0,
     can_delete=False,
 )
+
+
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault(
+            "widget",
+            MultipleFileInput(attrs={"accept": ".pdf"}),
+        )
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            return [
+                single_file_clean(item, initial) for item in data
+            ]
+        return [single_file_clean(data, initial)]
+
+
+MONEDAS_FIJO_KRAAIJEVELD = (
+    ("EUR", "EUR"),
+    ("USD", "USD"),
+)
+
+
+class FormularioCargaKraaijeveld(forms.Form):
+    semana = forms.IntegerField(
+        label="Semana",
+        min_value=1,
+        max_value=53,
+        error_messages={
+            "required": "Indique la semana.",
+            "invalid": "La semana debe ser un número entero.",
+            "min_value": "La semana mínima permitida es 1.",
+            "max_value": "La semana máxima permitida es 53.",
+        },
+    )
+    anio = forms.IntegerField(
+        label="Año",
+        min_value=2024,
+        max_value=2100,
+        initial=2026,
+        error_messages={
+            "required": "Indique el año.",
+            "invalid": "El año debe ser un número entero.",
+            "min_value": "El año mínimo permitido es 2024.",
+            "max_value": "El año máximo permitido es 2100.",
+        },
+    )
+    destino = forms.CharField(
+        label="Destino",
+        max_length=150,
+        error_messages={
+            "required": "Indique el destino.",
+            "max_length": (
+                "El destino no puede superar los 150 caracteres."
+            ),
+        },
+    )
+    archivos_pdf = MultipleFileField(
+        label="Liquidaciones Kraaijeveld (PDF)",
+        error_messages={
+            "required": "Adjunte al menos un PDF de liquidación.",
+        },
+    )
+    archivo_despachos = forms.FileField(
+        label="Archivo de despachos",
+        error_messages={
+            "required": "Seleccione el archivo de despachos.",
+            "invalid": "El archivo de despachos no es válido.",
+        },
+    )
+    archivo_cliente = forms.FileField(
+        label="Acumulativo Kraaijeveld Liquidaciones",
+        error_messages={
+            "required": (
+                "Seleccione el archivo acumulativo del cliente."
+            ),
+            "invalid": (
+                "El archivo del cliente no es válido."
+            ),
+        },
+    )
+    incluye_precio_fijo = forms.BooleanField(
+        label="Incluye factura a precio fijo",
+        required=False,
+    )
+    factura_corta_fijo = forms.CharField(
+        label="Factura (4 dígitos) a precio fijo",
+        required=False,
+        max_length=4,
+    )
+    precio_fijo = forms.DecimalField(
+        label="Precio fijo",
+        required=False,
+        max_digits=18,
+        decimal_places=6,
+        localize=True,
+    )
+    moneda_fijo = forms.ChoiceField(
+        label="Moneda del precio fijo",
+        required=False,
+        choices=(("", "—"),) + MONEDAS_FIJO_KRAAIJEVELD,
+    )
+
+    def clean_destino(self):
+        valor = (self.cleaned_data.get("destino") or "").strip().upper()
+        if not valor:
+            raise forms.ValidationError("Indique el destino.")
+        return valor
+
+    def clean_archivos_pdf(self):
+        archivos = self.cleaned_data.get("archivos_pdf") or []
+        archivos = [a for a in archivos if a]
+        if not archivos:
+            raise forms.ValidationError(
+                "Adjunte al menos un PDF de liquidación."
+            )
+        for archivo in archivos:
+            nombre = getattr(archivo, "name", "") or ""
+            if not nombre.lower().endswith(".pdf"):
+                raise forms.ValidationError(
+                    "Todos los archivos de liquidación deben "
+                    "ser PDF."
+                )
+        return archivos
+
+    def clean_archivo_despachos(self):
+        archivo = self.cleaned_data.get("archivo_despachos")
+        if archivo is None:
+            return archivo
+        nombre = getattr(archivo, "name", "") or ""
+        if not nombre.lower().endswith(".xlsx"):
+            raise forms.ValidationError(
+                "El archivo de despachos debe ser .xlsx."
+            )
+        return archivo
+
+    def clean_archivo_cliente(self):
+        archivo = self.cleaned_data.get("archivo_cliente")
+        if archivo is None:
+            return archivo
+        nombre = getattr(archivo, "name", "") or ""
+        if not nombre.lower().endswith(".xlsx"):
+            raise forms.ValidationError(
+                "El acumulativo del cliente debe ser .xlsx."
+            )
+        return archivo
+
+    def clean_factura_corta_fijo(self):
+        return (
+            self.cleaned_data.get("factura_corta_fijo") or ""
+        ).strip()
+
+    def clean(self):
+        cleaned = super().clean()
+        if not cleaned.get("incluye_precio_fijo"):
+            return cleaned
+
+        factura = (
+            cleaned.get("factura_corta_fijo") or ""
+        ).strip()
+        if len(factura) != 4 or not factura.isdigit():
+            self.add_error(
+                "factura_corta_fijo",
+                (
+                    "Indique los 4 dígitos de la factura a "
+                    "precio fijo."
+                ),
+            )
+
+        precio = cleaned.get("precio_fijo")
+        if precio is None or precio <= 0:
+            self.add_error(
+                "precio_fijo",
+                "Indique el precio fijo (mayor a 0).",
+            )
+
+        moneda = (cleaned.get("moneda_fijo") or "").strip().upper()
+        if moneda not in {"EUR", "USD"}:
+            self.add_error(
+                "moneda_fijo",
+                "Seleccione la moneda EUR o USD.",
+            )
+
+        return cleaned
