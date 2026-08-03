@@ -1,6 +1,11 @@
 from django.urls import path
 
-from procesamientos import views, views_master, views_orsero
+from procesamientos import (
+    views,
+    views_kraaijeveld,
+    views_master,
+    views_orsero,
+)
 
 app_name = "procesamientos"
 
@@ -118,5 +123,33 @@ urlpatterns = [
         ),
         views_orsero.descargar_generacion_orsero,
         name="orsero_generacion_descargar",
+    ),
+    path(
+        "kraaijeveld/",
+        views_kraaijeveld.cargar_kraaijeveld,
+        name="kraaijeveld_cargar",
+    ),
+    path(
+        "kraaijeveld/<uuid:procesamiento_id>/",
+        views_kraaijeveld.detalle_kraaijeveld,
+        name="kraaijeveld_detalle",
+    ),
+    path(
+        "kraaijeveld/<uuid:procesamiento_id>/generar/",
+        views_kraaijeveld.solicitar_generacion_kraaijeveld,
+        name="kraaijeveld_generar",
+    ),
+    path(
+        "kraaijeveld/generaciones/<uuid:generacion_id>/",
+        views_kraaijeveld.detalle_generacion_kraaijeveld,
+        name="kraaijeveld_generacion_detalle",
+    ),
+    path(
+        (
+            "kraaijeveld/generaciones/<uuid:generacion_id>/"
+            "descargar/"
+        ),
+        views_kraaijeveld.descargar_generacion_kraaijeveld,
+        name="kraaijeveld_generacion_descargar",
     ),
 ]
