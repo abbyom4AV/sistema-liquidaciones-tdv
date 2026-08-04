@@ -31,10 +31,12 @@ from procesamientos.models import (
     GeneracionKraaijeveld,
     GeneracionMaster,
     GeneracionOrsero,
+    GeneracionSifa,
     ProcesamientoDimanno,
     ProcesamientoKraaijeveld,
     ProcesamientoMaster,
     ProcesamientoOrsero,
+    ProcesamientoSifa,
     ResolucionDestinoDimanno,
 )
 from procesamientos.services.generacion_dimanno import (
@@ -157,9 +159,12 @@ CLIENTES_PANEL = (
     {
         "codigo": "sifa",
         "nombre": "SIFA",
-        "descripcion": "Módulo de liquidaciones SIFA.",
-        "disponible": False,
-        "url_name": None,
+        "descripcion": (
+            "Validar liquidación Excel, cruzar Despachos "
+            "y generar el acumulativo."
+        ),
+        "disponible": True,
+        "url_name": "procesamientos:sifa_cargar",
     },
     {
         "codigo": "tdv_europa",
@@ -247,11 +252,29 @@ def panel_control(request):
             "-creado_en"
         )[:10]
     ]
+    recientes_sifa = [
+        {
+            "cliente": "SIFA",
+            "factura_corta": (
+                item.factura_corta or item.destino_ui
+            ),
+            "semana": item.semana,
+            "anio": item.anio,
+            "estado_legible": item.estado_legible,
+            "creado_en": item.creado_en,
+            "url_name": "procesamientos:sifa_detalle",
+            "id": item.id,
+        }
+        for item in ProcesamientoSifa.objects.order_by(
+            "-creado_en"
+        )[:10]
+    ]
     recientes = sorted(
         recientes_dimanno
         + recientes_master
         + recientes_orsero
-        + recientes_kraaijeveld,
+        + recientes_kraaijeveld
+        + recientes_sifa,
         key=lambda item: item["creado_en"],
         reverse=True,
     )[:5]
@@ -269,6 +292,7 @@ def panel_control(request):
                 + ProcesamientoMaster.objects.count()
                 + ProcesamientoOrsero.objects.count()
                 + ProcesamientoKraaijeveld.objects.count()
+                + ProcesamientoSifa.objects.count()
             ),
             "clientes_panel": CLIENTES_PANEL,
             "total_clientes": len(CLIENTES_PANEL),
@@ -492,6 +516,37 @@ def bitacoras(request):
                 ),
                 "url_detalle": (
                     "procesamientos:kraaijeveld_generacion_detalle",
+                    item.id,
+                ),
+            }
+        )
+
+    generaciones_sifa = (
+        GeneracionSifa.objects.select_related(
+            "procesamiento",
+        ).order_by("-solicitado_en")[:120]
+    )
+    for item in generaciones_sifa:
+        estado_texto, estado_clase = estados_generacion.get(
+            item.estado,
+            (item.estado_legible, "proceso"),
+        )
+        eventos.append(
+            {
+                "tipo": "Generación de archivo",
+                "estado": estado_texto,
+                "estado_clase": estado_clase,
+                "cliente": "SIFA",
+                "detalle": estado_texto,
+                "usuario": item.solicitado_por_nombre or "—",
+                "fecha": item.solicitado_en,
+                "factura": (
+                    item.procesamiento.factura_corta
+                    or item.procesamiento.destino_ui
+                    or "—"
+                ),
+                "url_detalle": (
+                    "procesamientos:sifa_generacion_detalle",
                     item.id,
                 ),
             }
