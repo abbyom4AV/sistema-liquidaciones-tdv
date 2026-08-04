@@ -9,9 +9,11 @@ from procesamientos.models import (
     GeneracionDimanno,
     GeneracionKraaijeveld,
     GeneracionMaster,
+    GeneracionSifa,
     ProcesamientoDimanno,
     ProcesamientoKraaijeveld,
     ProcesamientoMaster,
+    ProcesamientoSifa,
     ResolucionDestinoDimanno,
 )
 
@@ -311,6 +313,67 @@ class ProcesamientoKraaijeveldAdmin(admin.ModelAdmin):
 
 @admin.register(GeneracionKraaijeveld)
 class GeneracionKraaijeveldAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "procesamiento",
+        "estado",
+        "solicitado_por_nombre",
+        "solicitado_en",
+        "intentos",
+    )
+    list_filter = ("estado",)
+    readonly_fields = (
+        "id",
+        "procesamiento",
+        "estado",
+        "solicitado_por",
+        "solicitado_por_nombre",
+        "solicitado_en",
+        "iniciado_en",
+        "finalizado_en",
+        "archivo_resultado",
+        "nombre_descarga",
+        "mensaje_error",
+        "filas_agregadas",
+        "fila_inicial",
+        "fila_final",
+        "rango_tabla",
+        "intentos",
+    )
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(ProcesamientoSifa)
+class ProcesamientoSifaAdmin(admin.ModelAdmin):
+    list_display = (
+        "destino_ui",
+        "factura_corta",
+        "semana",
+        "anio",
+        "estado",
+        "puede_escribir",
+        "cantidad_contenedores",
+        "creado_por_nombre",
+        "creado_en",
+    )
+    list_filter = ("estado", "anio")
+    search_fields = ("destino_ui", "factura_corta")
+    readonly_fields = (
+        "id",
+        "creado_por",
+        "creado_por_nombre",
+        "creado_en",
+        "actualizado_en",
+    )
+
+
+@admin.register(GeneracionSifa)
+class GeneracionSifaAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "procesamiento",

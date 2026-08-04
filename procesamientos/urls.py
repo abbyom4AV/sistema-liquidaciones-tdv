@@ -5,6 +5,7 @@ from procesamientos import (
     views_kraaijeveld,
     views_master,
     views_orsero,
+    views_sifa,
 )
 
 app_name = "procesamientos"
@@ -151,5 +152,33 @@ urlpatterns = [
         ),
         views_kraaijeveld.descargar_generacion_kraaijeveld,
         name="kraaijeveld_generacion_descargar",
+    ),
+    path(
+        "sifa/",
+        views_sifa.cargar_sifa,
+        name="sifa_cargar",
+    ),
+    path(
+        "sifa/<uuid:procesamiento_id>/",
+        views_sifa.detalle_sifa,
+        name="sifa_detalle",
+    ),
+    path(
+        "sifa/<uuid:procesamiento_id>/generar/",
+        views_sifa.solicitar_generacion_sifa,
+        name="sifa_generar",
+    ),
+    path(
+        "sifa/generaciones/<uuid:generacion_id>/",
+        views_sifa.detalle_generacion_sifa,
+        name="sifa_generacion_detalle",
+    ),
+    path(
+        (
+            "sifa/generaciones/<uuid:generacion_id>/"
+            "descargar/"
+        ),
+        views_sifa.descargar_generacion_sifa,
+        name="sifa_generacion_descargar",
     ),
 ]
