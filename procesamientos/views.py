@@ -115,9 +115,12 @@ CLIENTES_PANEL = (
     {
         "codigo": "glamour",
         "nombre": "Glamour",
-        "descripcion": "Módulo de liquidaciones Glamour.",
-        "disponible": False,
-        "url_name": None,
+        "descripcion": (
+            "Validar liquidaciones PDF, mapear gastos "
+            "y generar el acumulativo."
+        ),
+        "disponible": True,
+        "url_name": "procesamientos:glamour_cargar",
     },
     {
         "codigo": "kraaijeveld",
