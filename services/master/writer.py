@@ -588,14 +588,12 @@ def escribir_archivo_master(
             ) from error
 
         inicio = time.perf_counter()
-        _, posiciones, formula_cols = (
+        _, posiciones, _formula_cols = (
             obtener_encabezados_tabla_master(tabla)
         )
-        validar_formulas_ultima_fila_master(
-            tabla=tabla,
-            posiciones=posiciones,
-            columnas_formula=formula_cols,
-        )
+        # No se validan ni propagan fórmulas: el usuario las
+        # baja manualmente al abrir el acumulativo (igual que
+        # SIFA / Kraaijeveld).
 
         if existe_liquidacion_duplicada_master(
             tabla=tabla,
@@ -645,28 +643,15 @@ def escribir_archivo_master(
             time.perf_counter() - inicio,
         )
 
-        fila_plantilla = hoja.api.Range(
-            hoja.api.Cells(fila_plantilla_excel, col_ini),
-            hoja.api.Cells(fila_plantilla_excel, col_fin),
-        )
         rango_nuevas = hoja.api.Range(
             hoja.api.Cells(fila_inicial, col_ini),
             hoja.api.Cells(fila_final, col_fin),
         )
 
-        # Copy+FillDown + reparación de columnas que Tabla1
-        # deja vacías (Comision %, Local Charges, etc.).
-        inicio = time.perf_counter()
-        _propagar_formulas_columnas(
-            fila_plantilla=fila_plantilla,
-            rango_nuevas=rango_nuevas,
-            posiciones=posiciones,
-            columnas_formula=formula_cols,
-            aplicacion=aplicacion,
-        )
-        _log_fase(
-            "propagar_formulas",
-            time.perf_counter() - inicio,
+        logger.info(
+            "generacion_master=%s digitados_only=1 "
+            "(sin formulas; fill-down manual)",
+            _contexto_generacion.get(),
         )
 
         filas_valores = [
