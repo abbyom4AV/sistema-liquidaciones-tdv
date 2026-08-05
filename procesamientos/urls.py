@@ -2,6 +2,7 @@ from django.urls import path
 
 from procesamientos import (
     views,
+    views_glamour,
     views_kraaijeveld,
     views_master,
     views_orsero,
@@ -180,5 +181,38 @@ urlpatterns = [
         ),
         views_sifa.descargar_generacion_sifa,
         name="sifa_generacion_descargar",
+    ),
+    path(
+        "glamour/",
+        views_glamour.glamour_cargar,
+        name="glamour_cargar",
+    ),
+    path(
+        "glamour/<uuid:procesamiento_id>/",
+        views_glamour.glamour_validacion,
+        name="glamour_validacion",
+    ),
+    path(
+        "glamour/<uuid:procesamiento_id>/mapear-gastos/",
+        views_glamour.glamour_mapear_gastos,
+        name="glamour_mapear_gastos",
+    ),
+    path(
+        "glamour/<uuid:procesamiento_id>/generar/",
+        views_glamour.glamour_generar,
+        name="glamour_generar",
+    ),
+    path(
+        "glamour/generaciones/<uuid:generacion_id>/",
+        views_glamour.glamour_generacion_detalle,
+        name="glamour_generacion_detalle",
+    ),
+    path(
+        (
+            "glamour/generaciones/<uuid:generacion_id>/"
+            "descargar/"
+        ),
+        views_glamour.glamour_generacion_descargar,
+        name="glamour_generacion_descargar",
     ),
 ]
