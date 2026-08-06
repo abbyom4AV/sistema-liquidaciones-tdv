@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextvars
 import logging
+import re
 import shutil
 import tempfile
 import time
@@ -9,29 +10,15 @@ from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
 from typing import Any
+from xml.etree import ElementTree as ET
+from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
-from pywintypes import com_error
-import xlwings as xw
-
-from services.dimanno.matcher import (
-    interpretar_semana,
-    normalizar_texto,
-)
+from services.dimanno.matcher import interpretar_semana
 from services.dimanno.writer import (
-    cerrar_aplicacion_excel,
-    copiar_rango_con_reintentos,
     decimal_a_excel,
-    esperar_excel_listo,
-    escribir_valores_bloque,
-    ErrorEscrituraDimanno,
-    guardar_libro_con_reintentos,
     normalizar_factura_corta,
-    recalcular_dirigido_con_fallback,
-    rellenar_hacia_abajo_con_reintentos,
 )
-from services.master.processor import (
-    ResultadoPreparacionMaster,
-)
+from services.master.processor import ResultadoPreparacionMaster
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +32,17 @@ _contexto_generacion: contextvars.ContextVar[str] = (
 HOJA_RAW_DATA = "Raw Data"
 TABLA_RAW_DATA = "Tabla1"
 NOMBRE_DESCARGA_MASTER = "Master Liquidaciones (1).xlsx"
+SHARED_STRINGS_XML = "xl/sharedStrings.xml"
+_NS_MAIN = (
+    "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+)
+_NS_REL = (
+    "http://schemas.openxmlformats.org/package/2006/relationships"
+)
+_NS_OFFICE_REL = (
+    "http://schemas.openxmlformats.org/officeDocument/"
+    "2006/relationships"
+)
 
 COLUMNAS_ENTRADA = {
     "Semana",
@@ -70,19 +68,27 @@ COLUMNAS_ENTRADA = {
     "Precio de Venta €",
 }
 
-COLUMNAS_FORMULA_CRITICAS: tuple[str, ...] = (
-    "Contar Fcls",
-    "Fact. 4 Digitos",
-    "Total Cajas Netas",
-    "Total Venta €",
-    "Comision %",
-    "Comision €",
-    "Comision Formula",
-    "GED Total  €",
-    "Retorno  EXW €",
-    "Precio de Venta $",
-    "Local Charges",
+ALIAS_COLUMNAS = {
+    "Contenedor ": ("Contenedor ", "Contenedor"),
+    "Precio de Venta €": (
+        "Precio de Venta €",
+        "Precio de Venta € ",
+    ),
+}
+
+COLUMNA_FACTURA_DUPLICADO = "Fact. 4 Digitos"
+
+_CELL_RE = re.compile(
+    r'<c r="([A-Z]+)(\d+)"([^>]*)(?:/>|>(.*?)</c>)',
+    re.DOTALL,
 )
+_ROW_OPEN_RE = re.compile(r'<row r="(\d+)"([^>]*)>')
+_ROW_RE = re.compile(r"<row\b[^>]*>.*?</row>", re.DOTALL)
+_TABLE_REF_RE = re.compile(r'\bref="([^"]+)"')
+_DIMENSION_RE = re.compile(r'<dimension[^>]*ref="([^"]+)"[^>]*/>')
+_V_RE = re.compile(r"<v>(.*?)</v>", re.DOTALL)
+_INLINE_T_RE = re.compile(r"<t[^>]*>(.*?)</t>", re.DOTALL)
+_ATTR_T_RE = re.compile(r'\bt="([^"]*)"')
 
 
 class ErrorEscrituraMaster(Exception):
@@ -132,101 +138,316 @@ def _log_fase(fase: str, segundos: float) -> None:
     )
 
 
-def obtener_encabezados_tabla_master(
-    tabla: Any,
-) -> tuple[list[str], dict[str, int], set[str]]:
-    encabezados: list[str] = []
-    posiciones: dict[str, int] = {}
+def get_column_letter(col: int) -> str:
+    if col < 1:
+        raise ValueError(col)
+    letras: list[str] = []
+    while col:
+        col, resto = divmod(col - 1, 26)
+        letras.append(chr(65 + resto))
+    return "".join(reversed(letras))
 
-    for indice in range(1, tabla.ListColumns.Count + 1):
-        nombre = str(tabla.ListColumns(indice).Name)
-        if nombre in posiciones:
+
+def column_index_from_string(letra: str) -> int:
+    total = 0
+    for ch in letra.upper():
+        if not ("A" <= ch <= "Z"):
+            raise ValueError(letra)
+        total = total * 26 + (ord(ch) - 64)
+    return total
+
+
+def _resolver_rutas_raw_data(
+    zipped: ZipFile,
+) -> tuple[str, str]:
+    """
+    Localiza sheet XML de 'Raw Data' y table XML de 'Tabla1'
+    sin asumir el índice de hoja (sheet3, sheet1, etc.).
+    """
+    try:
+        workbook_xml = zipped.read("xl/workbook.xml").decode(
+            "utf-8"
+        )
+        rels_xml = zipped.read(
+            "xl/_rels/workbook.xml.rels"
+        ).decode("utf-8")
+    except KeyError as error:
+        raise EstructuraRawDataMasterError(
+            "El acumulativo no tiene workbook.xml válido."
+        ) from error
+
+    wb_root = ET.fromstring(workbook_xml)
+    rid: str | None = None
+    for sheet in wb_root.findall(f"{{{_NS_MAIN}}}sheets/{{{_NS_MAIN}}}sheet"):
+        if sheet.attrib.get("name") == HOJA_RAW_DATA:
+            rid = sheet.attrib.get(f"{{{_NS_OFFICE_REL}}}id")
+            break
+    if not rid:
+        raise EstructuraRawDataMasterError(
+            f"No existe la hoja {HOJA_RAW_DATA!r} en el acumulativo."
+        )
+
+    rels_root = ET.fromstring(rels_xml)
+    target: str | None = None
+    for rel in rels_root.findall(f"{{{_NS_REL}}}Relationship"):
+        if rel.attrib.get("Id") == rid:
+            target = rel.attrib.get("Target")
+            break
+    if not target:
+        raise EstructuraRawDataMasterError(
+            f"No se encontró la ruta de la hoja {HOJA_RAW_DATA!r}."
+        )
+    target = target.replace("\\", "/").lstrip("/")
+    if target.startswith("xl/"):
+        hoja_xml = target
+    else:
+        hoja_xml = f"xl/{target}"
+    if hoja_xml not in zipped.namelist():
+        raise EstructuraRawDataMasterError(
+            f"No existe {hoja_xml} en el acumulativo."
+        )
+
+    sheet_name = Path(hoja_xml).name
+    rels_sheet = f"xl/worksheets/_rels/{sheet_name}.rels"
+    if rels_sheet not in zipped.namelist():
+        raise EstructuraRawDataMasterError(
+            f"No hay relaciones de tablas para {HOJA_RAW_DATA!r}."
+        )
+    sheet_rels = ET.fromstring(
+        zipped.read(rels_sheet).decode("utf-8")
+    )
+    candidatos: list[str] = []
+    for rel in sheet_rels.findall(f"{{{_NS_REL}}}Relationship"):
+        tipo = rel.attrib.get("Type", "")
+        if not tipo.endswith("/table"):
+            continue
+        dest = rel.attrib.get("Target", "")
+        if not dest:
+            continue
+        if dest.startswith("../"):
+            candidatos.append("xl/" + dest[3:])
+        elif dest.startswith("xl/"):
+            candidatos.append(dest)
+        else:
+            candidatos.append(f"xl/tables/{Path(dest).name}")
+
+    tabla_xml: str | None = None
+    for ruta_tabla in candidatos:
+        if ruta_tabla not in zipped.namelist():
+            continue
+        crudo = zipped.read(ruta_tabla).decode("utf-8")
+        if f'name="{TABLA_RAW_DATA}"' in crudo or (
+            f"name='{TABLA_RAW_DATA}'" in crudo
+        ):
+            tabla_xml = ruta_tabla
+            break
+    if tabla_xml is None:
+        raise EstructuraRawDataMasterError(
+            f"No se encontró la tabla {TABLA_RAW_DATA!r} "
+            f"en la hoja {HOJA_RAW_DATA!r}."
+        )
+    return hoja_xml, tabla_xml
+
+
+def _resolver_nombre_columna(
+    encontrados: set[str],
+    nombre: str,
+) -> str:
+    if nombre in encontrados:
+        return nombre
+    for alias in ALIAS_COLUMNAS.get(nombre, ()):
+        if alias in encontrados:
+            return alias
+    return nombre
+
+
+def _xml_escape(texto: str) -> str:
+    return (
+        texto.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
+
+
+def _xml_unescape(texto: str) -> str:
+    return (
+        texto.replace("&quot;", '"')
+        .replace("&gt;", ">")
+        .replace("&lt;", "<")
+        .replace("&amp;", "&")
+    )
+
+
+def _cargar_shared_strings(zipped: ZipFile) -> list[str]:
+    if SHARED_STRINGS_XML not in zipped.namelist():
+        return []
+    root = ET.fromstring(zipped.read(SHARED_STRINGS_XML))
+    ns = {
+        "m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+    }
+    cadenas: list[str] = []
+    for si in root.findall("m:si", ns):
+        textos = [t.text or "" for t in si.findall(".//m:t", ns)]
+        if textos:
+            cadenas.append("".join(textos))
+            continue
+        cadenas.append("")
+    return cadenas
+
+
+def _valor_desde_celda_xml(
+    attrs: str,
+    cuerpo: str | None,
+    shared: list[str],
+) -> Any:
+    cuerpo = cuerpo or ""
+    tipo_match = _ATTR_T_RE.search(attrs)
+    tipo = tipo_match.group(1) if tipo_match else ""
+
+    if tipo == "inlineStr":
+        partes = _INLINE_T_RE.findall(cuerpo)
+        return _xml_unescape("".join(partes)) if partes else ""
+
+    valor_match = _V_RE.search(cuerpo)
+    if valor_match is None:
+        return None
+    crudo = _xml_unescape(valor_match.group(1))
+
+    if tipo == "s":
+        try:
+            return shared[int(crudo)]
+        except (ValueError, IndexError):
+            return crudo
+
+    if tipo == "b":
+        return crudo in {"1", "true", "TRUE"}
+
+    try:
+        if "." in crudo or "e" in crudo.lower():
+            return float(crudo)
+        return int(crudo)
+    except ValueError:
+        return crudo
+
+
+def _celdas_de_fila_xml(
+    fila_xml: str,
+    shared: list[str],
+) -> dict[int, Any]:
+    valores: dict[int, Any] = {}
+    for match in _CELL_RE.finditer(fila_xml):
+        letra, _fila, attrs, cuerpo = match.groups()
+        col = column_index_from_string(letra)
+        valores[col] = _valor_desde_celda_xml(attrs, cuerpo, shared)
+    return valores
+
+
+def _extraer_fila_xml(sheet_xml: str, fila: int) -> str:
+    match = re.search(
+        rf'<row r="{fila}"[^>]*>.*?</row>',
+        sheet_xml,
+        re.DOTALL,
+    )
+    if match is None:
+        raise EstructuraRawDataMasterError(
+            f"No se encontró la fila {fila} en la hoja Raw Data."
+        )
+    return match.group(0)
+
+
+def _leer_encabezados_xml(
+    sheet_xml: str,
+    shared: list[str],
+    col_ini: int,
+    col_fin: int,
+) -> dict[str, int]:
+    fila1 = _extraer_fila_xml(sheet_xml, 1)
+    valores = _celdas_de_fila_xml(fila1, shared)
+    encabezados: dict[str, int] = {}
+    for col in range(col_ini, col_fin + 1):
+        crudo = valores.get(col)
+        nombre = "" if crudo is None else str(crudo)
+        if nombre in encabezados:
             raise EstructuraRawDataMasterError(
                 f"El encabezado {nombre!r} está repetido."
             )
-        encabezados.append(nombre)
-        posiciones[nombre] = indice
+        encabezados[nombre] = col
 
     encontrados = set(encabezados)
-    faltantes = COLUMNAS_ENTRADA - encontrados
+    faltantes: list[str] = []
+    posiciones: dict[str, int] = {}
+    for nombre in COLUMNAS_ENTRADA:
+        resuelto = _resolver_nombre_columna(encontrados, nombre)
+        if resuelto not in encontrados:
+            faltantes.append(nombre)
+            continue
+        posiciones[nombre] = encabezados[resuelto]
+
     if faltantes:
         raise EstructuraRawDataMasterError(
             "Faltan columnas digitadas en Tabla1: "
             + ", ".join(repr(n) for n in sorted(faltantes))
         )
-
-    formula_cols = encontrados - COLUMNAS_ENTRADA
-    return encabezados, posiciones, formula_cols
+    return posiciones
 
 
-def validar_formulas_ultima_fila_master(
-    tabla: Any,
-    posiciones: dict[str, int],
-    columnas_formula: set[str],
-) -> None:
-    cuerpo = tabla.DataBodyRange
-    if cuerpo is None or cuerpo.Rows.Count < 1:
-        raise EstructuraRawDataMasterError(
-            "Tabla1 no tiene fila plantilla de fórmulas."
-        )
-
-    ultima = cuerpo.Rows(cuerpo.Rows.Count)
-    sin_formula: list[str] = []
-    for nombre in sorted(columnas_formula):
-        if nombre not in posiciones:
+def _columna_factura_digitos(
+    sheet_xml: str,
+    shared: list[str],
+    col_ini: int,
+    col_fin: int,
+) -> int:
+    fila1 = _extraer_fila_xml(sheet_xml, 1)
+    valores = _celdas_de_fila_xml(fila1, shared)
+    for col in range(col_ini, col_fin + 1):
+        crudo = valores.get(col)
+        if crudo is None:
             continue
-        celda = ultima.Cells(1, posiciones[nombre])
-        if not bool(celda.HasFormula):
-            # Algunas columnas auxiliares pueden quedar vacías.
-            if nombre in COLUMNAS_FORMULA_CRITICAS:
-                sin_formula.append(nombre)
-
-    if sin_formula:
-        raise EstructuraRawDataMasterError(
-            "La última fila no tiene fórmula en: "
-            + ", ".join(repr(n) for n in sin_formula)
-        )
+        if str(crudo) == COLUMNA_FACTURA_DUPLICADO:
+            return col
+    raise EstructuraRawDataMasterError(
+        f"No existe la columna {COLUMNA_FACTURA_DUPLICADO!r} "
+        "en Tabla1 (necesaria para detectar duplicados)."
+    )
 
 
-def existe_liquidacion_duplicada_master(
-    tabla: Any,
+def _existe_liquidacion_duplicada_xml(
+    sheet_xml: str,
+    shared: list[str],
     posiciones: dict[str, int],
+    col_factura: int,
+    *,
     anio: int,
     semana: int,
     factura_corta: str,
+    fila_fin: int,
 ) -> bool:
-    cuerpo = tabla.DataBodyRange
-    if cuerpo is None:
-        return False
-
-    filas = int(cuerpo.Rows.Count)
-    if filas < 1:
+    if fila_fin < 2:
         return False
 
     factura_buscada = normalizar_factura_corta(factura_corta)
+    col_anio = posiciones["Año"]
+    col_semana = posiciones["Semana"]
 
-    def _col(nombre: str) -> list[Any]:
-        crudo = cuerpo.Columns(posiciones[nombre]).Value2
-        if filas <= 1:
-            return [crudo]
-        return [
-            fila[0] if isinstance(fila, (list, tuple)) else fila
-            for fila in crudo
-        ]
+    for fila_xml in _ROW_RE.finditer(sheet_xml):
+        abierta = _ROW_OPEN_RE.match(fila_xml.group(0))
+        if abierta is None:
+            continue
+        num_fila = int(abierta.group(1))
+        if num_fila < 2 or num_fila > fila_fin:
+            continue
 
-    valores_anio = _col("Año")
-    valores_semana = _col("Semana")
-    valores_factura = _col("Fact. 4 Digitos")
+        celdas = _celdas_de_fila_xml(fila_xml.group(0), shared)
 
-    for i in range(filas):
         try:
-            anio_existente = int(float(valores_anio[i]))
+            anio_existente = int(float(celdas.get(col_anio)))
         except (TypeError, ValueError):
             continue
 
         try:
-            semana_existente, anio_en_semana = (
-                interpretar_semana(valores_semana[i])
+            semana_existente, anio_en_semana = interpretar_semana(
+                celdas.get(col_semana)
             )
         except Exception:
             continue
@@ -237,12 +458,77 @@ def existe_liquidacion_duplicada_master(
         if (
             anio_existente == anio
             and semana_existente == semana
-            and normalizar_factura_corta(valores_factura[i])
+            and normalizar_factura_corta(
+                celdas.get(col_factura)
+            )
             == factura_buscada
         ):
             return True
 
     return False
+
+
+def _attrs_sin_tipo(attrs: str) -> str:
+    limpio = re.sub(r'\bt="[^"]*"', "", attrs)
+    return re.sub(r"\s+", " ", limpio).rstrip()
+
+
+def _celda_valor_xml(
+    col_letra: str,
+    fila: int,
+    attrs: str,
+    valor: Any,
+) -> str:
+    ref = f"{col_letra}{fila}"
+    base = _attrs_sin_tipo(attrs)
+    if valor is None or valor == "":
+        return f'<c r="{ref}"{base}/>'
+
+    if isinstance(valor, bool):
+        return (
+            f'<c r="{ref}"{base} t="b">'
+            f"<v>{1 if valor else 0}</v></c>"
+        )
+
+    if isinstance(valor, Decimal):
+        valor = float(valor)
+
+    if isinstance(valor, (int, float)) and not isinstance(
+        valor, bool
+    ):
+        return f'<c r="{ref}"{base}><v>{valor}</v></c>'
+
+    texto = _xml_escape(str(valor))
+    return (
+        f'<c r="{ref}"{base} t="inlineStr">'
+        f"<is><t>{texto}</t></is></c>"
+    )
+
+
+def _fila_digitada_xml(
+    fila: int,
+    valores_por_col: dict[int, Any],
+    *,
+    col_ini: int,
+    col_fin: int,
+) -> str:
+    """
+    Solo escribe columnas digitadas. Sin fórmulas: el usuario
+    las bajará manualmente al abrir el acumulativo.
+    """
+    spans = f"{col_ini}:{col_fin}"
+    partes = [f'<row r="{fila}" spans="{spans}">']
+    for col in sorted(valores_por_col):
+        partes.append(
+            _celda_valor_xml(
+                get_column_letter(col),
+                fila,
+                "",
+                valores_por_col[col],
+            )
+        )
+    partes.append("</row>")
+    return "".join(partes)
 
 
 def construir_valores_fila_master(
@@ -266,14 +552,14 @@ def construir_valores_fila_master(
 
     return {
         "Semana": semana_texto,
-        "Año": despacho.anio,
+        "Año": str(despacho.anio),
         "Cliente": despacho.cliente,
         "Nave": despacho.barco,
         "Contenedor ": despacho.contenedor,
         "Destino": procesamiento.destino_final,
         "Tipo de fruta": linea.tipo_fruta,
         "Cartón": despacho.carton,
-        "# Calibre": despacho.calibre,
+        "# Calibre": str(despacho.calibre),
         "Total Cajas": despacho.total_cajas,
         "Merma": linea.merma if linea.merma else None,
         "LC Euros": decimal_a_excel(gastos["LC Euros"]),
@@ -301,8 +587,6 @@ def construir_valores_fila_master(
         "Comision Euros": decimal_a_excel(
             gastos["Comision Euros"]
         ),
-        # Texto decimal completo: Excel lo convierte a número
-        # sin el redondeo a 2 decimales del pipeline antiguo.
         "Precio de Venta €": format(
             linea.precio_venta_eur,
             "f",
@@ -310,182 +594,81 @@ def construir_valores_fila_master(
     }
 
 
-def redimensionar_tabla_master(
-    tabla: Any,
-    nuevo_rango: Any,
-    aplicacion: xw.App,
-    maximo_intentos: int = 8,
+def _parsear_ref_tabla(ref: str) -> tuple[int, int, int, int]:
+    izquierda, derecha = ref.split(":")
+    match_a = re.match(r"([A-Z]+)(\d+)", izquierda)
+    match_b = re.match(r"([A-Z]+)(\d+)", derecha)
+    if match_a is None or match_b is None:
+        raise EstructuraRawDataMasterError(
+            f"Referencia de tabla inválida: {ref!r}"
+        )
+    col_ini = column_index_from_string(match_a.group(1))
+    fila_ini = int(match_a.group(2))
+    col_fin = column_index_from_string(match_b.group(1))
+    fila_fin = int(match_b.group(2))
+    return col_ini, fila_ini, col_fin, fila_fin
+
+
+def _extraer_ref_tabla(tabla_xml: str) -> str:
+    match = _TABLE_REF_RE.search(tabla_xml)
+    if match is None:
+        raise EstructuraRawDataMasterError(
+            "No se encontró ref en table1.xml."
+        )
+    return match.group(1)
+
+
+def _actualizar_ref_tabla(tabla_xml: str, nueva_ref: str) -> str:
+    return _TABLE_REF_RE.sub(f'ref="{nueva_ref}"', tabla_xml, count=1)
+
+
+def _actualizar_dimension(sheet_xml: str, nueva_ref: str) -> str:
+    if _DIMENSION_RE.search(sheet_xml):
+        return _DIMENSION_RE.sub(
+            f'<dimension ref="{nueva_ref}"/>',
+            sheet_xml,
+            count=1,
+        )
+    return sheet_xml
+
+
+def _insertar_filas_en_sheet(
+    sheet_xml: str,
+    filas_xml: str,
+) -> str:
+    marca = "</sheetData>"
+    idx = sheet_xml.rfind(marca)
+    if idx < 0:
+        raise ErrorEscrituraMaster(
+            "La hoja Raw Data no contiene </sheetData>."
+        )
+    return sheet_xml[:idx] + filas_xml + sheet_xml[idx:]
+
+
+def _reescribir_xlsx(
+    ruta: Path,
+    sheet_xml: str,
+    tabla_xml: str,
+    *,
+    hoja_xml_path: str,
+    tabla_xml_path: str,
 ) -> None:
-    """Expande Tabla1 en un solo Resize (más estable que Add)."""
-    ultimo_error: Exception | None = None
-
-    for intento in range(1, maximo_intentos + 1):
-        try:
-            esperar_excel_listo(
-                aplicacion=aplicacion,
-                timeout_segundos=90,
-            )
-            tabla.Resize(nuevo_rango)
-            esperar_excel_listo(
-                aplicacion=aplicacion,
-                timeout_segundos=90,
-            )
-            return
-        except (com_error, ErrorEscrituraDimanno) as error:
-            ultimo_error = error
-            time.sleep(1.0 * intento)
-
-    raise ErrorEscrituraMaster(
-        "Excel no permitió redimensionar Tabla1 "
-        f"después de {maximo_intentos} intentos. "
-        "Cierre Excel/Master Liquidaciones si está abierto "
-        "e intente de nuevo."
-    ) from ultimo_error
-
-
-def _desactivar_refresco_pivots(libro: xw.Book) -> None:
-    try:
-        caches = libro.api.PivotCaches()
-        total = int(caches.Count)
-    except (com_error, AttributeError, TypeError, ValueError):
-        return
-
-    for indice in range(1, total + 1):
-        try:
-            caches(indice).EnableRefresh = False
-        except com_error:
-            continue
-
-
-def _propagar_formulas_columnas(
-    fila_plantilla: Any,
-    rango_nuevas: Any,
-    posiciones: dict[str, int],
-    columnas_formula: set[str],
-    aplicacion: xw.App,
-) -> None:
-    """
-    Propaga fórmulas a las filas nuevas.
-
-    1) Copy + FillDown (como Di Manno), con AutoFill de listas
-       desactivado para no sincronizar toda Tabla1.
-    2) Repara columnas de fórmula que queden vacías (PasteSpecial
-       / FillDown en tablas a menudo omite Comision %, Local
-       Charges, etc.).
-    """
-    filas = int(rango_nuevas.Rows.Count)
-    autofill_previo: bool | None = None
-    try:
-        autofill_previo = bool(
-            aplicacion.api.AutoCorrect.AutoFillFormulasInLists
-        )
-        aplicacion.api.AutoCorrect.AutoFillFormulasInLists = False
-    except (com_error, AttributeError):
-        autofill_previo = None
-
-    try:
-        esperar_excel_listo(
-            aplicacion=aplicacion,
-            timeout_segundos=60,
-        )
-
-        primera = (
-            rango_nuevas
-            if filas == 1
-            else rango_nuevas.Rows(1)
-        )
-        try:
-            copiar_rango_con_reintentos(
-                origen=fila_plantilla,
-                destino=primera,
-                aplicacion=aplicacion,
-            )
-            if filas > 1:
-                rellenar_hacia_abajo_con_reintentos(
-                    rango=rango_nuevas,
-                    aplicacion=aplicacion,
-                )
-            try:
-                aplicacion.api.CutCopyMode = False
-            except com_error:
-                pass
-        except ErrorEscrituraDimanno:
-            logger.warning(
-                "generacion_master=%s Copy+FillDown falló; "
-                "se reparará columna a columna",
-                _contexto_generacion.get(),
-            )
-            try:
-                aplicacion.api.CutCopyMode = False
-            except com_error:
-                pass
-
-        reparadas = 0
-        ultima = (
-            rango_nuevas
-            if filas == 1
-            else rango_nuevas.Rows(filas)
-        )
-        for nombre in sorted(columnas_formula):
-            if nombre not in posiciones:
-                continue
-            indice = posiciones[nombre]
-            try:
-                formula = fila_plantilla.Cells(
-                    1, indice
-                ).FormulaR1C1
-            except com_error:
-                continue
-            if not formula:
-                continue
-
-            try:
-                ya_tiene = bool(
-                    ultima.Cells(1, indice).HasFormula
-                )
-            except com_error:
-                ya_tiene = False
-            if ya_tiene:
-                continue
-
-            destino = rango_nuevas.Cells(1, indice).Resize(
-                filas, 1
-            )
-            try:
-                destino.FormulaR1C1 = formula
-                reparadas += 1
-                continue
-            except com_error:
-                pass
-
-            for fila_i in range(1, filas + 1):
-                try:
-                    rango_nuevas.Cells(
-                        fila_i, indice
-                    ).FormulaR1C1 = formula
-                except com_error:
-                    continue
-            reparadas += 1
-
-        if reparadas:
-            logger.info(
-                "generacion_master=%s formulas_reparadas=%s",
-                _contexto_generacion.get(),
-                reparadas,
-            )
-
-        esperar_excel_listo(
-            aplicacion=aplicacion,
-            timeout_segundos=90,
-        )
-    finally:
-        if autofill_previo is not None:
-            try:
-                aplicacion.api.AutoCorrect.AutoFillFormulasInLists = (
-                    autofill_previo
-                )
-            except (com_error, AttributeError):
-                pass
+    temporal = ruta.with_suffix(".tmp.xlsx")
+    with ZipFile(ruta, "r") as zin, ZipFile(
+        temporal, "w"
+    ) as zout:
+        for info in zin.infolist():
+            datos = zin.read(info.filename)
+            if info.filename == hoja_xml_path:
+                datos = sheet_xml.encode("utf-8")
+            elif info.filename == tabla_xml_path:
+                datos = tabla_xml.encode("utf-8")
+            nuevo = ZipInfo(filename=info.filename, date_time=info.date_time)
+            nuevo.compress_type = info.compress_type or ZIP_DEFLATED
+            nuevo.external_attr = info.external_attr
+            nuevo.flag_bits = info.flag_bits
+            zout.writestr(nuevo, datos)
+    temporal.replace(ruta)
 
 
 def escribir_archivo_master(
@@ -494,6 +677,15 @@ def escribir_archivo_master(
     ruta_salida: str | Path,
     recalcular_al_final: bool = False,
 ) -> ResultadoEscrituraMaster:
+    """
+    Escribe solo columnas digitadas, sin Excel COM ni xlwings.
+
+    No copia fórmulas: al abrir el archivo el usuario las baja
+    manualmente. Se preservan slicers/pivots al parchear solo
+    la hoja Raw Data y Tabla1 dentro del ZIP.
+    """
+    del recalcular_al_final
+
     if not procesamiento.puede_escribir:
         raise ProcesamientoMasterNoListoError(
             "El procesamiento no está listo para escribir. "
@@ -531,180 +723,137 @@ def escribir_archivo_master(
         tempfile.mkdtemp(prefix="master_write_")
     )
     salida_trabajo = carpeta_trabajo / "trabajo.xlsx"
-
-    aplicacion: xw.App | None = None
-    libro: xw.Book | None = None
     escritura_completada = False
     resultado: ResultadoEscrituraMaster | None = None
 
     try:
         inicio = time.perf_counter()
         shutil.copy2(origen, salida_trabajo)
-        aplicacion = xw.App(visible=False, add_book=False)
-        aplicacion.display_alerts = False
-        aplicacion.screen_updating = False
-        libro = aplicacion.books.open(
-            str(salida_trabajo),
-            update_links=False,
-            read_only=False,
-            add_to_mru=False,
-        )
-        aplicacion.calculation = "manual"
-        aplicacion.enable_events = False
-        try:
-            aplicacion.api.CalculateBeforeSave = False
-        except com_error:
-            pass
-        try:
-            # Evita que Tabla1 sincronice fórmulas en miles de
-            # filas al hacer Resize / pegar fórmulas.
-            aplicacion.api.AutoCorrect.AutoFillFormulasInLists = (
-                False
-            )
-        except (com_error, AttributeError):
-            pass
-        _desactivar_refresco_pivots(libro)
-        esperar_excel_listo(
-            aplicacion=aplicacion,
-            timeout_segundos=120,
-        )
         _log_fase(
-            "copiar_abrir_acumulativo",
+            "copiar_acumulativo",
             time.perf_counter() - inicio,
         )
-
-        nombres = [hoja.name for hoja in libro.sheets]
-        if HOJA_RAW_DATA not in nombres:
-            raise EstructuraRawDataMasterError(
-                f"No existe la hoja '{HOJA_RAW_DATA}'."
-            )
-        hoja = libro.sheets[HOJA_RAW_DATA]
-
-        try:
-            tabla = hoja.api.ListObjects(TABLA_RAW_DATA)
-        except Exception as error:
-            raise EstructuraRawDataMasterError(
-                f"No existe la tabla '{TABLA_RAW_DATA}'."
-            ) from error
 
         inicio = time.perf_counter()
-        _, posiciones, _formula_cols = (
-            obtener_encabezados_tabla_master(tabla)
-        )
-        # No se validan ni propagan fórmulas: el usuario las
-        # baja manualmente al abrir el acumulativo (igual que
-        # SIFA / Kraaijeveld).
-
-        if existe_liquidacion_duplicada_master(
-            tabla=tabla,
-            posiciones=posiciones,
-            anio=procesamiento.despachos.anio,
-            semana=procesamiento.despachos.semana,
-            factura_corta=(
-                procesamiento.liquidacion.factura_corta
-            ),
-        ):
-            raise LiquidacionDuplicadaMasterError(
-                "La liquidación ya existe en Raw Data "
-                "para el mismo año, semana y factura."
+        with ZipFile(salida_trabajo, "r") as zipped:
+            hoja_xml_path, tabla_xml_path = (
+                _resolver_rutas_raw_data(zipped)
             )
+            shared = _cargar_shared_strings(zipped)
+            tabla_xml = zipped.read(tabla_xml_path).decode(
+                "utf-8"
+            )
+            sheet_xml = zipped.read(hoja_xml_path).decode(
+                "utf-8"
+            )
+            ref_actual = _extraer_ref_tabla(tabla_xml)
+            col_ini, fila_enc, col_fin, fila_fin = (
+                _parsear_ref_tabla(ref_actual)
+            )
+            if fila_enc != 1:
+                raise EstructuraRawDataMasterError(
+                    "Se esperaba encabezado de Tabla1 en fila 1."
+                )
+
+            posiciones = _leer_encabezados_xml(
+                sheet_xml,
+                shared,
+                col_ini,
+                col_fin,
+            )
+            col_factura = _columna_factura_digitos(
+                sheet_xml,
+                shared,
+                col_ini,
+                col_fin,
+            )
+            if _existe_liquidacion_duplicada_xml(
+                sheet_xml,
+                shared,
+                posiciones,
+                col_factura,
+                anio=procesamiento.despachos.anio,
+                semana=procesamiento.despachos.semana,
+                factura_corta=(
+                    procesamiento.liquidacion.factura_corta
+                ),
+                fila_fin=fila_fin,
+            ):
+                raise LiquidacionDuplicadaMasterError(
+                    "La liquidación ya existe en Raw Data "
+                    "para el mismo año, semana y factura."
+                )
         _log_fase(
-            "validar_estructura_duplicado",
+            "validar_y_cargar_xml",
             time.perf_counter() - inicio,
         )
 
-        cuerpo_inicial = tabla.DataBodyRange
-        filas_antes = int(cuerpo_inicial.Rows.Count)
         cantidad = len(
             procesamiento.validacion.lineas_preparadas
         )
-
-        col_ini = int(tabla.Range.Column)
-        col_fin = (
-            col_ini + int(tabla.Range.Columns.Count) - 1
+        fila_inicial = fila_fin + 1
+        fila_final = fila_fin + cantidad
+        nueva_ref = (
+            f"{get_column_letter(col_ini)}{fila_enc}:"
+            f"{get_column_letter(col_fin)}{fila_final}"
         )
-        fila_encabezado = int(tabla.HeaderRowRange.Row)
-        fila_plantilla_excel = fila_encabezado + filas_antes
-        fila_inicial = fila_plantilla_excel + 1
-        fila_final = fila_plantilla_excel + cantidad
 
-        nuevo_rango = hoja.api.Range(
-            hoja.api.Cells(fila_encabezado, col_ini),
-            hoja.api.Cells(fila_final, col_fin),
-        )
         inicio = time.perf_counter()
-        redimensionar_tabla_master(
-            tabla=tabla,
-            nuevo_rango=nuevo_rango,
-            aplicacion=aplicacion,
-        )
-        _log_fase(
-            "resize_tabla",
-            time.perf_counter() - inicio,
-        )
-
-        rango_nuevas = hoja.api.Range(
-            hoja.api.Cells(fila_inicial, col_ini),
-            hoja.api.Cells(fila_final, col_fin),
-        )
-
-        logger.info(
-            "generacion_master=%s digitados_only=1 "
-            "(sin formulas; fill-down manual)",
-            _contexto_generacion.get(),
-        )
-
-        filas_valores = [
-            construir_valores_fila_master(
+        nuevas_filas: list[str] = []
+        for offset in range(cantidad):
+            fila_excel = fila_inicial + offset
+            valores = construir_valores_fila_master(
                 procesamiento=procesamiento,
-                indice_linea=i,
+                indice_linea=offset,
             )
-            for i in range(cantidad)
-        ]
-        for fila in filas_valores:
-            if fila.get("Merma") is None:
-                fila["Merma"] = ""
-
-        inicio = time.perf_counter()
-        escribir_valores_bloque(
-            hoja=hoja.api,
-            fila_inicial=fila_inicial,
-            fila_final=fila_final,
-            posiciones=posiciones,
-            filas_valores=filas_valores,
+            if valores.get("Merma") is None:
+                valores["Merma"] = ""
+            valores_por_col = {
+                posiciones[nombre]: valor
+                for nombre, valor in valores.items()
+                if nombre in posiciones
+            }
+            if offset == 0:
+                logger.info(
+                    "generacion_master=%s hoja=%s tabla=%s "
+                    "digitado_cols=%s (sin formulas; fill-down manual)",
+                    _contexto_generacion.get(),
+                    hoja_xml_path,
+                    tabla_xml_path,
+                    len(valores_por_col),
+                )
+            nuevas_filas.append(
+                _fila_digitada_xml(
+                    fila_excel,
+                    valores_por_col,
+                    col_ini=col_ini,
+                    col_fin=col_fin,
+                )
+            )
+        sheet_xml = _insertar_filas_en_sheet(
+            sheet_xml, "".join(nuevas_filas)
         )
+        sheet_xml = _actualizar_dimension(sheet_xml, nueva_ref)
+        tabla_xml = _actualizar_ref_tabla(tabla_xml, nueva_ref)
         _log_fase(
-            "escribir_valores",
+            "construir_filas_xml",
             time.perf_counter() - inicio,
         )
 
-        if recalcular_al_final:
-            inicio = time.perf_counter()
-            recalcular_dirigido_con_fallback(
-                aplicacion=aplicacion,
-                hoja=hoja,
-                rango_filas_nuevas=rango_nuevas,
-                fila_inicial=fila_inicial,
-                fila_final=fila_final,
-                posiciones=posiciones,
-            )
-            _log_fase(
-                "recalcular",
-                time.perf_counter() - inicio,
-            )
-        else:
-            _log_fase("recalcular_omitido", 0.0)
-
-        rango_tabla = str(tabla.Range.Address)
         inicio = time.perf_counter()
-        guardar_libro_con_reintentos(
-            libro=libro,
-            aplicacion=aplicacion,
+        _reescribir_xlsx(
+            salida_trabajo,
+            sheet_xml=sheet_xml,
+            tabla_xml=tabla_xml,
+            hoja_xml_path=hoja_xml_path,
+            tabla_xml_path=tabla_xml_path,
         )
         _log_fase(
-            "guardar",
+            "guardar_zip",
             time.perf_counter() - inicio,
         )
+
+        shutil.copy2(salida_trabajo, salida)
         escritura_completada = True
         resultado = ResultadoEscrituraMaster(
             archivo_origen=origen.name,
@@ -718,31 +867,14 @@ def escribir_archivo_master(
             ),
             semana=procesamiento.despachos.semana,
             anio=procesamiento.despachos.anio,
-            rango_tabla=rango_tabla,
+            rango_tabla=nueva_ref,
         )
     finally:
-        cerrar_aplicacion_excel(
-            libro=libro,
-            aplicacion=aplicacion,
-            guardar=False,
-        )
-        if escritura_completada and salida_trabajo.is_file():
-            try:
-                shutil.copy2(salida_trabajo, salida)
-            except OSError:
-                escritura_completada = False
-                resultado = None
-                if salida.exists():
-                    try:
-                        salida.unlink()
-                    except OSError:
-                        pass
-        elif salida.exists():
+        if not escritura_completada and salida.exists():
             try:
                 salida.unlink()
             except OSError:
                 pass
-
         shutil.rmtree(carpeta_trabajo, ignore_errors=True)
         _log_fase(
             "total_writer",
