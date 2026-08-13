@@ -11,12 +11,14 @@ from procesamientos.models import (
     GeneracionKraaijeveld,
     GeneracionMaster,
     GeneracionSifa,
+    GeneracionTdvEuropa,
     MapeoGastoGlamour,
     ProcesamientoDimanno,
     ProcesamientoGlamour,
     ProcesamientoKraaijeveld,
     ProcesamientoMaster,
     ProcesamientoSifa,
+    ProcesamientoTdvEuropa,
     ResolucionDestinoDimanno,
 )
 
@@ -454,6 +456,69 @@ class MapeoGastoGlamourAdmin(admin.ModelAdmin):
 
 @admin.register(GeneracionGlamour)
 class GeneracionGlamourAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "procesamiento",
+        "estado",
+        "solicitado_por_nombre",
+        "solicitado_en",
+        "intentos",
+    )
+    list_filter = ("estado",)
+    readonly_fields = (
+        "id",
+        "procesamiento",
+        "estado",
+        "solicitado_por",
+        "solicitado_por_nombre",
+        "solicitado_en",
+        "iniciado_en",
+        "finalizado_en",
+        "archivo_resultado",
+        "nombre_descarga",
+        "mensaje_error",
+        "destino_aplicado",
+        "origen_destino_aplicado",
+        "filas_agregadas",
+        "fila_inicial",
+        "fila_final",
+        "rango_tabla",
+        "intentos",
+    )
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(ProcesamientoTdvEuropa)
+class ProcesamientoTdvEuropaAdmin(admin.ModelAdmin):
+    list_display = (
+        "factura_corta",
+        "semana",
+        "anio",
+        "destino_ui",
+        "estado",
+        "destino_final",
+        "puede_escribir",
+        "creado_por_nombre",
+        "creado_en",
+    )
+    list_filter = ("estado", "anio")
+    search_fields = ("factura_corta", "destino_ui", "destino_final")
+    readonly_fields = (
+        "id",
+        "creado_por",
+        "creado_por_nombre",
+        "creado_en",
+        "actualizado_en",
+    )
+
+
+@admin.register(GeneracionTdvEuropa)
+class GeneracionTdvEuropaAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "procesamiento",

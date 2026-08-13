@@ -7,6 +7,7 @@ from procesamientos import (
     views_master,
     views_orsero,
     views_sifa,
+    views_tdv_europa,
 )
 
 app_name = "procesamientos"
@@ -214,5 +215,33 @@ urlpatterns = [
         ),
         views_glamour.glamour_generacion_descargar,
         name="glamour_generacion_descargar",
+    ),
+    path(
+        "tdv-europa/",
+        views_tdv_europa.tdv_europa_cargar,
+        name="tdv_europa_cargar",
+    ),
+    path(
+        "tdv-europa/<uuid:procesamiento_id>/",
+        views_tdv_europa.tdv_europa_validacion,
+        name="tdv_europa_validacion",
+    ),
+    path(
+        "tdv-europa/<uuid:procesamiento_id>/generar/",
+        views_tdv_europa.tdv_europa_generar,
+        name="tdv_europa_generar",
+    ),
+    path(
+        "tdv-europa/generaciones/<uuid:generacion_id>/",
+        views_tdv_europa.tdv_europa_generacion_detalle,
+        name="tdv_europa_generacion_detalle",
+    ),
+    path(
+        (
+            "tdv-europa/generaciones/<uuid:generacion_id>/"
+            "descargar/"
+        ),
+        views_tdv_europa.tdv_europa_generacion_descargar,
+        name="tdv_europa_generacion_descargar",
     ),
 ]

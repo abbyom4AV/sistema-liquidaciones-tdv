@@ -172,9 +172,12 @@ CLIENTES_PANEL = (
     {
         "codigo": "tdv_europa",
         "nombre": "TDV Europa",
-        "descripcion": "Módulo de liquidaciones TDV Europa.",
-        "disponible": False,
-        "url_name": None,
+        "descripcion": (
+            "Validar liquidaciones PDF, cruzar Despachos "
+            "y generar el acumulativo."
+        ),
+        "disponible": True,
+        "url_name": "procesamientos:tdv_europa_cargar",
     },
     {
         "codigo": "tdv_usa",

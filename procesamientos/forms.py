@@ -1029,3 +1029,129 @@ class FormularioMapeoGastoGlamour(forms.Form):
                 }
             )
         return resultado
+
+
+class FormularioCargaTdvEuropa(forms.Form):
+    semana = forms.IntegerField(
+        label="Semana",
+        min_value=1,
+        max_value=53,
+        error_messages={
+            "required": "Indique la semana.",
+            "invalid": "La semana debe ser un número entero.",
+            "min_value": "La semana mínima permitida es 1.",
+            "max_value": "La semana máxima permitida es 53.",
+        },
+    )
+    anio = forms.IntegerField(
+        label="Año",
+        min_value=2024,
+        max_value=2100,
+        initial=2026,
+        error_messages={
+            "required": "Indique el año.",
+            "invalid": "El año debe ser un número entero.",
+            "min_value": "El año mínimo permitido es 2024.",
+            "max_value": "El año máximo permitido es 2100.",
+        },
+    )
+    destino = forms.CharField(
+        label="Destino",
+        max_length=150,
+        error_messages={
+            "required": "Indique el destino.",
+            "max_length": (
+                "El destino no puede superar los 150 caracteres."
+            ),
+        },
+    )
+    factura_corta = forms.CharField(
+        label="Factura (4 dígitos)",
+        max_length=4,
+        min_length=4,
+        error_messages={
+            "required": "Indique la factura (4 dígitos).",
+            "min_length": (
+                "La factura corta debe tener exactamente 4 dígitos."
+            ),
+            "max_length": (
+                "La factura corta debe tener exactamente 4 dígitos."
+            ),
+        },
+    )
+    archivo_despachos = forms.FileField(
+        label="Archivo de despachos",
+        error_messages={
+            "required": "Seleccione el archivo de despachos.",
+            "invalid": "El archivo de despachos no es válido.",
+        },
+    )
+    archivo_liquidacion = forms.FileField(
+        label="Liquidación TDV Europa (PDF)",
+        error_messages={
+            "required": "Seleccione el PDF de liquidación.",
+            "invalid": "El archivo de liquidación no es válido.",
+        },
+    )
+    archivo_cliente = forms.FileField(
+        label="Archivo acumulativo del cliente",
+        error_messages={
+            "required": (
+                "Seleccione el archivo acumulativo del cliente."
+            ),
+            "invalid": (
+                "El archivo del cliente no es válido."
+            ),
+        },
+    )
+
+    def clean_destino(self):
+        valor = (
+            self.cleaned_data.get("destino") or ""
+        ).strip().upper()
+        if not valor:
+            raise forms.ValidationError("Indique el destino.")
+        return valor
+
+    def clean_factura_corta(self):
+        valor = (
+            self.cleaned_data.get("factura_corta") or ""
+        ).strip()
+        if len(valor) != 4 or not valor.isdigit():
+            raise forms.ValidationError(
+                "La factura corta debe tener exactamente 4 dígitos."
+            )
+        return valor
+
+    def clean_archivo_despachos(self):
+        archivo = self.cleaned_data.get("archivo_despachos")
+        if archivo is None:
+            return archivo
+        nombre = getattr(archivo, "name", "") or ""
+        if not nombre.lower().endswith(".xlsx"):
+            raise forms.ValidationError(
+                "El archivo de despachos debe ser .xlsx."
+            )
+        return archivo
+
+    def clean_archivo_liquidacion(self):
+        archivo = self.cleaned_data.get("archivo_liquidacion")
+        if archivo is None:
+            return archivo
+        nombre = getattr(archivo, "name", "") or ""
+        if not nombre.lower().endswith(".pdf"):
+            raise forms.ValidationError(
+                "La liquidación TDV Europa debe ser .pdf."
+            )
+        return archivo
+
+    def clean_archivo_cliente(self):
+        archivo = self.cleaned_data.get("archivo_cliente")
+        if archivo is None:
+            return archivo
+        nombre = getattr(archivo, "name", "") or ""
+        if not nombre.lower().endswith(".xlsx"):
+            raise forms.ValidationError(
+                "El acumulativo del cliente debe ser .xlsx."
+            )
+        return archivo
