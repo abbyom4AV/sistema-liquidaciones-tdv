@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TDV Europa — Generación del archivo</title>
+  {% if recargar_automaticamente %}<meta http-equiv="refresh" content="10">{% endif %}
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fondo: #f3f6f2;
+      --tarjeta: #fff;
+      --texto: #1f2a24;
+      --muted: #6b7a71;
+      --borde: #d9e3dc;
+      --suave: #f0f3ef;
+      --ok: #246f53;
+      --aviso: #8a6116;
+      --error: #9b1c1c;
+      --acento: #375a4d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Outfit", sans-serif;
+      color: var(--texto);
+      background: var(--fondo);
+      line-height: 1.45;
+    }
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.75rem 1.5rem 2.5rem;
+    }
+    .nav-volver { margin: 0 0 1rem; }
+    .nav-volver a {
+      color: var(--muted);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    header { margin-bottom: 1.25rem; }
+    h1 {
+      margin: 0 0 .35rem;
+      font-size: 1.85rem;
+      letter-spacing: -0.02em;
+    }
+    h2 {
+      margin: 0 0 .85rem;
+      font-size: 1.1rem;
+    }
+    .meta {
+      margin: 0;
+      color: var(--muted);
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 1.45fr .95fr;
+      gap: 1.15rem;
+      align-items: start;
+    }
+    .tarjeta {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 16px;
+      padding: 1.25rem 1.35rem;
+      margin-bottom: 1.15rem;
+      height: fit-content;
+    }
+    .col-izq > .tarjeta:last-child { margin-bottom: 0; }
+    .resumen {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem 1.25rem;
+    }
+    .resumen > div {
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+      min-width: 0;
+    }
+    .resumen strong {
+      display: block;
+      margin: 0;
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .resumen .valor {
+      display: block;
+      font-size: 1rem;
+      line-height: 1.35;
+      letter-spacing: 0.01em;
+      word-break: break-word;
+    }
+    .estado-completado {
+      display: inline-flex;
+      width: fit-content;
+      background: #ecfdf5;
+      color: var(--ok);
+      padding: .25rem .6rem;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .estado-pendiente,
+    .estado-procesando {
+      display: inline-flex;
+      width: fit-content;
+      background: #fffbeb;
+      color: var(--aviso);
+      padding: .25rem .6rem;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .estado-error {
+      display: inline-flex;
+      width: fit-content;
+      background: #fef2f2;
+      color: var(--error);
+      padding: .25rem .6rem;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .financiero {
+      margin: 0;
+      color: var(--texto);
+      letter-spacing: 0.01em;
+      line-height: 1.6;
+    }
+    .archivo-meta {
+      margin: 0 0 1.1rem;
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.5;
+    }
+    .acciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+    }
+    a.boton {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 700;
+      padding: .8rem 1.1rem;
+      line-height: 1.25;
+      letter-spacing: 0.01em;
+    }
+    a.boton-primario {
+      background: var(--acento);
+      color: #fff;
+      flex: 1 1 180px;
+    }
+    a.boton-secundario {
+      background: #dfe4db;
+      color: var(--texto);
+      flex: 1 1 140px;
+    }
+    .aviso {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: var(--aviso);
+      border-radius: 12px;
+      padding: .9rem 1rem;
+      margin-bottom: 1.15rem;
+    }
+    .error-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: var(--error);
+      border-radius: 12px;
+      padding: .9rem 1rem;
+      margin-bottom: 1.15rem;
+    }
+    @media (max-width: 900px) {
+      .layout,
+      .resumen { grid-template-columns: 1fr; }
+      .acciones { flex-direction: column; }
+      a.boton { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="nav-volver"><a href="{% url 'procesamientos:tdv_europa_cargar' %}">← Volver a adjuntar archivos</a></p>
+    <header>
+      <h1>TDV Europa — Generación del archivo</h1>
+      <p class="meta">Factura {{ procesamiento.factura_corta }} · Semana {{ procesamiento.semana }} · {{ procesamiento.anio }}</p>
+    </header>
+
+    {% if generacion.esta_activa %}
+      <div class="aviso">La generación está en proceso. Esta página se actualizará sola.</div>
+    {% endif %}
+    {% if generacion.tiene_error %}
+      <div class="error-box"><strong>Error.</strong> {{ generacion.mensaje_error }}</div>
+    {% endif %}
+
+    <div class="layout">
+      <div class="col-izq">
+        <section class="tarjeta">
+          <h2>Resumen</h2>
+          <div class="resumen">
+            <div>
+              <strong>Estado</strong>
+              <span class="valor estado-{{ generacion.estado }}">{{ generacion.estado_legible }}</span>
+            </div>
+            <div>
+              <strong>Solicitado por</strong>
+              <span class="valor">{{ generacion.solicitado_por_nombre }}</span>
+            </div>
+            <div>
+              <strong>Intentos</strong>
+              <span class="valor">{{ generacion.intentos }}</span>
+            </div>
+            <div>
+              <strong>Destino</strong>
+              <span class="valor">{{ generacion.destino_aplicado }}</span>
+            </div>
+          </div>
+        </section>
+        <section class="tarjeta">
+          <h2>Financiero</h2>
+          <p class="financiero">
+            Venta: {{ procesamiento.total_venta_eur|floatformat:2 }} EUR ·
+            Gastos: {{ procesamiento.total_gastos_eur|floatformat:2 }} EUR ·
+            Merma: {{ procesamiento.total_merma|floatformat:2 }} cajas
+          </p>
+        </section>
+      </div>
+
+      <aside class="tarjeta">
+        {% if generacion.esta_completada %}
+          <h2>Archivo listo</h2>
+          <p class="archivo-meta">
+            Filas {{ generacion.fila_inicial }}–{{ generacion.fila_final }}
+            · Rango {{ generacion.rango_tabla }}
+          </p>
+          <div class="acciones">
+            <a class="boton boton-primario" href="{% url 'procesamientos:tdv_europa_generacion_descargar' generacion.id %}">Descargar TDV Europa V3.xlsx</a>
+            <a class="boton boton-secundario" href="{% url 'procesamientos:tdv_europa_cargar' %}">Volver a adjuntar</a>
+          </div>
+        {% else %}
+          <h2>Seguimiento</h2>
+          <div class="acciones">
+            <a class="boton boton-secundario" href="{% url 'procesamientos:tdv_europa_cargar' %}">Volver a adjuntar</a>
+          </div>
+        {% endif %}
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

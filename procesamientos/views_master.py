@@ -9,7 +9,7 @@ from pathlib import Path
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
-from django.http import FileResponse, Http404
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_GET, require_POST
 
@@ -18,6 +18,7 @@ from procesamientos.forms import (
     FormularioMotivoCorreccion,
     FormsetGastosMaster,
 )
+from procesamientos.http_descargas import respuesta_descarga_xlsx
 from procesamientos.models import (
     RUBROS_GASTOS_MASTER_DEFINICION,
     CorreccionGastoMaster,
@@ -483,21 +484,8 @@ def descargar_generacion_master(request, generacion_id):
         raise Http404("No hay archivo de resultado.")
 
     ruta = Path(generacion.archivo_resultado.path)
-    if not ruta.is_file():
-        raise Http404("El archivo ya no existe.")
-
     nombre = generacion.nombre_descarga or NOMBRE_DESCARGA_MASTER
     if nombre != NOMBRE_DESCARGA_MASTER:
         nombre = NOMBRE_DESCARGA_MASTER
 
-    try:
-        handle = ruta.open("rb")
-    except OSError as error:
-        raise Http404("No se pudo abrir el archivo.") from error
-
-    respuesta = FileResponse(
-        handle,
-        as_attachment=True,
-        filename=nombre,
-    )
-    return respuesta
+    return respuesta_descarga_xlsx(ruta, nombre)

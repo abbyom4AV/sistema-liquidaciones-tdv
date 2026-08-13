@@ -44,6 +44,27 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+# Demo en red local: si DEBUG está activo, aceptar cualquier Host
+# (evita DisallowedHost cuando la IP de la PC cambia por DHCP).
+if DEBUG or "*" in ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ["*"]
+
+import socket
+
+_hostname = socket.gethostname().strip()
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+]
+if _hostname:
+    CSRF_TRUSTED_ORIGINS.extend(
+        [
+            f"http://{_hostname}:8000",
+            f"http://{_hostname.lower()}:8000",
+            f"http://{_hostname}.local:8000",
+        ]
+    )
+
 
 # Application definition
 
