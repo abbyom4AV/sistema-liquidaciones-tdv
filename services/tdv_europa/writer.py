@@ -107,6 +107,8 @@ _AUTO_FILTER_REF_RE = re.compile(
 )
 _DIMENSION_RE = re.compile(r'<dimension[^>]*ref="([^"]+)"[^>]*/>')
 _MIN_CELDAS_FILA_COMPLETA = 40
+# Filas digitadas traen ~22 celdas; huérfanas de fórmula suelen traer 1.
+_MIN_CELDAS_FILA_DATOS = 10
 _V_RE = re.compile(r"<v>(.*?)</v>", re.DOTALL)
 _INLINE_T_RE = re.compile(r"<t[^>]*>(.*?)</t>", re.DOTALL)
 _ATTR_T_RE = re.compile(r'\bt="([^"]*)"')
@@ -605,12 +607,18 @@ def _contar_celdas_en_fila(fila_xml: str) -> int:
     return len(re.findall(r"<c r=", fila_xml))
 
 
-def _detectar_ultima_fila_completa(
+def _es_fila_datos_valida(fila_xml: str) -> bool:
+    """
+    True para filas históricas completas o digitadas del módulo.
+    False para huérfanas de 1 fórmula suelta.
+    """
+    return _contar_celdas_en_fila(fila_xml) >= _MIN_CELDAS_FILA_DATOS
+
+
+def _detectar_ultima_fila_datos(
     sheet_xml: str,
-    *,
-    min_celdas: int = _MIN_CELDAS_FILA_COMPLETA,
 ) -> int:
-    """Última fila con ancho de tabla (ignora pegados parciales)."""
+    """Última fila con datos reales (digitados o fila completa)."""
     ultima = 1
     for match in _ROW_RE.finditer(sheet_xml):
         abierta = _ROW_OPEN_RE.match(match.group(0))
@@ -619,9 +627,19 @@ def _detectar_ultima_fila_completa(
         num_fila = int(abierta.group(1))
         if num_fila < 2:
             continue
-        if _contar_celdas_en_fila(match.group(0)) >= min_celdas:
+        if _es_fila_datos_valida(match.group(0)):
             ultima = max(ultima, num_fila)
     return ultima
+
+
+def _detectar_ultima_fila_completa(
+    sheet_xml: str,
+    *,
+    min_celdas: int = _MIN_CELDAS_FILA_COMPLETA,
+) -> int:
+    """Compatibilidad: ahora detecta también filas digitadas."""
+    del min_celdas
+    return _detectar_ultima_fila_datos(sheet_xml)
 
 
 def _resolver_fila_fin_datos(
@@ -629,11 +647,23 @@ def _resolver_fila_fin_datos(
     fila_fin_tabla: int,
 ) -> int:
     """
-    Si ref de Tabla1 quedó inflada por una corrida previa, confía en
-    la última fila completa detectada en sheet1.xml.
+    Ajusta el fin de tabla solo si hay hueco/huérfanas tras el
+    último dato real. Conserva filas digitadas previas.
     """
-    detectada = _detectar_ultima_fila_completa(sheet_xml)
+    detectada = _detectar_ultima_fila_datos(sheet_xml)
+    if detectada < 2:
+        return fila_fin_tabla
     if detectada < fila_fin_tabla:
+        logger.warning(
+            "generacion_tdv_europa=%s fila_fin_tabla=%s "
+            "fila_fin_detectada=%s (se usa la detectada)",
+            _contexto_generacion.get(),
+            fila_fin_tabla,
+            detectada,
+        )
+        return detectada
+    if detectada > fila_fin_tabla:
+        # Tabla atrasada respecto a filas ya escritas.
         logger.warning(
             "generacion_tdv_europa=%s fila_fin_tabla=%s "
             "fila_fin_detectada=%s (se usa la detectada)",
