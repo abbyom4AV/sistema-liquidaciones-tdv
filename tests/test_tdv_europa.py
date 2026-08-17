@@ -224,7 +224,7 @@ class ValidacionTdvEuropaTests(unittest.TestCase):
 class WriterTdvEuropaTests(unittest.TestCase):
     def test_preparar_sheet_quita_huerfanas_y_duplicados(self) -> None:
         from services.tdv_europa.writer import (
-            _detectar_ultima_fila_completa,
+            _detectar_ultima_fila_datos,
             _preparar_sheet_antes_escritura,
             _resolver_fila_fin_datos,
         )
@@ -252,7 +252,7 @@ class WriterTdvEuropaTests(unittest.TestCase):
             "</sheetData></worksheet>"
         )
 
-        self.assertEqual(_detectar_ultima_fila_completa(sheet), 11984)
+        self.assertEqual(_detectar_ultima_fila_datos(sheet), 11984)
         self.assertEqual(
             _resolver_fila_fin_datos(sheet, 12014),
             11984,
@@ -263,6 +263,47 @@ class WriterTdvEuropaTests(unittest.TestCase):
         self.assertNotIn('r="11988"', limpio)
         self.assertIn('r="11984"', limpio)
         self.assertEqual(limpio.count('r="11984"'), 1)
+
+    def test_conserva_filas_digitadas_previas(self) -> None:
+        from services.tdv_europa.writer import (
+            _detectar_ultima_fila_datos,
+            _preparar_sheet_antes_escritura,
+            _resolver_fila_fin_datos,
+        )
+
+        fila_completa = (
+            '<row r="11984" spans="1:108">'
+            + ('<c r="A11984"><v>1</v></c>' * 50)
+            + "</row>"
+        )
+        digitada = (
+            '<row r="12014" spans="1:108">'
+            + (
+                '<c r="A12014" t="inlineStr"><is><t>16-2026</t></is></c>'
+                * 22
+            )
+            + "</row>"
+        )
+        huerfana = (
+            '<row r="12020" spans="74:74">'
+            '<c r="BV12020"><f>+1</f><v>0</v></c></row>'
+        )
+        sheet = (
+            '<?xml version="1.0"?><worksheet>'
+            "<sheetData>"
+            '<row r="1"><c r="A1"><v>Semana</v></c></row>'
+            f"{fila_completa}{digitada}{huerfana}"
+            "</sheetData></worksheet>"
+        )
+
+        self.assertEqual(_detectar_ultima_fila_datos(sheet), 12014)
+        self.assertEqual(
+            _resolver_fila_fin_datos(sheet, 12014),
+            12014,
+        )
+        limpio = _preparar_sheet_antes_escritura(sheet, 12014)
+        self.assertIn('r="12014"', limpio)
+        self.assertNotIn('r="12020"', limpio)
 
     def test_actualizar_auto_filter_tabla(self) -> None:
         from services.tdv_europa.writer import (
