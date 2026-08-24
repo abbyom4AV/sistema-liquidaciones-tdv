@@ -88,6 +88,21 @@ Subtotal 1,00
             Decimal("84.00"),
         )
 
+    def test_mapea_storage_fee(self):
+        texto = """
+Settlement of sales
+Container SILU7034166 Currency EUR
+External reference 1090000005455
+10000 Pineapple Super Sweet 5, CR, CAT I, Carton 11,00 9,00 1275 3,0 11.475,00
+Description Costs/Pallet Costs
+Commission -541,05
+Storage fee -20,80
+Subtotal 1,00
+"""
+        liq = parsear_texto_liquidacion_kraaijeveld(texto)
+        self.assertEqual(liq.gastos["Storage Fee"], Decimal("20.80"))
+        self.assertEqual(liq.rubros_no_mapeados, ())
+
     def test_parsea_texto_muestra(self):
         liq = parsear_texto_liquidacion_kraaijeveld(TEXTO_MUESTRA)
         self.assertEqual(liq.contenedor, "SILU7048489")
@@ -176,6 +191,7 @@ class ReconstruccionKraaijeveldTests(TestCase):
                         "Demourge Cost": "0",
                         "Export C.S": "0",
                         "Repack Costs": "0",
+                        "Storage Fee": "20.80",
                     },
                     "precio_encontrado": True,
                     "factura_corta": "5598",
