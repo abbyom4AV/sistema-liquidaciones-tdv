@@ -450,15 +450,15 @@ def construir_valores_fila_kraaijeveld(
         precio_usd = decimal_a_excel(linea.precio_venta_usd)
 
     fila: dict[str, Any] = {
-        "Semana": semana_texto,
-        "Año": despacho.anio,
+        "Semana": str(semana_texto),
+        "Año": str(despacho.anio),
         "Cliente": despacho.cliente,
         "Nave": despacho.barco,
         "Contenedor": despacho.contenedor,
         "Destino": despacho.puerto_destino,
         "Tipo de fruta": despacho.tipo_fruta,
         "Cartón": despacho.carton,
-        "# Calibre": despacho.calibre,
+        "# Calibre": str(despacho.calibre),
         "Total Cajas": despacho.total_cajas,
         "Comisión": decimal_a_excel(linea.comision),
         "Precio de Venta €": precio_eur,

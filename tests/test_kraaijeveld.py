@@ -219,7 +219,12 @@ class ReconstruccionKraaijeveldTests(TestCase):
         self.assertEqual(fila["Storage Fee"], 20.8)
         self.assertIsInstance(fila["Storage Fee"], float)
         self.assertEqual(fila["Total Cajas"], 100)
-        self.assertEqual(fila["# Calibre"], 5)
+        self.assertEqual(fila["Semana"], "24-2026")
+        self.assertIsInstance(fila["Semana"], str)
+        self.assertEqual(fila["Año"], "2026")
+        self.assertIsInstance(fila["Año"], str)
+        self.assertEqual(fila["# Calibre"], "5")
+        self.assertIsInstance(fila["# Calibre"], str)
 
 
 class PrecioFijoContenedorKraaijeveldTests(TestCase):
