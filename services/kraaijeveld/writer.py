@@ -443,11 +443,11 @@ def construir_valores_fila_kraaijeveld(
 
     precio_eur = ""
     if linea.precio_venta_eur is not None and linea.precio_encontrado:
-        precio_eur = format(linea.precio_venta_eur, "f")
+        precio_eur = decimal_a_excel(linea.precio_venta_eur)
 
     precio_usd = ""
     if linea.precio_venta_usd is not None and linea.precio_encontrado:
-        precio_usd = format(linea.precio_venta_usd, "f")
+        precio_usd = decimal_a_excel(linea.precio_venta_usd)
 
     fila: dict[str, Any] = {
         "Semana": semana_texto,

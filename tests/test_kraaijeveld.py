@@ -207,6 +207,19 @@ class ReconstruccionKraaijeveldTests(TestCase):
             linea.gastos["Logistics.C"],
             Decimal("525"),
         )
+        from services.kraaijeveld.writer import (
+            construir_valores_fila_kraaijeveld,
+        )
+
+        fila = construir_valores_fila_kraaijeveld(resultado, 0)
+        self.assertEqual(fila["Precio de Venta €"], 9.0)
+        self.assertIsInstance(fila["Precio de Venta €"], float)
+        self.assertEqual(fila["Comisión"], 541.05)
+        self.assertIsInstance(fila["Comisión"], float)
+        self.assertEqual(fila["Storage Fee"], 20.8)
+        self.assertIsInstance(fila["Storage Fee"], float)
+        self.assertEqual(fila["Total Cajas"], 100)
+        self.assertEqual(fila["# Calibre"], 5)
 
 
 class PrecioFijoContenedorKraaijeveldTests(TestCase):
