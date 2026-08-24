@@ -8,6 +8,7 @@ from procesamientos import (
     views_orsero,
     views_sifa,
     views_tdv_europa,
+    views_fruver,
 )
 
 app_name = "procesamientos"
@@ -243,5 +244,33 @@ urlpatterns = [
         ),
         views_tdv_europa.tdv_europa_generacion_descargar,
         name="tdv_europa_generacion_descargar",
+    ),
+    path(
+        "fruver/",
+        views_fruver.cargar_fruver,
+        name="fruver_cargar",
+    ),
+    path(
+        "fruver/<uuid:procesamiento_id>/",
+        views_fruver.detalle_fruver,
+        name="fruver_detalle",
+    ),
+    path(
+        "fruver/<uuid:procesamiento_id>/generar/",
+        views_fruver.solicitar_generacion_fruver,
+        name="fruver_generar",
+    ),
+    path(
+        "fruver/generaciones/<uuid:generacion_id>/",
+        views_fruver.detalle_generacion_fruver,
+        name="fruver_generacion_detalle",
+    ),
+    path(
+        (
+            "fruver/generaciones/<uuid:generacion_id>/"
+            "descargar/"
+        ),
+        views_fruver.descargar_generacion_fruver,
+        name="fruver_generacion_descargar",
     ),
 ]

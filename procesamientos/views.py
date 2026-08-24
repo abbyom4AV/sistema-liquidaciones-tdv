@@ -28,11 +28,13 @@ from procesamientos.models import (
     CorreccionGastoOrsero,
     GastoProcesamientoDimanno,
     GeneracionDimanno,
+    GeneracionFruver,
     GeneracionKraaijeveld,
     GeneracionMaster,
     GeneracionOrsero,
     GeneracionSifa,
     ProcesamientoDimanno,
+    ProcesamientoFruver,
     ProcesamientoKraaijeveld,
     ProcesamientoMaster,
     ProcesamientoOrsero,
@@ -108,9 +110,12 @@ CLIENTES_PANEL = (
     {
         "codigo": "fruver",
         "nombre": "FRU&VER",
-        "descripcion": "Módulo de liquidaciones FRU&VER.",
-        "disponible": False,
-        "url_name": None,
+        "descripcion": (
+            "Validar liquidaciones PDF por contenedor, cruzar "
+            "Despachos y generar el acumulativo."
+        ),
+        "disponible": True,
+        "url_name": "procesamientos:fruver_cargar",
     },
     {
         "codigo": "glamour",
@@ -258,6 +263,23 @@ def panel_control(request):
             "-creado_en"
         )[:10]
     ]
+    recientes_fruver = [
+        {
+            "cliente": "FRU&VER",
+            "factura_corta": (
+                item.factura_corta or item.destino_ui
+            ),
+            "semana": item.semana,
+            "anio": item.anio,
+            "estado_legible": item.estado_legible,
+            "creado_en": item.creado_en,
+            "url_name": "procesamientos:fruver_detalle",
+            "id": item.id,
+        }
+        for item in ProcesamientoFruver.objects.order_by(
+            "-creado_en"
+        )[:10]
+    ]
     recientes_sifa = [
         {
             "cliente": "SIFA",
@@ -280,6 +302,7 @@ def panel_control(request):
         + recientes_master
         + recientes_orsero
         + recientes_kraaijeveld
+        + recientes_fruver
         + recientes_sifa,
         key=lambda item: item["creado_en"],
         reverse=True,
@@ -298,6 +321,7 @@ def panel_control(request):
                 + ProcesamientoMaster.objects.count()
                 + ProcesamientoOrsero.objects.count()
                 + ProcesamientoKraaijeveld.objects.count()
+                + ProcesamientoFruver.objects.count()
                 + ProcesamientoSifa.objects.count()
             ),
             "clientes_panel": CLIENTES_PANEL,
@@ -522,6 +546,37 @@ def bitacoras(request):
                 ),
                 "url_detalle": (
                     "procesamientos:kraaijeveld_generacion_detalle",
+                    item.id,
+                ),
+            }
+        )
+
+    generaciones_fruver = (
+        GeneracionFruver.objects.select_related(
+            "procesamiento",
+        ).order_by("-solicitado_en")[:120]
+    )
+    for item in generaciones_fruver:
+        estado_texto, estado_clase = estados_generacion.get(
+            item.estado,
+            (item.estado_legible, "proceso"),
+        )
+        eventos.append(
+            {
+                "tipo": "Generación de archivo",
+                "estado": estado_texto,
+                "estado_clase": estado_clase,
+                "cliente": "FRU&VER",
+                "detalle": estado_texto,
+                "usuario": item.solicitado_por_nombre or "—",
+                "fecha": item.solicitado_en,
+                "factura": (
+                    item.procesamiento.factura_corta
+                    or item.procesamiento.destino_ui
+                    or "—"
+                ),
+                "url_detalle": (
+                    "procesamientos:fruver_generacion_detalle",
                     item.id,
                 ),
             }
