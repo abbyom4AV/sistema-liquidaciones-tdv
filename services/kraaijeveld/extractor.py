@@ -69,6 +69,7 @@ MAPEO_GASTOS: tuple[tuple[str, str], ...] = (
     ("EXPORT COSTS", "Export C.S"),
     ("REPACK COSTS", "Repack Costs"),
     ("REPACK", "Repack Costs"),
+    ("STORAGE FEE", "Storage Fee"),
 )
 
 COLUMNAS_GASTO = (
@@ -80,6 +81,7 @@ COLUMNAS_GASTO = (
     "Demourge Cost",
     "Export C.S",
     "Repack Costs",
+    "Storage Fee",
 )
 
 

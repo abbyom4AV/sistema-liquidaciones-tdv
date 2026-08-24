@@ -56,6 +56,7 @@ COLUMNAS_ENTRADA = {
     "Demourge Cost",
     "Export C.S",
     "Repack Costs",
+    "Storage Fee",
     "Comisión",
     "Precio de Venta €",
     "Precio de Venta $",
@@ -76,6 +77,7 @@ ALIAS_COLUMNAS = {
     "Demourge Cost": ("Demourge Cost", "Demourge Cost "),
     "Export C.S": ("Export C.S", "Export C.S "),
     "Repack Costs": ("Repack Costs", "Repack Costs "),
+    "Storage Fee": ("Storage Fee", "Storage Fee "),
     "Comisión": ("Comisión", "Comision", "Comisión "),
     "Precio de Venta €": (
         "Precio de Venta €",
