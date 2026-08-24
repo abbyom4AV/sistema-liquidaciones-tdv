@@ -90,6 +90,12 @@ class ParseoTdvEuropaTests(unittest.TestCase):
     def test_tipo_fruta_col_especial(self):
         self.assertEqual(tipo_fruta_desde("COL", "CAL6"), "Especial")
 
+    def test_tipo_fruta_int_intermedio(self):
+        self.assertEqual(tipo_fruta_desde("INT", "CAL6"), "Intermedio")
+
+    def test_tipo_fruta_ver_verde(self):
+        self.assertEqual(tipo_fruta_desde("VER", "CAL6"), "Verde")
+
     def test_tipo_fruta_cl_crownless(self):
         self.assertEqual(
             tipo_fruta_desde("COL", "CAL6CL8"),

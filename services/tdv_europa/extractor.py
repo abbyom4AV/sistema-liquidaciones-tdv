@@ -43,7 +43,7 @@ _LINEA_RE = re.compile(
     r"^(?P<contenedor>[A-Z]{4}\d{6,7})\s+"
     r"(?P<cliente>.+?)\s+"
     r"(?P<fecha>\d{2}/\d{2}/\d{4})\s+"
-    r"(?P<tipo>COL|VER)\s+"
+    r"(?P<tipo>COL|VER|INT)\s+"
     r"(?P<calibre>CAL\d+(?:CL\d+)?)\s+"
     r"(?P<resto>.+)$",
     re.I,
@@ -223,6 +223,8 @@ def tipo_fruta_desde(tipo_raw: str, calibre_raw: str) -> str:
     tipo = normalizar_texto(tipo_raw)
     if tipo == "VER":
         return "Verde"
+    if tipo == "INT":
+        return "Intermedio"
     return "Especial"
 
 
