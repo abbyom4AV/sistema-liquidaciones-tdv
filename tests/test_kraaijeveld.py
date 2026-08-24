@@ -207,3 +207,89 @@ class ReconstruccionKraaijeveldTests(TestCase):
             linea.gastos["Logistics.C"],
             Decimal("525"),
         )
+
+
+class PrecioFijoContenedorKraaijeveldTests(TestCase):
+    def test_aplica_mapeo_solo_a_tipo_calibre(self):
+        from services.kraaijeveld.matcher import (
+            LineaDespachoKraaijeveld,
+            ResultadoMatcherKraaijeveld,
+        )
+        from services.kraaijeveld.validator import (
+            MapeoPrecioFijoContenedor,
+            validar_liquidaciones_kraaijeveld,
+        )
+
+        linea_fija = LineaDespachoKraaijeveld(
+            fila_excel=2,
+            semana=28,
+            anio=2026,
+            semana_texto="28-2026",
+            contenedor="MNBU4036725",
+            cliente="KRAAIJEVELD",
+            barco="BARCO",
+            puerto_destino="AMBERES",
+            tipo_empaque="ESPECIAL",
+            carton="ESPECIAL",
+            calibre=5,
+            total_cajas=100,
+            factura="1090000005999",
+            factura_corta="5999",
+        )
+        linea_consig = LineaDespachoKraaijeveld(
+            fila_excel=3,
+            semana=28,
+            anio=2026,
+            semana_texto="28-2026",
+            contenedor="MNBU4036725",
+            cliente="KRAAIJEVELD",
+            barco="BARCO",
+            puerto_destino="AMBERES",
+            tipo_empaque="VERDE",
+            carton="VERDE",
+            calibre=6,
+            total_cajas=50,
+            factura="1090000005999",
+            factura_corta="5999",
+        )
+        despachos = ResultadoMatcherKraaijeveld(
+            archivo="despachos.xlsx",
+            hoja="Hoja1",
+            cliente_buscado="KRAAIJEVELD",
+            semana=28,
+            anio=2026,
+            destino_buscado="AMBERES",
+            semana_texto="28-2026",
+            lineas=(linea_fija, linea_consig),
+            total_cajas=150,
+            contenedores=("MNBU4036725",),
+            destinos=("AMBERES",),
+            facturas_cortas=("5999",),
+        )
+        resultado = validar_liquidaciones_kraaijeveld(
+            liquidaciones=(),
+            despachos=despachos,
+            destino_ui="AMBERES",
+            incluye_precio_fijo=True,
+            modo_precio_fijo="contenedor",
+            contenedor_fijo="MNBU4036725",
+            moneda_fijo="EUR",
+            mapeos_precio_fijo=(
+                MapeoPrecioFijoContenedor(
+                    tipo_fruta="ESPECIAL",
+                    calibre=5,
+                    precio=Decimal("12.50"),
+                ),
+            ),
+        )
+        self.assertTrue(resultado.es_valido)
+        self.assertEqual(len(resultado.lineas_preparadas), 1)
+        fija = resultado.lineas_preparadas[0]
+        self.assertTrue(fija.es_precio_fijo)
+        self.assertEqual(fija.precio_venta_eur, Decimal("12.50"))
+        self.assertEqual(fija.comision, Decimal("0"))
+        self.assertTrue(
+            all(v == Decimal("0") for v in fija.gastos.values())
+        )
+        codigos = {a.codigo for a in resultado.advertencias}
+        self.assertIn("SIN_PDF_CONTENEDOR", codigos)

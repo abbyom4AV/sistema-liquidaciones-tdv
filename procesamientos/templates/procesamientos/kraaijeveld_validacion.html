@@ -232,9 +232,8 @@
 
     .bloque-tablas {
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
+      grid-template-columns: 1fr;
       gap: 1rem;
-      margin-bottom: 1.1rem;
       align-items: start;
     }
 
@@ -440,8 +439,23 @@
             <div class="dato">
               <strong>Precio fijo</strong>
               {% if procesamiento.incluye_precio_fijo %}
-                Sí — Factura {{ procesamiento.factura_corta_fijo }}
-                ({{ procesamiento.precio_fijo|decimal_es }} {{ procesamiento.moneda_fijo }})
+                {% if procesamiento.modo_precio_fijo == "contenedor" %}
+                  Sí — Contenedor {{ procesamiento.contenedor_fijo }}
+                  ({{ procesamiento.moneda_fijo }})
+                  {% if procesamiento.mapeos_precio_fijo %}
+                    <ul style="margin:0.4rem 0 0;padding-left:1.1rem">
+                      {% for m in procesamiento.mapeos_precio_fijo %}
+                        <li>
+                          {{ m.tipo_fruta }} / cal. {{ m.calibre }}:
+                          {{ m.precio }}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                {% else %}
+                  Sí — Factura {{ procesamiento.factura_corta_fijo }}
+                  ({{ procesamiento.precio_fijo|decimal_es }} {{ procesamiento.moneda_fijo }})
+                {% endif %}
               {% else %}
                 No
               {% endif %}
@@ -480,6 +494,102 @@
               </ul>
             {% else %}
               <p class="vacio">Sin advertencias.</p>
+            {% endif %}
+          </section>
+        </div>
+
+        <div class="bloque-tablas">
+          <section class="tarjeta tabla-scroll">
+            <div class="cabecera-bloque">
+              <h2>Líneas preparadas</h2>
+            </div>
+            {% if lineas %}
+              <table>
+                <thead>
+                  <tr>
+                    <th>Contenedor</th>
+                    <th>Destino</th>
+                    <th>Cartón</th>
+                    <th>Calibre</th>
+                    <th class="num">Cajas</th>
+                    <th class="num">Comisión</th>
+                    <th class="num">Precio €</th>
+                    <th class="num">Precio $</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for linea in lineas %}
+                    <tr>
+                      <td>
+                        {{ linea.contenedor }}
+                        {% if linea.es_precio_fijo %}
+                          <span class="etiqueta-fijo">Fijo</span>
+                        {% endif %}
+                      </td>
+                      <td>{{ linea.destino }}</td>
+                      <td>{{ linea.carton }}</td>
+                      <td>{{ linea.calibre }}</td>
+                      <td class="num">{{ linea.total_cajas }}</td>
+                      <td class="num">{{ linea.comision|decimal_es }}</td>
+                      <td class="num">
+                        {% if linea.precio_venta_eur %}
+                          {{ linea.precio_venta_eur|decimal_es }}
+                        {% elif not linea.precio_encontrado %}
+                          —
+                          <span class="etiqueta-sinprecio">Sin precio</span>
+                        {% else %}
+                          —
+                        {% endif %}
+                      </td>
+                      <td class="num">
+                        {% if linea.precio_venta_usd %}
+                          {{ linea.precio_venta_usd|decimal_es }}
+                        {% else %}
+                          —
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <p class="vacio">No hay líneas preparadas.</p>
+            {% endif %}
+          </section>
+
+          <section class="tarjeta tabla-scroll">
+            <div class="cabecera-bloque">
+              <h2>Gastos por contenedor</h2>
+            </div>
+            {% if resumen_gastos %}
+              <table>
+                <thead>
+                  <tr>
+                    <th>Contenedor</th>
+                    <th>Factura</th>
+                    <th class="num">Comisión</th>
+                    <th>Rubros capturados</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in resumen_gastos %}
+                    <tr>
+                      <td>{{ item.contenedor }}</td>
+                      <td>{{ item.factura_corta|default:"—" }}</td>
+                      <td class="num">{{ item.comision|decimal_es }}</td>
+                      <td class="rubros-pdf">
+                        {% if item.rubros_pdf %}
+                          {{ item.rubros_pdf|join:", " }}
+                        {% else %}
+                          Sin gastos capturados.
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <p class="vacio">No hay resumen de gastos.</p>
             {% endif %}
           </section>
         </div>
@@ -564,102 +674,6 @@
           {% endif %}
         {% endif %}
       </aside>
-    </div>
-
-    <div class="bloque-tablas">
-      <section class="tarjeta tabla-scroll">
-        <div class="cabecera-bloque">
-          <h2>Líneas preparadas</h2>
-        </div>
-        {% if lineas %}
-          <table>
-            <thead>
-              <tr>
-                <th>Contenedor</th>
-                <th>Destino</th>
-                <th>Cartón</th>
-                <th>Calibre</th>
-                <th class="num">Cajas</th>
-                <th class="num">Comisión</th>
-                <th class="num">Precio €</th>
-                <th class="num">Precio $</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for linea in lineas %}
-                <tr>
-                  <td>
-                    {{ linea.contenedor }}
-                    {% if linea.es_precio_fijo %}
-                      <span class="etiqueta-fijo">Fijo</span>
-                    {% endif %}
-                  </td>
-                  <td>{{ linea.destino }}</td>
-                  <td>{{ linea.carton }}</td>
-                  <td>{{ linea.calibre }}</td>
-                  <td class="num">{{ linea.total_cajas }}</td>
-                  <td class="num">{{ linea.comision|decimal_es }}</td>
-                  <td class="num">
-                    {% if linea.precio_venta_eur %}
-                      {{ linea.precio_venta_eur|decimal_es }}
-                    {% elif not linea.precio_encontrado %}
-                      —
-                      <span class="etiqueta-sinprecio">Sin precio</span>
-                    {% else %}
-                      —
-                    {% endif %}
-                  </td>
-                  <td class="num">
-                    {% if linea.precio_venta_usd %}
-                      {{ linea.precio_venta_usd|decimal_es }}
-                    {% else %}
-                      —
-                    {% endif %}
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        {% else %}
-          <p class="vacio">No hay líneas preparadas.</p>
-        {% endif %}
-      </section>
-
-      <section class="tarjeta tabla-scroll">
-        <div class="cabecera-bloque">
-          <h2>Gastos por contenedor</h2>
-        </div>
-        {% if resumen_gastos %}
-          <table>
-            <thead>
-              <tr>
-                <th>Contenedor</th>
-                <th>Factura</th>
-                <th class="num">Comisión</th>
-                <th>Rubros capturados</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in resumen_gastos %}
-                <tr>
-                  <td>{{ item.contenedor }}</td>
-                  <td>{{ item.factura_corta|default:"—" }}</td>
-                  <td class="num">{{ item.comision|decimal_es }}</td>
-                  <td class="rubros-pdf">
-                    {% if item.rubros_pdf %}
-                      {{ item.rubros_pdf|join:", " }}
-                    {% else %}
-                      Sin gastos capturados.
-                    {% endif %}
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        {% else %}
-          <p class="vacio">No hay resumen de gastos.</p>
-        {% endif %}
-      </section>
     </div>
 
     <div class="acciones-finales">

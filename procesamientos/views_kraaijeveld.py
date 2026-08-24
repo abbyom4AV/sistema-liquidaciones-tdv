@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import shutil
 import uuid
@@ -33,9 +34,34 @@ from services.kraaijeveld.processor import (
     ResultadoPreparacionKraaijeveld,
     preparar_procesamiento_kraaijeveld,
 )
+from services.kraaijeveld.validator import MapeoPrecioFijoContenedor
 from services.kraaijeveld.writer import NOMBRE_DESCARGA_KRAAIJEVELD
 
 logger = logging.getLogger(__name__)
+
+
+def _mapeos_precio_fijo_json(formulario: FormularioCargaKraaijeveld) -> str:
+    mapeos = []
+    if hasattr(formulario, "cleaned_data"):
+        mapeos = formulario.cleaned_data.get("mapeos_precio_fijo") or []
+    if not mapeos and formulario.is_bound:
+        tipos = formulario.data.getlist("tipo_fruta_fijo")
+        calibres = formulario.data.getlist("calibre_fijo")
+        precios = formulario.data.getlist("precio_linea_fijo")
+        total = max(len(tipos), len(calibres), len(precios), 0)
+        for i in range(total):
+            tipo = (tipos[i] if i < len(tipos) else "").strip()
+            calibre = (calibres[i] if i < len(calibres) else "").strip()
+            precio = (precios[i] if i < len(precios) else "").strip()
+            if tipo or calibre or precio:
+                mapeos.append(
+                    {
+                        "tipo_fruta": tipo,
+                        "calibre": calibre,
+                        "precio": precio,
+                    }
+                )
+    return json.dumps(mapeos)
 
 
 def _decimal_a_str(valor) -> str:
@@ -151,10 +177,15 @@ def _eliminar_procesamiento_kraaijeveld(
 def cargar_kraaijeveld(request):
     ctx = contexto_sesion(request, nav_activo="panel")
     if request.method != "POST":
+        formulario = FormularioCargaKraaijeveld()
         return render(
             request,
             "procesamientos/kraaijeveld_cargar.html",
-            {**ctx, "formulario": FormularioCargaKraaijeveld()},
+            {
+                **ctx,
+                "formulario": formulario,
+                "mapeos_precio_fijo_json": "[]",
+            },
         )
 
     formulario = FormularioCargaKraaijeveld(
@@ -165,7 +196,13 @@ def cargar_kraaijeveld(request):
         return render(
             request,
             "procesamientos/kraaijeveld_cargar.html",
-            {**ctx, "formulario": formulario},
+            {
+                **ctx,
+                "formulario": formulario,
+                "mapeos_precio_fijo_json": _mapeos_precio_fijo_json(
+                    formulario
+                ),
+            },
             status=400,
         )
 
@@ -180,15 +217,43 @@ def cargar_kraaijeveld(request):
                 if datos.get("incluye_precio_fijo")
                 else ""
             )
+            modo_precio_fijo = (
+                (datos.get("modo_precio_fijo") or "").strip().lower()
+                if datos.get("incluye_precio_fijo")
+                else ""
+            )
             factura_fijo = (
                 datos.get("factura_corta_fijo") or ""
                 if datos.get("incluye_precio_fijo")
+                and modo_precio_fijo == "factura"
                 else ""
             )
             precio_fijo = (
                 datos.get("precio_fijo")
                 if datos.get("incluye_precio_fijo")
+                and modo_precio_fijo == "factura"
                 else None
+            )
+            contenedor_fijo = (
+                datos.get("contenedor_fijo") or ""
+                if datos.get("incluye_precio_fijo")
+                and modo_precio_fijo == "contenedor"
+                else ""
+            )
+            mapeos_precio_fijo = (
+                datos.get("mapeos_precio_fijo") or []
+                if datos.get("incluye_precio_fijo")
+                and modo_precio_fijo == "contenedor"
+                else []
+            )
+
+            mapeos_tuple = tuple(
+                MapeoPrecioFijoContenedor(
+                    tipo_fruta=str(m.get("tipo_fruta") or ""),
+                    calibre=int(m.get("calibre") or 0),
+                    precio=Decimal(str(m.get("precio") or "0")),
+                )
+                for m in mapeos_precio_fijo
             )
 
             procesamiento = ProcesamientoKraaijeveld(
@@ -199,7 +264,10 @@ def cargar_kraaijeveld(request):
                 incluye_precio_fijo=bool(
                     datos.get("incluye_precio_fijo")
                 ),
+                modo_precio_fijo=modo_precio_fijo,
                 factura_corta_fijo=factura_fijo,
+                contenedor_fijo=contenedor_fijo,
+                mapeos_precio_fijo=mapeos_precio_fijo,
                 precio_fijo=precio_fijo,
                 moneda_fijo=moneda_fijo,
                 estado="procesando",
@@ -241,9 +309,12 @@ def cargar_kraaijeveld(request):
                 incluye_precio_fijo=bool(
                     datos.get("incluye_precio_fijo")
                 ),
+                modo_precio_fijo=modo_precio_fijo or "factura",
                 factura_corta_fijo=factura_fijo or None,
                 precio_fijo=precio_fijo,
                 moneda_fijo=moneda_fijo or None,
+                contenedor_fijo=contenedor_fijo or None,
+                mapeos_precio_fijo=mapeos_tuple,
             )
             _aplicar_resultado_kraaijeveld(
                 procesamiento,
@@ -268,6 +339,9 @@ def cargar_kraaijeveld(request):
             {
                 **ctx,
                 "formulario": formulario,
+                "mapeos_precio_fijo_json": _mapeos_precio_fijo_json(
+                    formulario
+                ),
                 "error_proceso": str(error),
             },
             status=400,
@@ -281,6 +355,9 @@ def cargar_kraaijeveld(request):
             {
                 **ctx,
                 "formulario": formulario,
+                "mapeos_precio_fijo_json": _mapeos_precio_fijo_json(
+                    formulario
+                ),
                 "error_proceso": (
                     "Ocurrió un error inesperado al validar "
                     "los archivos."

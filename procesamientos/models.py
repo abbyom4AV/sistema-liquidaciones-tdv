@@ -1238,8 +1238,21 @@ class ProcesamientoKraaijeveld(models.Model):
         blank=True,
     )
     incluye_precio_fijo = models.BooleanField(default=False)
+    modo_precio_fijo = models.CharField(
+        max_length=20,
+        blank=True,
+        default="",
+    )
     factura_corta_fijo = models.CharField(
         max_length=10,
+        blank=True,
+    )
+    contenedor_fijo = models.CharField(
+        max_length=30,
+        blank=True,
+    )
+    mapeos_precio_fijo = models.JSONField(
+        default=list,
         blank=True,
     )
     precio_fijo = models.DecimalField(

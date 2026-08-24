@@ -629,13 +629,28 @@ class FormularioCargaKraaijeveld(forms.Form):
         },
     )
     incluye_precio_fijo = forms.BooleanField(
-        label="Incluye factura a precio fijo",
+        label="Incluye precio fijo",
         required=False,
+    )
+    modo_precio_fijo = forms.ChoiceField(
+        label="Aplicar precio fijo",
+        required=False,
+        choices=(
+            ("factura", "Por factura completa"),
+            ("contenedor", "Por contenedor"),
+        ),
+        initial="factura",
+        widget=forms.RadioSelect,
     )
     factura_corta_fijo = forms.CharField(
         label="Factura (4 dígitos) a precio fijo",
         required=False,
         max_length=4,
+    )
+    contenedor_fijo = forms.CharField(
+        label="Contenedor a precio fijo",
+        required=False,
+        max_length=30,
     )
     precio_fijo = forms.DecimalField(
         label="Precio fijo",
@@ -699,29 +714,22 @@ class FormularioCargaKraaijeveld(forms.Form):
             self.cleaned_data.get("factura_corta_fijo") or ""
         ).strip()
 
+    def clean_contenedor_fijo(self):
+        return (
+            self.cleaned_data.get("contenedor_fijo") or ""
+        ).strip().upper()
+
     def clean(self):
         cleaned = super().clean()
         if not cleaned.get("incluye_precio_fijo"):
+            cleaned["modo_precio_fijo"] = ""
+            cleaned["mapeos_precio_fijo"] = []
             return cleaned
 
-        factura = (
-            cleaned.get("factura_corta_fijo") or ""
-        ).strip()
-        if len(factura) != 4 or not factura.isdigit():
-            self.add_error(
-                "factura_corta_fijo",
-                (
-                    "Indique los 4 dígitos de la factura a "
-                    "precio fijo."
-                ),
-            )
-
-        precio = cleaned.get("precio_fijo")
-        if precio is None or precio <= 0:
-            self.add_error(
-                "precio_fijo",
-                "Indique el precio fijo (mayor a 0).",
-            )
+        modo = (
+            cleaned.get("modo_precio_fijo") or "factura"
+        ).strip().lower()
+        cleaned["modo_precio_fijo"] = modo
 
         moneda = (cleaned.get("moneda_fijo") or "").strip().upper()
         if moneda not in {"EUR", "USD"}:
@@ -730,6 +738,98 @@ class FormularioCargaKraaijeveld(forms.Form):
                 "Seleccione la moneda EUR o USD.",
             )
 
+        if modo == "factura":
+            factura = (
+                cleaned.get("factura_corta_fijo") or ""
+            ).strip()
+            if len(factura) != 4 or not factura.isdigit():
+                self.add_error(
+                    "factura_corta_fijo",
+                    (
+                        "Indique los 4 dígitos de la factura a "
+                        "precio fijo."
+                    ),
+                )
+            precio = cleaned.get("precio_fijo")
+            if precio is None or precio <= 0:
+                self.add_error(
+                    "precio_fijo",
+                    "Indique el precio fijo (mayor a 0).",
+                )
+            cleaned["mapeos_precio_fijo"] = []
+            cleaned["contenedor_fijo"] = ""
+            return cleaned
+
+        if modo == "contenedor":
+            contenedor = (
+                cleaned.get("contenedor_fijo") or ""
+            ).strip()
+            if not contenedor:
+                self.add_error(
+                    "contenedor_fijo",
+                    "Indique el contenedor a precio fijo.",
+                )
+
+            tipos = self.data.getlist("tipo_fruta_fijo")
+            calibres = self.data.getlist("calibre_fijo")
+            precios = self.data.getlist("precio_linea_fijo")
+            mapeos: list[dict] = []
+            total = max(len(tipos), len(calibres), len(precios), 0)
+            for i in range(total):
+                tipo = (tipos[i] if i < len(tipos) else "").strip()
+                calibre_txt = (
+                    calibres[i] if i < len(calibres) else ""
+                ).strip()
+                precio_txt = (
+                    precios[i] if i < len(precios) else ""
+                ).strip()
+                if not tipo and not calibre_txt and not precio_txt:
+                    continue
+                try:
+                    calibre = int(calibre_txt)
+                except (TypeError, ValueError):
+                    calibre = 0
+                try:
+                    precio = Decimal(
+                        str(precio_txt).replace(",", ".")
+                    )
+                except (InvalidOperation, TypeError, ValueError):
+                    precio = Decimal("0")
+                if not tipo or calibre <= 0 or precio <= 0:
+                    self.add_error(
+                        None,
+                        (
+                            "Cada mapeo a precio fijo debe incluir "
+                            "tipo de fruta, calibre y precio (> 0)."
+                        ),
+                    )
+                    continue
+                mapeos.append(
+                    {
+                        "tipo_fruta": tipo.upper(),
+                        "calibre": calibre,
+                        "precio": format(precio, "f"),
+                    }
+                )
+            if not mapeos:
+                self.add_error(
+                    None,
+                    (
+                        "Agregue al menos un mapeo de tipo de "
+                        "fruta, calibre y precio."
+                    ),
+                )
+            cleaned["mapeos_precio_fijo"] = mapeos
+            cleaned["factura_corta_fijo"] = ""
+            cleaned["precio_fijo"] = None
+            return cleaned
+
+        self.add_error(
+            "modo_precio_fijo",
+            "Seleccione si el precio fijo es por factura "
+            "o por contenedor.",
+        )
+        cleaned["mapeos_precio_fijo"] = []
         return cleaned
 
 

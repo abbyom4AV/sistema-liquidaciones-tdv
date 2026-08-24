@@ -184,7 +184,11 @@
       border: 1px dashed var(--borde);
     }
 
-    .bloque-precio-fijo.oculto { display: none; }
+    .bloque-precio-fijo.oculto,
+    .modo-panel.oculto,
+    .oculto {
+      display: none !important;
+    }
 
     .campo-checkbox {
       display: flex;
@@ -196,12 +200,75 @@
     .campo-checkbox input {
       width: 1.15rem;
       height: 1.15rem;
+      flex-shrink: 0;
     }
 
     .fila-precio-fijo {
       display: grid;
-      grid-template-columns: 1fr 1fr 0.8fr;
+      grid-template-columns: 1fr 1fr;
       gap: 1rem;
+    }
+
+    .modo-precio-fijo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.5rem;
+      margin-top: 0.35rem;
+    }
+
+    .modo-precio-fijo label {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .modo-precio-fijo input[type="radio"] {
+      width: 1.05rem;
+      height: 1.05rem;
+      margin: 0;
+      flex-shrink: 0;
+      accent-color: var(--acento);
+    }
+
+    .mapeos-fijos {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .fila-mapeo-fijo {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr) minmax(0, 0.9fr) auto;
+      gap: 0.75rem;
+      align-items: end;
+    }
+
+    .fila-mapeo-fijo .campo {
+      min-width: 0;
+    }
+
+    .btn-mapeo {
+      border: 1px solid var(--borde);
+      background: #fff;
+      border-radius: 10px;
+      padding: 0.7rem 0.85rem;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      height: fit-content;
+    }
+
+    .btn-mapeo.quitar {
+      color: #9b1c1c;
+    }
+
+    .acciones-mapeos {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
     }
 
     .errores,
@@ -349,7 +416,8 @@
       }
 
       .fila-tres,
-      .fila-precio-fijo {
+      .fila-precio-fijo,
+      .fila-mapeo-fijo {
         grid-template-columns: 1fr;
       }
 
@@ -484,36 +552,83 @@
 
             <div id="bloque-precio-fijo" class="bloque-precio-fijo oculto">
               <p class="ayuda">
-                Use esta opción cuando una factura completa se liquida
-                a un precio único (no viene detallada en un PDF).
+                Elija un solo modo: factura completa o un contenedor
+                (con mapeos tipo/calibre/precio). Gastos y comisión
+                del precio fijo quedan en 0.
               </p>
-              <div class="fila-precio-fijo">
+
+              <div class="campo">
+                <span class="titulo-bloque" style="margin:0">
+                  {{ formulario.modo_precio_fijo.label }}
+                </span>
+                <div class="modo-precio-fijo">
+                  {% for radio in formulario.modo_precio_fijo %}
+                    <label for="{{ radio.id_for_label }}">
+                      {{ radio.tag }}
+                      {{ radio.choice_label }}
+                    </label>
+                  {% endfor %}
+                </div>
+                {% for error in formulario.modo_precio_fijo.errors %}
+                  <div class="campo-error">{{ error }}</div>
+                {% endfor %}
+              </div>
+
+              <div class="campo">
+                <label for="{{ formulario.moneda_fijo.id_for_label }}">
+                  {{ formulario.moneda_fijo.label }}
+                </label>
+                {{ formulario.moneda_fijo }}
+                {% for error in formulario.moneda_fijo.errors %}
+                  <div class="campo-error">{{ error }}</div>
+                {% endfor %}
+              </div>
+
+              <div id="panel-modo-factura" class="modo-panel">
+                <div class="fila-precio-fijo">
+                  <div class="campo">
+                    <label for="{{ formulario.factura_corta_fijo.id_for_label }}">
+                      {{ formulario.factura_corta_fijo.label }}
+                    </label>
+                    {{ formulario.factura_corta_fijo }}
+                    {% for error in formulario.factura_corta_fijo.errors %}
+                      <div class="campo-error">{{ error }}</div>
+                    {% endfor %}
+                  </div>
+                  <div class="campo">
+                    <label for="{{ formulario.precio_fijo.id_for_label }}">
+                      {{ formulario.precio_fijo.label }}
+                    </label>
+                    {{ formulario.precio_fijo }}
+                    {% for error in formulario.precio_fijo.errors %}
+                      <div class="campo-error">{{ error }}</div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+
+              <div id="panel-modo-contenedor" class="modo-panel oculto" hidden>
                 <div class="campo">
-                  <label for="{{ formulario.factura_corta_fijo.id_for_label }}">
-                    {{ formulario.factura_corta_fijo.label }}
+                  <label for="{{ formulario.contenedor_fijo.id_for_label }}">
+                    {{ formulario.contenedor_fijo.label }}
                   </label>
-                  {{ formulario.factura_corta_fijo }}
-                  {% for error in formulario.factura_corta_fijo.errors %}
+                  {{ formulario.contenedor_fijo }}
+                  {% for error in formulario.contenedor_fijo.errors %}
                     <div class="campo-error">{{ error }}</div>
                   {% endfor %}
                 </div>
-                <div class="campo">
-                  <label for="{{ formulario.precio_fijo.id_for_label }}">
-                    {{ formulario.precio_fijo.label }}
-                  </label>
-                  {{ formulario.precio_fijo }}
-                  {% for error in formulario.precio_fijo.errors %}
-                    <div class="campo-error">{{ error }}</div>
-                  {% endfor %}
-                </div>
-                <div class="campo">
-                  <label for="{{ formulario.moneda_fijo.id_for_label }}">
-                    {{ formulario.moneda_fijo.label }}
-                  </label>
-                  {{ formulario.moneda_fijo }}
-                  {% for error in formulario.moneda_fijo.errors %}
-                    <div class="campo-error">{{ error }}</div>
-                  {% endfor %}
+
+                <p class="titulo-bloque">Mapeos tipo / calibre / precio</p>
+                <p class="ayuda">
+                  Solo las líneas que coincidan con un mapeo van a
+                  precio fijo; el resto del contenedor sigue por
+                  consignación (PDF).
+                </p>
+                <div id="lista-mapeos-fijos" class="mapeos-fijos"></div>
+                <div class="acciones-mapeos">
+                  <button type="button" class="btn-mapeo" id="btn-add-mapeo">
+                    + Añadir mapeo
+                  </button>
                 </div>
               </div>
             </div>
@@ -560,15 +675,170 @@
         "{{ formulario.incluye_precio_fijo.id_for_label }}"
       );
       var bloqueFijo = document.getElementById("bloque-precio-fijo");
+      var panelFactura = document.getElementById("panel-modo-factura");
+      var panelContenedor = document.getElementById("panel-modo-contenedor");
+      var listaMapeos = document.getElementById("lista-mapeos-fijos");
+      var btnAddMapeo = document.getElementById("btn-add-mapeo");
+      var mapeosIniciales = {{ mapeos_precio_fijo_json|default:"[]"|safe }};
+
+      function modoSeleccionado() {
+        var marcado = document.querySelector(
+          'input[name="modo_precio_fijo"]:checked'
+        );
+        return marcado ? marcado.value : "factura";
+      }
+
+      function setPanelVisible(panel, visible) {
+        if (!panel) return;
+        panel.classList.toggle("oculto", !visible);
+        panel.hidden = !visible;
+        panel.querySelectorAll("input, select, textarea, button").forEach(
+          function (el) {
+            if (el.id === "btn-add-mapeo") {
+              el.disabled = !visible;
+              return;
+            }
+            if (el.classList.contains("btn-mapeo")) {
+              el.disabled = !visible;
+              return;
+            }
+            el.disabled = !visible;
+          }
+        );
+      }
+
+      function actualizarModo() {
+        var modo = modoSeleccionado();
+        setPanelVisible(panelFactura, modo === "factura");
+        setPanelVisible(panelContenedor, modo === "contenedor");
+        if (modo === "contenedor" && listaMapeos && !listaMapeos.children.length) {
+          crearFilaMapeo();
+        }
+      }
 
       function actualizarBloqueFijo() {
         if (!checkboxFijo || !bloqueFijo) return;
-        bloqueFijo.classList.toggle("oculto", !checkboxFijo.checked);
+        var activo = checkboxFijo.checked;
+        bloqueFijo.classList.toggle("oculto", !activo);
+        bloqueFijo.hidden = !activo;
+        if (activo) {
+          actualizarModo();
+        } else {
+          setPanelVisible(panelFactura, false);
+          setPanelVisible(panelContenedor, false);
+        }
+      }
+
+      function crearFilaMapeo(datos) {
+        if (datos && typeof datos === "number") {
+          datos = {};
+        }
+        datos = datos || {};
+        var fila = document.createElement("div");
+        fila.className = "fila-mapeo-fijo";
+
+        var campoTipo = document.createElement("div");
+        campoTipo.className = "campo";
+        var labelTipo = document.createElement("label");
+        labelTipo.textContent = "Tipo de fruta";
+        var selectTipo = document.createElement("select");
+        selectTipo.name = "tipo_fruta_fijo";
+        [
+          ["", "—"],
+          ["ESPECIAL", "Especial"],
+          ["VERDE", "Verde"],
+          ["CROWNLESS", "Crownless"],
+        ].forEach(function (opt) {
+          var option = document.createElement("option");
+          option.value = opt[0];
+          option.textContent = opt[1];
+          selectTipo.appendChild(option);
+        });
+        if (datos.tipo_fruta) {
+          selectTipo.value = String(datos.tipo_fruta).toUpperCase();
+        }
+        campoTipo.appendChild(labelTipo);
+        campoTipo.appendChild(selectTipo);
+
+        var campoCalibre = document.createElement("div");
+        campoCalibre.className = "campo";
+        var labelCalibre = document.createElement("label");
+        labelCalibre.textContent = "Calibre";
+        var inputCalibre = document.createElement("input");
+        inputCalibre.type = "number";
+        inputCalibre.name = "calibre_fijo";
+        inputCalibre.min = "1";
+        inputCalibre.step = "1";
+        if (datos.calibre) {
+          inputCalibre.value = datos.calibre;
+        }
+        campoCalibre.appendChild(labelCalibre);
+        campoCalibre.appendChild(inputCalibre);
+
+        var campoPrecio = document.createElement("div");
+        campoPrecio.className = "campo";
+        var labelPrecio = document.createElement("label");
+        labelPrecio.textContent = "Precio";
+        var inputPrecio = document.createElement("input");
+        inputPrecio.type = "text";
+        inputPrecio.name = "precio_linea_fijo";
+        inputPrecio.setAttribute("inputmode", "decimal");
+        if (datos.precio != null && datos.precio !== "") {
+          inputPrecio.value = datos.precio;
+        }
+        campoPrecio.appendChild(labelPrecio);
+        campoPrecio.appendChild(inputPrecio);
+
+        var btnQuitar = document.createElement("button");
+        btnQuitar.type = "button";
+        btnQuitar.className = "btn-mapeo quitar";
+        btnQuitar.textContent = "Quitar";
+        btnQuitar.addEventListener("click", function () {
+          fila.remove();
+          if (
+            listaMapeos &&
+            !listaMapeos.children.length &&
+            modoSeleccionado() === "contenedor" &&
+            checkboxFijo &&
+            checkboxFijo.checked
+          ) {
+            crearFilaMapeo();
+          }
+        });
+
+        fila.appendChild(campoTipo);
+        fila.appendChild(campoCalibre);
+        fila.appendChild(campoPrecio);
+        fila.appendChild(btnQuitar);
+        if (listaMapeos) listaMapeos.appendChild(fila);
       }
 
       if (checkboxFijo) {
         checkboxFijo.addEventListener("change", actualizarBloqueFijo);
-        actualizarBloqueFijo();
+      }
+      document
+        .querySelectorAll('input[name="modo_precio_fijo"]')
+        .forEach(function (radio) {
+          radio.addEventListener("change", actualizarModo);
+        });
+      if (btnAddMapeo) {
+        btnAddMapeo.addEventListener("click", function () {
+          crearFilaMapeo();
+        });
+      }
+
+      if (listaMapeos) {
+        listaMapeos.innerHTML = "";
+        if (Array.isArray(mapeosIniciales) && mapeosIniciales.length) {
+          mapeosIniciales.forEach(function (item) {
+            crearFilaMapeo(item);
+          });
+        }
+      }
+
+      actualizarBloqueFijo();
+      if (checkboxFijo && checkboxFijo.checked) {
+        actualizarModo();
       }
 
       if (form && btn) {

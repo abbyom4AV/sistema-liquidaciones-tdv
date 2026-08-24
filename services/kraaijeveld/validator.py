@@ -107,15 +107,42 @@ def _precio_para_linea(
     return None
 
 
+@dataclass(frozen=True)
+class MapeoPrecioFijoContenedor:
+    tipo_fruta: str
+    calibre: int
+    precio: Decimal
+
+
+def _clave_contenedor(valor: str) -> str:
+    return normalizar_texto(valor).replace(" ", "")
+
+
+def _normalizar_variante_ui(valor: str) -> str:
+    t = normalizar_texto(valor)
+    if "CROWNLESS" in t:
+        return "CROWNLESS"
+    if "ESPECIAL" in t or t == "COL":
+        return "ESPECIAL"
+    if "VERDE" in t or t == "VER":
+        return "VERDE"
+    if "INTERMEDIO" in t or t == "INT":
+        return "ESPECIAL"
+    return t
+
+
 def validar_liquidaciones_kraaijeveld(
     liquidaciones: tuple[LiquidacionKraaijeveld, ...],
     despachos: ResultadoMatcherKraaijeveld,
     destino_ui: str,
     *,
     incluye_precio_fijo: bool = False,
+    modo_precio_fijo: str = "factura",
     factura_corta_fijo: str | None = None,
     precio_fijo: Decimal | None = None,
     moneda_fijo: str | None = None,
+    contenedor_fijo: str | None = None,
+    mapeos_precio_fijo: tuple[MapeoPrecioFijoContenedor, ...] = (),
 ) -> ResultadoValidacionKraaijeveld:
     errores: list[IncidenciaValidacionKraaijeveld] = []
     advertencias: list[IncidenciaValidacionKraaijeveld] = []
@@ -198,29 +225,117 @@ def validar_liquidaciones_kraaijeveld(
 
     factura_fijo = (
         str(factura_corta_fijo).strip()
-        if incluye_precio_fijo and factura_corta_fijo
+        if incluye_precio_fijo
+        and (modo_precio_fijo or "factura") == "factura"
+        and factura_corta_fijo
         else ""
     )
+    cont_fijo = (
+        _clave_contenedor(contenedor_fijo or "")
+        if incluye_precio_fijo
+        and (modo_precio_fijo or "") == "contenedor"
+        else ""
+    )
+    mapeos_fijos: dict[tuple[str, int], Decimal] = {}
+    if incluye_precio_fijo and cont_fijo:
+        for mapeo in mapeos_precio_fijo:
+            clave = (
+                _normalizar_variante_ui(mapeo.tipo_fruta),
+                int(mapeo.calibre),
+            )
+            mapeos_fijos[clave] = mapeo.precio
+
     if incluye_precio_fijo:
-        if len(factura_fijo) != 4 or not factura_fijo.isdigit():
+        modo = (modo_precio_fijo or "factura").strip().lower()
+        if modo not in {"factura", "contenedor"}:
             errores.append(
                 IncidenciaValidacionKraaijeveld(
-                    codigo="FACTURA_FIJO_INVALIDA",
+                    codigo="MODO_PRECIO_FIJO_INVALIDO",
                     nivel="error",
                     mensaje=(
-                        "Indique los 4 dígitos de la factura "
-                        "a precio fijo."
+                        "Seleccione precio fijo por factura "
+                        "o por contenedor."
                     ),
                 )
             )
-        if precio_fijo is None or precio_fijo <= 0:
-            errores.append(
-                IncidenciaValidacionKraaijeveld(
-                    codigo="PRECIO_FIJO_INVALIDO",
-                    nivel="error",
-                    mensaje="Indique el precio fijo (> 0).",
+        if modo == "factura":
+            if len(factura_fijo) != 4 or not factura_fijo.isdigit():
+                errores.append(
+                    IncidenciaValidacionKraaijeveld(
+                        codigo="FACTURA_FIJO_INVALIDA",
+                        nivel="error",
+                        mensaje=(
+                            "Indique los 4 dígitos de la factura "
+                            "a precio fijo."
+                        ),
+                    )
                 )
-            )
+            if precio_fijo is None or precio_fijo <= 0:
+                errores.append(
+                    IncidenciaValidacionKraaijeveld(
+                        codigo="PRECIO_FIJO_INVALIDO",
+                        nivel="error",
+                        mensaje="Indique el precio fijo (> 0).",
+                    )
+                )
+        elif modo == "contenedor":
+            if not cont_fijo:
+                errores.append(
+                    IncidenciaValidacionKraaijeveld(
+                        codigo="CONTENEDOR_FIJO_INVALIDO",
+                        nivel="error",
+                        mensaje=(
+                            "Indique el contenedor a precio fijo."
+                        ),
+                    )
+                )
+            if not mapeos_fijos:
+                errores.append(
+                    IncidenciaValidacionKraaijeveld(
+                        codigo="MAPEOS_PRECIO_FIJO_VACIOS",
+                        nivel="error",
+                        mensaje=(
+                            "Agregue al menos un mapeo de tipo "
+                            "de fruta, calibre y precio."
+                        ),
+                    )
+                )
+            for (tipo, calibre), precio in mapeos_fijos.items():
+                if tipo not in {"ESPECIAL", "VERDE", "CROWNLESS"}:
+                    errores.append(
+                        IncidenciaValidacionKraaijeveld(
+                            codigo="TIPO_FIJO_INVALIDO",
+                            nivel="error",
+                            mensaje=(
+                                "Tipo de fruta a precio fijo "
+                                "inválido: use Especial, Verde "
+                                "o Crownless."
+                            ),
+                            detalles={"tipo_fruta": tipo},
+                        )
+                    )
+                if calibre <= 0:
+                    errores.append(
+                        IncidenciaValidacionKraaijeveld(
+                            codigo="CALIBRE_FIJO_INVALIDO",
+                            nivel="error",
+                            mensaje=(
+                                "Indique un calibre válido "
+                                "en el mapeo a precio fijo."
+                            ),
+                        )
+                    )
+                if precio is None or precio <= 0:
+                    errores.append(
+                        IncidenciaValidacionKraaijeveld(
+                            codigo="PRECIO_FIJO_INVALIDO",
+                            nivel="error",
+                            mensaje=(
+                                "Indique precio fijo (> 0) "
+                                "en cada mapeo."
+                            ),
+                        )
+                    )
         mon = (moneda_fijo or "").strip().upper()
         if mon not in {"EUR", "USD", "€", "$"}:
             errores.append(
@@ -259,15 +374,29 @@ def validar_liquidaciones_kraaijeveld(
 
     for linea in despachos.lineas:
         cont_n = normalizar_texto(linea.contenedor).replace(" ", "")
-        es_fijo = bool(
+        variante = _variante_despacho(
+            linea.tipo_empaque,
+            linea.carton,
+        )
+        es_fijo_factura = bool(
             incluye_precio_fijo
             and factura_fijo
             and linea.factura_corta == factura_fijo
         )
+        precio_mapeo = mapeos_fijos.get((variante, linea.calibre))
+        es_fijo_contenedor = bool(
+            incluye_precio_fijo
+            and cont_fijo
+            and cont_n == cont_fijo
+            and precio_mapeo is not None
+        )
 
-        if es_fijo:
-            precio_eur = None if es_usd else precio_fijo
-            precio_usd = precio_fijo if es_usd else None
+        if es_fijo_factura or es_fijo_contenedor:
+            precio_usar = (
+                precio_mapeo if es_fijo_contenedor else precio_fijo
+            )
+            precio_eur = None if es_usd else precio_usar
+            precio_usd = precio_usar if es_usd else None
             gastos_cero = {col: Decimal("0") for col in COLUMNAS_GASTO}
             lineas_prep.append(
                 LineaPreparadaKraaijeveld(
@@ -302,10 +431,6 @@ def validar_liquidaciones_kraaijeveld(
             continue
 
         precios = _precios_por_calibre(liq)
-        variante = _variante_despacho(
-            linea.tipo_empaque,
-            linea.carton,
-        )
         precio = _precio_para_linea(
             precios,
             variante,
@@ -374,6 +499,50 @@ def validar_liquidaciones_kraaijeveld(
                     ),
                 )
             )
+
+    if incluye_precio_fijo and cont_fijo:
+        lineas_cont = [
+            ln
+            for ln in despachos.lineas
+            if _clave_contenedor(ln.contenedor) == cont_fijo
+        ]
+        if not lineas_cont:
+            advertencias.append(
+                IncidenciaValidacionKraaijeveld(
+                    codigo="SIN_LINEAS_CONTENEDOR_FIJO",
+                    nivel="advertencia",
+                    mensaje=(
+                        f"No hay líneas Despachos para el "
+                        f"contenedor {contenedor_fijo} en "
+                        f"semana/destino."
+                    ),
+                )
+            )
+        else:
+            aplicadas = [
+                ln
+                for ln in lineas_cont
+                if (
+                    _variante_despacho(
+                        ln.tipo_empaque,
+                        ln.carton,
+                    ),
+                    ln.calibre,
+                )
+                in mapeos_fijos
+            ]
+            if not aplicadas:
+                advertencias.append(
+                    IncidenciaValidacionKraaijeveld(
+                        codigo="SIN_MAPEO_CONTENEDOR_FIJO",
+                        nivel="advertencia",
+                        mensaje=(
+                            f"Ningún mapeo tipo/calibre coincidió "
+                            f"con líneas del contenedor "
+                            f"{contenedor_fijo}."
+                        ),
+                    )
+                )
 
     if not lineas_prep and not errores:
         errores.append(
