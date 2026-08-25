@@ -197,11 +197,7 @@ def _contexto_carga_tdv_europa(
 def _repreparar_procesamiento(
     procesamiento: ProcesamientoTdvEuropa,
 ) -> ResultadoPreparacionTdvEuropa:
-    especiales = ()
-    if procesamiento.incluye_contenedor_especial:
-        especiales = (
-            procesamiento.contenedor_especial or ""
-        ).strip()
+    especiales = (procesamiento.contenedor_especial or "").strip()
     resultado = preparar_procesamiento_tdv_europa(
         ruta_liquidacion=procesamiento.archivo_liquidacion.path,
         ruta_despachos=procesamiento.archivo_despachos.path,

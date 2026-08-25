@@ -9,12 +9,16 @@ from typing import Any, Literal
 
 from services.tdv_europa.extractor import (
     LiquidacionTdvEuropa,
-    aplicar_contenedores_especiales,
+    aplicar_mapa_contenedores_liquidacion,
+    construir_mapa_contenedores,
+    contenedores_en_liquidacion,
     extraer_liquidacion_tdv_europa,
+    parsear_contenedores_especiales,
 )
 from services.tdv_europa.matcher import (
     CLIENTE_TDV_EUROPA_PREFIXES,
     ResultadoMatcherTdvEuropa,
+    aplicar_mapa_contenedores_despachos,
     buscar_lineas_despachos_tdv_europa,
 )
 from services.tdv_europa.validator import (
@@ -56,10 +60,6 @@ def preparar_procesamiento_tdv_europa(
     cliente_prefix: str | tuple[str, ...] = CLIENTE_TDV_EUROPA_PREFIXES,
 ) -> ResultadoPreparacionTdvEuropa:
     liquidacion = extraer_liquidacion_tdv_europa(ruta_liquidacion)
-    liquidacion = aplicar_contenedores_especiales(
-        liquidacion,
-        contenedores_especiales,
-    )
     factura_ui = str(factura_corta).strip()
 
     despachos = buscar_lineas_despachos_tdv_europa(
@@ -70,6 +70,30 @@ def preparar_procesamiento_tdv_europa(
         factura_corta=factura_ui,
         cliente_prefix=cliente_prefix,
     )
+
+    if isinstance(contenedores_especiales, str):
+        usuario = (
+            parsear_contenedores_especiales(contenedores_especiales)
+            if contenedores_especiales.strip()
+            else ()
+        )
+    elif contenedores_especiales:
+        usuario = parsear_contenedores_especiales(
+            "\n".join(str(c) for c in contenedores_especiales)
+        )
+    else:
+        usuario = ()
+
+    mapa = construir_mapa_contenedores(
+        contenedores_pdf=contenedores_en_liquidacion(liquidacion),
+        contenedores_despachos=despachos.contenedores,
+        contenedores_usuario=usuario,
+    )
+    liquidacion = aplicar_mapa_contenedores_liquidacion(
+        liquidacion,
+        mapa,
+    )
+    despachos = aplicar_mapa_contenedores_despachos(despachos, mapa)
 
     validacion = validar_liquidacion_tdv_europa(
         liquidacion=liquidacion,

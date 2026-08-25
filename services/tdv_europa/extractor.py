@@ -173,51 +173,77 @@ def normalizar_contenedor_especial(valor: str) -> str:
             "Contenedor con carácter especial inválido. "
             "Use formato tipo SEGU9826184-2."
         )
+    if "-" not in texto:
+        raise FormatoLiquidacionTdvEuropaError(
+            "Indique el contenedor con sufijo (ej. SEGU9826184-2)."
+        )
     return texto
 
 
-def parsear_contenedores_especiales(
-    valor: str | None,
-) -> tuple[str, ...]:
-    """Acepta uno o varios separados por coma, ; o salto de línea."""
-    if not valor:
-        return ()
-    partes = re.split(r"[,;\n]+", str(valor))
-    resultado: list[str] = []
-    for parte in partes:
-        limpio = parte.strip()
-        if not limpio:
-            continue
-        resultado.append(normalizar_contenedor_especial(limpio))
-    return tuple(dict.fromkeys(resultado))
+def _normalizar_id_contenedor(contenedor: str) -> str:
+    return normalizar_texto(contenedor).replace(" ", "")
 
 
-def aplicar_contenedores_especiales(
+def contenedores_en_liquidacion(
     liquidacion: LiquidacionTdvEuropa,
-    contenedores_especiales: tuple[str, ...] | list[str] | str = (),
+) -> tuple[str, ...]:
+    vistos: dict[str, None] = {}
+    for linea in (*liquidacion.lineas, *liquidacion.mermas):
+        cid = _normalizar_id_contenedor(linea.contenedor)
+        if cid:
+            vistos[cid] = None
+    return tuple(vistos.keys())
+
+
+def construir_mapa_contenedores(
+    *,
+    contenedores_pdf: tuple[str, ...],
+    contenedores_despachos: tuple[str, ...] = (),
+    contenedores_usuario: tuple[str, ...] = (),
+) -> dict[str, str]:
+    """
+    Arma el mapa base→ID completo:
+    - explícitos del usuario (prioridad),
+    - sufijo -N ya presente en el PDF,
+    - PDF con base sin sufijo + Despachos con sufijo.
+    """
+    mapa: dict[str, str] = {}
+
+    def _registrar(full: str) -> None:
+        cid = _normalizar_id_contenedor(full)
+        if not cid:
+            return
+        mapa[cid] = cid
+        mapa[base_contenedor(cid)] = cid
+
+    for full in contenedores_usuario:
+        _registrar(full)
+
+    for cid in contenedores_pdf:
+        if "-" in cid:
+            _registrar(cid)
+
+    pdf_set = set(contenedores_pdf)
+    for desp_id in contenedores_despachos:
+        desp_norm = _normalizar_id_contenedor(desp_id)
+        if "-" not in desp_norm:
+            continue
+        base = base_contenedor(desp_norm)
+        if base in pdf_set and base not in mapa:
+            _registrar(desp_norm)
+
+    return mapa
+
+
+def aplicar_mapa_contenedores_liquidacion(
+    liquidacion: LiquidacionTdvEuropa,
+    mapa: dict[str, str],
 ) -> LiquidacionTdvEuropa:
-    """
-    Fuerza el ID completo (con -N) en líneas/mermas/reclamos
-    cuando el PDF solo trajo la base o el usuario lo digitó.
-    """
-    if isinstance(contenedores_especiales, str):
-        especiales = parsear_contenedores_especiales(
-            contenedores_especiales
-        )
-    else:
-        especiales = parsear_contenedores_especiales(
-            "\n".join(str(c) for c in contenedores_especiales)
-        )
-    if not especiales:
+    if not mapa:
         return liquidacion
 
-    mapa: dict[str, str] = {}
-    for full in especiales:
-        mapa[full] = full
-        mapa[base_contenedor(full)] = full
-
     def _remap_id(contenedor: str) -> str:
-        clave = normalizar_texto(contenedor).replace(" ", "")
+        clave = _normalizar_id_contenedor(contenedor)
         return mapa.get(clave, contenedor)
 
     lineas = tuple(
@@ -255,6 +281,50 @@ def aplicar_contenedores_especiales(
             "reclamos": reclamos,
         }
     )
+
+
+def parsear_contenedores_especiales(
+    valor: str | None,
+) -> tuple[str, ...]:
+    """Acepta uno o varios separados por coma, ; o salto de línea."""
+    if not valor:
+        return ()
+    partes = re.split(r"[,;\n]+", str(valor))
+    resultado: list[str] = []
+    for parte in partes:
+        limpio = parte.strip()
+        if not limpio:
+            continue
+        resultado.append(normalizar_contenedor_especial(limpio))
+    return tuple(dict.fromkeys(resultado))
+
+
+def aplicar_contenedores_especiales(
+    liquidacion: LiquidacionTdvEuropa,
+    contenedores_especiales: tuple[str, ...] | list[str] | str = (),
+    contenedores_despachos: tuple[str, ...] = (),
+) -> LiquidacionTdvEuropa:
+    """
+    Unifica IDs de contenedor entre PDF y Despachos.
+    No filtra líneas: lee todo el PDF y solo remapea bases→sufijo.
+    """
+    if isinstance(contenedores_especiales, str):
+        usuario = parsear_contenedores_especiales(
+            contenedores_especiales
+        )
+    elif contenedores_especiales:
+        usuario = parsear_contenedores_especiales(
+            "\n".join(str(c) for c in contenedores_especiales)
+        )
+    else:
+        usuario = ()
+
+    mapa = construir_mapa_contenedores(
+        contenedores_pdf=contenedores_en_liquidacion(liquidacion),
+        contenedores_despachos=contenedores_despachos,
+        contenedores_usuario=usuario,
+    )
+    return aplicar_mapa_contenedores_liquidacion(liquidacion, mapa)
 
 
 def formatear_destino_excel(valor: Any) -> str:

@@ -1333,7 +1333,7 @@ class FormularioCargaTdvEuropa(forms.Form):
         },
     )
     incluye_contenedor_especial = forms.BooleanField(
-        label="Incluye contenedor con carácter especial",
+        label="Mapear contenedores con sufijo especial (-2, etc.)",
         required=False,
     )
 

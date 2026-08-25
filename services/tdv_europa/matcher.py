@@ -343,6 +343,42 @@ def buscar_lineas_despachos_tdv_europa(
         libro.close()
 
 
+def aplicar_mapa_contenedores_despachos(
+    despachos: ResultadoMatcherTdvEuropa,
+    mapa: dict[str, str],
+) -> ResultadoMatcherTdvEuropa:
+    if not mapa:
+        return despachos
+
+    def _remap(contenedor: str) -> str:
+        clave = normalizar_texto(contenedor).replace(" ", "")
+        return mapa.get(clave, contenedor)
+
+    lineas = tuple(
+        LineaDespachoTdvEuropa(
+            **{
+                **linea.__dict__,
+                "contenedor": _remap(linea.contenedor),
+            }
+        )
+        for linea in despachos.lineas
+    )
+    contenedores = tuple(
+        dict.fromkeys(
+            linea.contenedor
+            for linea in lineas
+            if linea.contenedor
+        )
+    )
+    return ResultadoMatcherTdvEuropa(
+        **{
+            **despachos.__dict__,
+            "lineas": lineas,
+            "contenedores": contenedores,
+        }
+    )
+
+
 def convertir_a_json(valor: Any) -> Any:
     if isinstance(valor, Decimal):
         return format(valor, "f")

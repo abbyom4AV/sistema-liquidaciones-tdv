@@ -10,6 +10,7 @@ from services.tdv_europa.extractor import (
     _parsear_total_general,
     _partir_carton_y_montos,
     aplicar_contenedores_especiales,
+    construir_mapa_contenedores,
     clave_carton,
     limpiar_carton,
     normalizar_destino,
@@ -242,6 +243,42 @@ class ContenedorEspecialTdvEuropaTests(unittest.TestCase):
             remapeada.lineas[1].contenedor,
             "TTNU80607257-3",
         )
+
+    def test_mapa_auto_desde_pdf_con_sufijo(self):
+        liq = _liquidacion_base(
+            lineas=(
+                _linea_producto(contenedor="SEGU9826184-2"),
+                _linea_producto(contenedor="TTNU80607257"),
+            )
+        )
+        mapa = construir_mapa_contenedores(
+            contenedores_pdf=("SEGU9826184-2", "TTNU80607257"),
+        )
+        remapeada = aplicar_contenedores_especiales(
+            liq,
+            contenedores_despachos=(),
+        )
+        self.assertEqual(
+            remapeada.lineas[0].contenedor,
+            "SEGU9826184-2",
+        )
+        self.assertEqual(
+            remapeada.lineas[1].contenedor,
+            "TTNU80607257",
+        )
+        self.assertIn("SEGU9826184", mapa)
+        self.assertEqual(mapa["SEGU9826184"], "SEGU9826184-2")
+
+    def test_mapa_infiere_base_pdf_contra_despachos(self):
+        mapa = construir_mapa_contenedores(
+            contenedores_pdf=("SEGU9826184", "TTNU80607257"),
+            contenedores_despachos=(
+                "SEGU9826184-2",
+                "TTNU80607257",
+            ),
+        )
+        self.assertEqual(mapa["SEGU9826184"], "SEGU9826184-2")
+        self.assertNotIn("TTNU80607257", mapa)
 
 
 class MermaTdvEuropaTests(unittest.TestCase):
