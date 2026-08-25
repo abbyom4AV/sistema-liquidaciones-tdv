@@ -211,31 +211,74 @@
       min-width: 0;
     }
 
-    .btn-contenedor {
-      border: 1px solid var(--borde);
-      background: #fff;
-      border-radius: 10px;
-      padding: 0.7rem 0.85rem;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-      height: fit-content;
+    .fila-contenedor-especial .campo label {
+      font-size: 0.88rem;
+      color: var(--muted);
     }
 
-    .btn-contenedor.quitar {
-      color: #9b1c1c;
+    .lista-contenedores {
+      display: grid;
+      gap: 0.75rem;
     }
 
     .acciones-contenedores {
       display: flex;
       gap: 0.75rem;
       flex-wrap: wrap;
+      padding-top: 0.15rem;
     }
 
-    .lista-contenedores {
-      display: grid;
-      gap: 0.75rem;
+    .btn-contenedor {
+      border: 1px solid var(--borde);
+      background: #fff;
+      border-radius: 12px;
+      padding: 0.72rem 0.95rem;
+      font: inherit;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--texto);
+      cursor: pointer;
+      white-space: nowrap;
+      height: fit-content;
+      min-width: 0;
+      width: auto;
+      transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease;
+    }
+
+    .btn-contenedor:hover:not(:disabled) {
+      background: var(--suave);
+      border-color: #b8c9bf;
+    }
+
+    .btn-contenedor.anadir {
+      align-self: flex-start;
+      border-style: dashed;
+      color: var(--acento);
+      padding: 0.62rem 1rem;
+    }
+
+    .btn-contenedor.anadir:hover:not(:disabled) {
+      border-color: var(--acento);
+      background: rgba(55, 90, 77, 0.06);
+    }
+
+    .btn-contenedor.quitar {
+      color: #9b1c1c;
+      font-size: 0.88rem;
+      padding: 0.78rem 0.9rem;
+    }
+
+    .btn-contenedor.quitar:hover:not(:disabled) {
+      background: #fff5f5;
+      border-color: #f0b4b4;
+    }
+
+    .btn-contenedor:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
     }
 
     .campo-checkbox {
@@ -278,7 +321,7 @@
       padding-top: 0.45rem;
     }
 
-    button {
+    .acciones-form button {
       border: 0;
       border-radius: 999px;
       background: var(--acento);
@@ -291,17 +334,17 @@
       transition: background 0.15s ease, opacity 0.15s ease;
     }
 
-    button:hover {
+    .acciones-form button:hover {
       background: var(--acento-oscuro);
     }
 
-    button.procesando {
+    .acciones-form button.procesando {
       background: var(--acento-proceso);
       cursor: wait;
       opacity: 0.95;
     }
 
-    button:disabled {
+    .acciones-form button:disabled {
       cursor: wait;
     }
 
@@ -396,8 +439,12 @@
         justify-content: stretch;
       }
 
-      button {
+      .acciones-form button {
         width: 100%;
+      }
+
+      .fila-contenedor-especial .btn-contenedor.quitar {
+        justify-self: start;
       }
     }
   </style>
@@ -499,7 +546,7 @@
               </p>
               <div id="lista-contenedores-especiales" class="lista-contenedores"></div>
               <div class="acciones-contenedores">
-                <button type="button" class="btn-contenedor" id="btn-add-contenedor">
+                <button type="button" class="btn-contenedor anadir" id="btn-add-contenedor">
                   + Añadir contenedor
                 </button>
               </div>
@@ -606,6 +653,19 @@
         });
       }
 
+      function renumerarFilasContenedor() {
+        if (!listaEsp) return;
+        Array.prototype.forEach.call(
+          listaEsp.children,
+          function (fila, indice) {
+            var label = fila.querySelector("label");
+            if (label) {
+              label.textContent = "Contenedor " + (indice + 1);
+            }
+          }
+        );
+      }
+
       function crearFilaContenedor(valor) {
         if (!listaEsp) return;
         var fila = document.createElement("div");
@@ -614,7 +674,8 @@
         var campo = document.createElement("div");
         campo.className = "campo";
         var label = document.createElement("label");
-        label.textContent = "Contenedor especial";
+        label.textContent =
+          "Contenedor " + (listaEsp.children.length + 1);
         var input = document.createElement("input");
         input.type = "text";
         input.name = "contenedor_especial";
@@ -633,12 +694,15 @@
           fila.remove();
           if (!listaEsp.children.length && checkEsp && checkEsp.checked) {
             crearFilaContenedor("");
+          } else {
+            renumerarFilasContenedor();
           }
         });
 
         fila.appendChild(campo);
         fila.appendChild(btnQuitar);
         listaEsp.appendChild(fila);
+        renumerarFilasContenedor();
       }
 
       function actualizarEspecial() {
