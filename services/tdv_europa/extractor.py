@@ -33,9 +33,10 @@ ALIAS_DESTINO = {
     "ANTWERPEN": "AMBERES",
 }
 
-# ISO + variantes: 6–8 dígitos y sufijo opcional (ej. SEGU9826184-2,
-# TTNU80607257).
-_CONTENEDOR_PAT = r"[A-Z]{4}\d{6,8}(?:-\d+)?"
+# Prefijo ISO (4 letras) + 6–12 dígitos + sufijo opcional
+# (ej. SEGU9826184-2, TTNU80607257). El tope 12 cubre variantes
+# largas sin abrir el match a números arbitrarios.
+_CONTENEDOR_PAT = r"[A-Z]{4}\d{6,12}(?:-\d+)?"
 _CONTENEDOR_RE = re.compile(
     rf"\b({_CONTENEDOR_PAT})\b",
     re.I,

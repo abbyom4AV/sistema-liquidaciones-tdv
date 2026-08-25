@@ -171,6 +171,17 @@ class ContenedorEspecialTdvEuropaTests(unittest.TestCase):
         self.assertEqual(producto.contenedor, "TTNU80607257")
         self.assertEqual(producto.cajas_netas, Decimal("640.00"))
 
+    def test_parsea_contenedor_con_mas_de_8_digitos(self):
+        linea = (
+            "ABCD1234567890 MERCADONA 08/05/2026 COL CAL6 "
+            "CARTON STD 100,00 1,35 € 16,00 € 1.600,00 €"
+        )
+        producto = _parsear_linea_producto(linea)
+        self.assertIsNotNone(producto)
+        assert producto is not None
+        self.assertEqual(producto.contenedor, "ABCD1234567890")
+        self.assertEqual(producto.cajas_netas, Decimal("100.00"))
+
     def test_remap_base_a_especial_digitado(self):
         liq = _liquidacion_base(
             lineas=(
