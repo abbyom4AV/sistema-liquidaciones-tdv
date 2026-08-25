@@ -361,6 +361,61 @@ class MermaTdvEuropaTests(unittest.TestCase):
         self.assertEqual(len(errores), 1)
         self.assertEqual(errores[0].codigo, "MERMA_AMBIGUA")
 
+    def test_merma_desempata_por_cajas_iguales(self):
+        cliente_a = _linea_producto(
+            cliente="GREEN SELECT",
+            cajas_netas=Decimal("400"),
+        )
+        cliente_b = _linea_producto(
+            cliente="BLAS EL CANARIO",
+            cajas_netas=Decimal("160"),
+        )
+        merma = _linea_producto(
+            cliente="MERMA",
+            es_merma=True,
+            cajas_netas=Decimal("160"),
+        )
+        liquidacion = _liquidacion_base(
+            lineas=(cliente_a, cliente_b),
+            mermas=(merma,),
+        )
+        _map, atribuciones, errores, _adv = atribuir_mermas(liquidacion)
+        self.assertEqual(len(errores), 0)
+        self.assertEqual(atribuciones[0].cliente, "BLAS EL CANARIO")
+
+    def test_merma_calidad_no_duplica_ni_exige_precio(self):
+        cliente = _linea_producto(
+            cliente="ZAMBRANO MERMA CALIDAD",
+            cajas_netas=Decimal("80"),
+            venta_bruta_eur=Decimal("0"),
+        )
+        merma = _linea_producto(
+            cliente="MERMA",
+            es_merma=True,
+            cajas_netas=Decimal("80"),
+        )
+        liquidacion = _liquidacion_base(
+            lineas=(cliente,),
+            mermas=(merma,),
+        )
+        _map, atribuciones, errores, advertencias = atribuir_mermas(
+            liquidacion
+        )
+        self.assertEqual(len(errores), 0)
+        self.assertEqual(len(atribuciones), 0)
+        self.assertTrue(
+            any(a.codigo == "MERMA_YA_EN_CALIDAD" for a in advertencias)
+        )
+        resultado = validar_liquidacion_tdv_europa(
+            liquidacion=liquidacion,
+            despachos=_despachos(total_cajas=80),
+            destino_ui="AMBERES",
+            factura_ui="1234",
+        )
+        self.assertFalse(
+            any(e.codigo == "PRECIO_INVALIDO" for e in resultado.errores)
+        )
+
 
 class ValidacionTdvEuropaTests(unittest.TestCase):
     def test_total_general_gastos_en_validacion(self):

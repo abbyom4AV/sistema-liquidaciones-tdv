@@ -117,16 +117,36 @@ def _nave_coincide(a: str, b: str) -> bool:
     return na == nb or na in nb or nb in na
 
 
+def _es_cliente_merma_calidad(cliente: str) -> bool:
+    nombre = normalizar_texto(cliente)
+    return "MERMA" in nombre and nombre != "MERMA"
+
+
+def _filtrar_candidatos_merma(
+    candidatos: list[LineaProductoTdvEuropa],
+) -> list[LineaProductoTdvEuropa]:
+    venta = [
+        c
+        for c in candidatos
+        if not _es_cliente_merma_calidad(c.cliente)
+    ]
+    return venta or candidatos
+
+
 def _resolver_cliente_merma(
     candidatos: list[LineaProductoTdvEuropa],
+    cajas_merma: Decimal,
 ) -> LineaProductoTdvEuropa | None:
     """
     Desempate con mismo contenedor+calibre+cartón:
     - 1 coincidencia → ese cliente
     - varias y hay una MERCADONA única → MERCADONA
     - varias sin MERCADONA y hay una IRMADONA única → IRMADONA
+    - cajas de merma = netas de un solo candidato → ese cliente
+    - varias con mismas cajas que la merma → el primero por nombre
     - resto → None (bloqueo)
     """
+    candidatos = _filtrar_candidatos_merma(candidatos)
     if len(candidatos) == 1:
         return candidatos[0]
     mercadonas = [
@@ -143,6 +163,17 @@ def _resolver_cliente_merma(
     ]
     if len(irmadonas) == 1:
         return irmadonas[0]
+
+    por_cajas = [
+        c
+        for c in candidatos
+        if c.cajas_netas == cajas_merma
+    ]
+    if len(por_cajas) == 1:
+        return por_cajas[0]
+    if len(por_cajas) > 1:
+        return sorted(por_cajas, key=lambda c: c.cliente)[0]
+
     return None
 
 
@@ -196,7 +227,37 @@ def atribuir_mermas(
             )
             continue
 
-        cliente = _resolver_cliente_merma(candidatos)
+        calidad = [
+            c
+            for c in candidatos
+            if _es_cliente_merma_calidad(c.cliente)
+            and c.cajas_netas == merma.cajas_netas
+        ]
+        if len(calidad) == 1:
+            advertencias.append(
+                IncidenciaValidacionTdvEuropa(
+                    codigo="MERMA_YA_EN_CALIDAD",
+                    nivel="advertencia",
+                    mensaje=(
+                        "La merma ya está reflejada en la "
+                        f"línea {calidad[0].cliente}."
+                    ),
+                    detalles={
+                        "contenedor": merma.contenedor,
+                        "calibre_raw": merma.calibre_raw,
+                        "carton": merma.carton,
+                        "cajas": str(merma.cajas_netas),
+                        "cliente_calidad": calidad[0].cliente,
+                    },
+                )
+            )
+            continue
+
+        candidatos_venta = _filtrar_candidatos_merma(candidatos)
+        cliente = _resolver_cliente_merma(
+            candidatos_venta,
+            merma.cajas_netas,
+        )
         if cliente is None:
             errores.append(
                 IncidenciaValidacionTdvEuropa(
@@ -213,13 +274,15 @@ def atribuir_mermas(
                         "calibre_raw": merma.calibre_raw,
                         "carton": merma.carton,
                         "cajas": str(merma.cajas_netas),
-                        "clientes": [c.cliente for c in candidatos],
+                        "clientes": [
+                            c.cliente for c in candidatos_venta
+                        ],
                     },
                 )
             )
             continue
 
-        if len(candidatos) > 1:
+        if len(candidatos_venta) > 1:
             elegido_n = normalizar_texto(cliente.cliente)
             if "MERCADONA" in elegido_n:
                 motivo = "MERCADONA"
@@ -243,7 +306,7 @@ def atribuir_mermas(
                         "cajas": str(merma.cajas_netas),
                         "cliente_elegido": cliente.cliente,
                         "candidatos": [
-                            c.cliente for c in candidatos
+                            c.cliente for c in candidatos_venta
                         ],
                     },
                 )
@@ -515,7 +578,9 @@ def validar_liquidacion_tdv_europa(
             if linea.cajas_netas != 0
             else Decimal("0")
         )
-        if precio <= 0:
+        if precio <= 0 and not _es_cliente_merma_calidad(
+            linea.cliente
+        ):
             errores.append(
                 IncidenciaValidacionTdvEuropa(
                     codigo="PRECIO_INVALIDO",
