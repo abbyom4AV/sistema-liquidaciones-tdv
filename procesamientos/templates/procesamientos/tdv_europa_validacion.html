@@ -303,7 +303,7 @@
           <div class="metric"><strong>Total gastos EUR</strong><span>{{ procesamiento.total_gastos_eur|floatformat:2 }}</span></div>
           <div class="metric"><strong>Comisión EUR</strong><span>{{ procesamiento.comision_eur|floatformat:2 }}</span></div>
         </div>
-        <p><strong>Destino final:</strong> {{ procesamiento.destino_final|default:"—" }} · <strong>Listo:</strong> {% if procesamiento.puede_escribir %}Sí{% else %}No{% endif %}</p>
+        <p><strong>Destino final:</strong> {{ procesamiento.destino_final|default:"—" }} · <strong>Listo:</strong> {% if procesamiento.puede_escribir %}Sí{% else %}No{% endif %}{% if procesamiento.incluye_contenedor_especial %} · <strong>Contenedor especial:</strong> {{ procesamiento.contenedor_especial }}{% endif %}</p>
       </section>
       <aside class="tarjeta">
         <h2>Generación</h2>

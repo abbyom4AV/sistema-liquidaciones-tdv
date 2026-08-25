@@ -1332,6 +1332,15 @@ class FormularioCargaTdvEuropa(forms.Form):
             ),
         },
     )
+    incluye_contenedor_especial = forms.BooleanField(
+        label="Incluye contenedor con carácter especial",
+        required=False,
+    )
+    contenedor_especial = forms.CharField(
+        label="Contenedor especial (ej. SEGU9826184-2)",
+        required=False,
+        max_length=80,
+    )
 
     def clean_destino(self):
         valor = (
@@ -1350,6 +1359,40 @@ class FormularioCargaTdvEuropa(forms.Form):
                 "La factura corta debe tener exactamente 4 dígitos."
             )
         return valor
+
+    def clean_contenedor_especial(self):
+        return (
+            self.cleaned_data.get("contenedor_especial") or ""
+        ).strip().upper()
+
+    def clean(self):
+        cleaned = super().clean()
+        if not cleaned.get("incluye_contenedor_especial"):
+            cleaned["contenedor_especial"] = ""
+            return cleaned
+
+        from services.tdv_europa.extractor import (
+            FormatoLiquidacionTdvEuropaError,
+            parsear_contenedores_especiales,
+        )
+
+        valor = cleaned.get("contenedor_especial") or ""
+        if not valor:
+            self.add_error(
+                "contenedor_especial",
+                (
+                    "Indique el contenedor con carácter especial "
+                    "(ej. SEGU9826184-2)."
+                ),
+            )
+            return cleaned
+        try:
+            especiales = parsear_contenedores_especiales(valor)
+        except FormatoLiquidacionTdvEuropaError as error:
+            self.add_error("contenedor_especial", str(error))
+            return cleaned
+        cleaned["contenedor_especial"] = ", ".join(especiales)
+        return cleaned
 
     def clean_archivo_despachos(self):
         archivo = self.cleaned_data.get("archivo_despachos")

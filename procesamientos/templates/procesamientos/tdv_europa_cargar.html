@@ -189,6 +189,30 @@
       font-weight: 700;
     }
 
+    .bloque-especial {
+      display: grid;
+      gap: 0.85rem;
+      padding: 1rem;
+      border-radius: 16px;
+      background: var(--suave);
+      border: 1px dashed var(--borde);
+    }
+
+    .bloque-especial.oculto { display: none !important; }
+
+    .campo-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 600;
+    }
+
+    .campo-checkbox input {
+      width: 1.15rem;
+      height: 1.15rem;
+      flex-shrink: 0;
+    }
+
     .errores,
     .error-proceso {
       background: #fff5f5;
@@ -423,6 +447,30 @@
           </div>
 
           <div class="bloque-archivos">
+            <p class="titulo-bloque">Contenedor especial (opcional)</p>
+            <label class="campo-checkbox" for="{{ formulario.incluye_contenedor_especial.id_for_label }}">
+              {{ formulario.incluye_contenedor_especial }}
+              {{ formulario.incluye_contenedor_especial.label }}
+            </label>
+            <div id="bloque-contenedor-especial" class="bloque-especial oculto">
+              <p class="ayuda" style="margin:0">
+                Si el PDF/Despachos traen un contenedor con guion
+                (ej. SEGU9826184-2), digítelo aquí para mapearlo
+                igual en ambos lados.
+              </p>
+              <div class="campo">
+                <label for="{{ formulario.contenedor_especial.id_for_label }}">
+                  {{ formulario.contenedor_especial.label }}
+                </label>
+                {{ formulario.contenedor_especial }}
+                {% for error in formulario.contenedor_especial.errors %}
+                  <div class="campo-error">{{ error }}</div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div class="bloque-archivos">
             <p class="titulo-bloque">Archivos requeridos</p>
             <div class="campo">
               <label for="{{ formulario.archivo_despachos.id_for_label }}">
@@ -499,6 +547,22 @@
     (function () {
       var f = document.getElementById("form-validar");
       var b = document.getElementById("btn-validar");
+      var checkEsp = document.getElementById(
+        "{{ formulario.incluye_contenedor_especial.id_for_label }}"
+      );
+      var bloqueEsp = document.getElementById(
+        "bloque-contenedor-especial"
+      );
+
+      function actualizarEspecial() {
+        if (!checkEsp || !bloqueEsp) return;
+        bloqueEsp.classList.toggle("oculto", !checkEsp.checked);
+      }
+      if (checkEsp) {
+        checkEsp.addEventListener("change", actualizarEspecial);
+        actualizarEspecial();
+      }
+
       if (!f || !b) return;
       f.addEventListener("submit", function () {
         b.disabled = true;

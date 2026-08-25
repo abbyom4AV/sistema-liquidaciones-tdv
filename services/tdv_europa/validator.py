@@ -123,8 +123,9 @@ def _resolver_cliente_merma(
     """
     Desempate con mismo contenedor+calibre+cartón:
     - 1 coincidencia → ese cliente
-    - varias y está MERCADONA (p. ej. con IRMADONA) → MERCADONA
-    - varias sin MERCADONA → None (bloqueo)
+    - varias y hay una MERCADONA única → MERCADONA
+    - varias sin MERCADONA y hay una IRMADONA única → IRMADONA
+    - resto → None (bloqueo)
     """
     if len(candidatos) == 1:
         return candidatos[0]
@@ -135,6 +136,13 @@ def _resolver_cliente_merma(
     ]
     if len(mercadonas) == 1:
         return mercadonas[0]
+    irmadonas = [
+        c
+        for c in candidatos
+        if "IRMADONA" in normalizar_texto(c.cliente)
+    ]
+    if len(irmadonas) == 1:
+        return irmadonas[0]
     return None
 
 
@@ -197,8 +205,8 @@ def atribuir_mermas(
                     mensaje=(
                         "La merma coincide con más de una "
                         "línea de cliente y no se pudo "
-                        "desempatar (varias líneas y ninguna "
-                        "MERCADONA única)."
+                        "desempatar (sin MERCADONA/IRMADONA "
+                        "única)."
                     ),
                     detalles={
                         "contenedor": merma.contenedor,
@@ -212,12 +220,19 @@ def atribuir_mermas(
             continue
 
         if len(candidatos) > 1:
+            elegido_n = normalizar_texto(cliente.cliente)
+            if "MERCADONA" in elegido_n:
+                motivo = "MERCADONA"
+            elif "IRMADONA" in elegido_n:
+                motivo = "IRMADONA"
+            else:
+                motivo = cliente.cliente
             advertencias.append(
                 IncidenciaValidacionTdvEuropa(
-                    codigo="MERMA_DESEMPATE_MERCADONA",
+                    codigo="MERMA_DESEMPATE",
                     nivel="advertencia",
                     mensaje=(
-                        "Merma ambigua atribuida a MERCADONA "
+                        f"Merma ambigua atribuida a {motivo} "
                         "(había varias líneas con el mismo "
                         "contenedor/calibre/cartón)."
                     ),

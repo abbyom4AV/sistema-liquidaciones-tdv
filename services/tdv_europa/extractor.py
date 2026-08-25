@@ -33,14 +33,20 @@ ALIAS_DESTINO = {
     "ANTWERPEN": "AMBERES",
 }
 
-_CONTENEDOR_RE = re.compile(r"\b([A-Z]{4}\d{6,7})\b", re.I)
+# ISO + variantes: 6–8 dígitos y sufijo opcional (ej. SEGU9826184-2,
+# TTNU80607257).
+_CONTENEDOR_PAT = r"[A-Z]{4}\d{6,8}(?:-\d+)?"
+_CONTENEDOR_RE = re.compile(
+    rf"\b({_CONTENEDOR_PAT})\b",
+    re.I,
+)
 _HEADER_RE = re.compile(
     r"LIQUIDACI[OÓ]N\s+(\d{1,2})-(\d{4})\s+(\S+)\s+(.+?)\s+"
     r"FAC:\s*(\d+)",
     re.I,
 )
 _LINEA_RE = re.compile(
-    r"^(?P<contenedor>[A-Z]{4}\d{6,7})\s+"
+    rf"^(?P<contenedor>{_CONTENEDOR_PAT})\s+"
     r"(?P<cliente>.+?)\s+"
     r"(?P<fecha>\d{2}/\d{2}/\d{4})\s+"
     r"(?P<tipo>COL|VER|INT)\s+"
@@ -53,7 +59,11 @@ _TOTAL_GENERAL_RE = re.compile(
     re.I,
 )
 _TOTAL_CONTENEDOR_RE = re.compile(
-    r"^Total\s+[A-Z]{4}\d{6,7}\b",
+    rf"^Total\s+{_CONTENEDOR_PAT}\b",
+    re.I,
+)
+_CONTENEDOR_ESPECIAL_RE = re.compile(
+    rf"^{_CONTENEDOR_PAT}$",
     re.I,
 )
 _NOTA_RE = re.compile(
@@ -145,6 +155,105 @@ def normalizar_texto(valor: Any) -> str:
 def normalizar_destino(valor: Any) -> str:
     texto = normalizar_texto(valor)
     return ALIAS_DESTINO.get(texto, texto)
+
+
+def base_contenedor(valor: str) -> str:
+    """SEGU9826184-2 → SEGU9826184."""
+    texto = normalizar_texto(valor).replace(" ", "")
+    return texto.split("-", 1)[0]
+
+
+def normalizar_contenedor_especial(valor: str) -> str:
+    texto = normalizar_texto(valor).replace(" ", "")
+    if not texto:
+        return ""
+    if not _CONTENEDOR_ESPECIAL_RE.match(texto):
+        raise FormatoLiquidacionTdvEuropaError(
+            "Contenedor con carácter especial inválido. "
+            "Use formato tipo SEGU9826184-2."
+        )
+    return texto
+
+
+def parsear_contenedores_especiales(
+    valor: str | None,
+) -> tuple[str, ...]:
+    """Acepta uno o varios separados por coma, ; o salto de línea."""
+    if not valor:
+        return ()
+    partes = re.split(r"[,;\n]+", str(valor))
+    resultado: list[str] = []
+    for parte in partes:
+        limpio = parte.strip()
+        if not limpio:
+            continue
+        resultado.append(normalizar_contenedor_especial(limpio))
+    return tuple(dict.fromkeys(resultado))
+
+
+def aplicar_contenedores_especiales(
+    liquidacion: LiquidacionTdvEuropa,
+    contenedores_especiales: tuple[str, ...] | list[str] | str = (),
+) -> LiquidacionTdvEuropa:
+    """
+    Fuerza el ID completo (con -N) en líneas/mermas/reclamos
+    cuando el PDF solo trajo la base o el usuario lo digitó.
+    """
+    if isinstance(contenedores_especiales, str):
+        especiales = parsear_contenedores_especiales(
+            contenedores_especiales
+        )
+    else:
+        especiales = parsear_contenedores_especiales(
+            "\n".join(str(c) for c in contenedores_especiales)
+        )
+    if not especiales:
+        return liquidacion
+
+    mapa: dict[str, str] = {}
+    for full in especiales:
+        mapa[full] = full
+        mapa[base_contenedor(full)] = full
+
+    def _remap_id(contenedor: str) -> str:
+        clave = normalizar_texto(contenedor).replace(" ", "")
+        return mapa.get(clave, contenedor)
+
+    lineas = tuple(
+        LineaProductoTdvEuropa(
+            **{
+                **ln.__dict__,
+                "contenedor": _remap_id(ln.contenedor),
+            }
+        )
+        for ln in liquidacion.lineas
+    )
+    mermas = tuple(
+        LineaProductoTdvEuropa(
+            **{
+                **ln.__dict__,
+                "contenedor": _remap_id(ln.contenedor),
+            }
+        )
+        for ln in liquidacion.mermas
+    )
+    reclamos = tuple(
+        ReclamoTdvEuropa(
+            **{
+                **rc.__dict__,
+                "contenedor": _remap_id(rc.contenedor),
+            }
+        )
+        for rc in liquidacion.reclamos
+    )
+    return LiquidacionTdvEuropa(
+        **{
+            **liquidacion.__dict__,
+            "lineas": lineas,
+            "mermas": mermas,
+            "reclamos": reclamos,
+        }
+    )
 
 
 def formatear_destino_excel(valor: Any) -> str:

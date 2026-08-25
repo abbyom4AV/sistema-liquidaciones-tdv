@@ -9,6 +9,7 @@ from typing import Any, Literal
 
 from services.tdv_europa.extractor import (
     LiquidacionTdvEuropa,
+    aplicar_contenedores_especiales,
     extraer_liquidacion_tdv_europa,
 )
 from services.tdv_europa.matcher import (
@@ -51,9 +52,14 @@ def preparar_procesamiento_tdv_europa(
     anio: int,
     destino: str,
     factura_corta: str,
+    contenedores_especiales: tuple[str, ...] | list[str] | str = (),
     cliente_prefix: str | tuple[str, ...] = CLIENTE_TDV_EUROPA_PREFIXES,
 ) -> ResultadoPreparacionTdvEuropa:
     liquidacion = extraer_liquidacion_tdv_europa(ruta_liquidacion)
+    liquidacion = aplicar_contenedores_especiales(
+        liquidacion,
+        contenedores_especiales,
+    )
     factura_ui = str(factura_corta).strip()
 
     despachos = buscar_lineas_despachos_tdv_europa(

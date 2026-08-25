@@ -2052,6 +2052,11 @@ class ProcesamientoTdvEuropa(models.Model):
     semana_texto = models.CharField(max_length=20, blank=True)
     factura_corta = models.CharField(max_length=20, blank=True)
     destino_ui = models.CharField(max_length=150, blank=True)
+    incluye_contenedor_especial = models.BooleanField(default=False)
+    contenedor_especial = models.CharField(
+        max_length=80,
+        blank=True,
+    )
     estado = models.CharField(max_length=40)
     destino_final = models.CharField(max_length=150, blank=True)
     origen_destino = models.CharField(max_length=30, blank=True)

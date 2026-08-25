@@ -6,7 +6,9 @@ from decimal import Decimal
 from services.tdv_europa.extractor import (
     LiquidacionTdvEuropa,
     LineaProductoTdvEuropa,
+    _parsear_linea_producto,
     _parsear_total_general,
+    aplicar_contenedores_especiales,
     clave_carton,
     limpiar_carton,
     normalizar_destino,
@@ -144,6 +146,47 @@ class ParseoTdvEuropaTests(unittest.TestCase):
         self.assertEqual(comision, Decimal("89.01"))
 
 
+class ContenedorEspecialTdvEuropaTests(unittest.TestCase):
+    def test_parsea_linea_con_sufijo_guion(self):
+        linea = (
+            "SEGU9826184-2 MERCADONA 01/02/2026 COL CAL6 "
+            "CARTON STD 100,00 11,00 € 10,00 € 1.000,00 €"
+        )
+        producto = _parsear_linea_producto(linea)
+        self.assertIsNotNone(producto)
+        assert producto is not None
+        self.assertEqual(producto.contenedor, "SEGU9826184-2")
+        self.assertEqual(producto.cliente, "MERCADONA")
+        self.assertEqual(producto.calibre, 6)
+
+    def test_parsea_contenedor_con_8_digitos(self):
+        linea = (
+            "TTNU80607257 GREEN SELECT 08/05/2026 COL CAL5 "
+            "SWEET DIAMOND MARITIMA 640,00 0,95 € 11,34 € "
+            "7.259,67 €"
+        )
+        producto = _parsear_linea_producto(linea)
+        self.assertIsNotNone(producto)
+        assert producto is not None
+        self.assertEqual(producto.contenedor, "TTNU80607257")
+        self.assertEqual(producto.cajas_netas, Decimal("640.00"))
+
+    def test_remap_base_a_especial_digitado(self):
+        liq = _liquidacion_base(
+            lineas=(
+                _linea_producto(contenedor="SEGU9826184"),
+            )
+        )
+        remapeada = aplicar_contenedores_especiales(
+            liq,
+            ("SEGU9826184-2",),
+        )
+        self.assertEqual(
+            remapeada.lineas[0].contenedor,
+            "SEGU9826184-2",
+        )
+
+
 class MermaTdvEuropaTests(unittest.TestCase):
     def test_merma_unica_coincide_con_ese_cliente(self):
         cliente = _linea_producto(cliente="GOZALBO")
@@ -163,7 +206,7 @@ class MermaTdvEuropaTests(unittest.TestCase):
         self.assertEqual(atribuciones[0].cliente, "GOZALBO")
         self.assertEqual(merma_map[id(cliente)], Decimal("4"))
 
-    def test_merma_prefer_irmadona(self):
+    def test_merma_prefer_mercadona_sobre_irmadona(self):
         cliente_merc = _linea_producto(cliente="MERCADONA")
         cliente_irma = _linea_producto(cliente="IRMADONA SA")
         merma = _linea_producto(
@@ -180,22 +223,44 @@ class MermaTdvEuropaTests(unittest.TestCase):
         )
         self.assertEqual(len(errores), 0)
         self.assertEqual(len(atribuciones), 1)
-        self.assertEqual(atribuciones[0].cliente, "IRMADONA SA")
+        self.assertEqual(atribuciones[0].cliente, "MERCADONA")
         self.assertEqual(
-            merma_map[id(cliente_irma)],
+            merma_map[id(cliente_merc)],
             Decimal("5"),
         )
 
-    def test_merma_ambigua_sin_irmadona_bloquea(self):
+    def test_merma_prefer_irmadona_sin_mercadona(self):
+        cliente_green = _linea_producto(cliente="GREEN SELECT")
         cliente_irma = _linea_producto(cliente="IRMADONA")
-        cliente_otro = _linea_producto(cliente="GOZALBO")
+        merma = _linea_producto(
+            cliente="MERMA",
+            es_merma=True,
+            cajas_netas=Decimal("2"),
+        )
+        liquidacion = _liquidacion_base(
+            lineas=(cliente_green, cliente_irma),
+            mermas=(merma,),
+        )
+        merma_map, atribuciones, errores, _adv = atribuir_mermas(
+            liquidacion
+        )
+        self.assertEqual(len(errores), 0)
+        self.assertEqual(atribuciones[0].cliente, "IRMADONA")
+        self.assertEqual(
+            merma_map[id(cliente_irma)],
+            Decimal("2"),
+        )
+
+    def test_merma_ambigua_sin_preferido_bloquea(self):
+        cliente_a = _linea_producto(cliente="GREEN SELECT")
+        cliente_b = _linea_producto(cliente="GOZALBO")
         merma = _linea_producto(
             cliente="MERMA",
             es_merma=True,
             cajas_netas=Decimal("3"),
         )
         liquidacion = _liquidacion_base(
-            lineas=(cliente_otro, cliente_irma),
+            lineas=(cliente_a, cliente_b),
             mermas=(merma,),
         )
         _map, _atr, errores, _adv = atribuir_mermas(liquidacion)

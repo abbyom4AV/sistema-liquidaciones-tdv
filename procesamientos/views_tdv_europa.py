@@ -162,6 +162,11 @@ def _eliminar_procesamiento_tdv_europa(
 def _repreparar_procesamiento(
     procesamiento: ProcesamientoTdvEuropa,
 ) -> ResultadoPreparacionTdvEuropa:
+    especiales = ()
+    if procesamiento.incluye_contenedor_especial:
+        especiales = (
+            procesamiento.contenedor_especial or ""
+        ).strip()
     resultado = preparar_procesamiento_tdv_europa(
         ruta_liquidacion=procesamiento.archivo_liquidacion.path,
         ruta_despachos=procesamiento.archivo_despachos.path,
@@ -172,6 +177,7 @@ def _repreparar_procesamiento(
             or procesamiento.destino_final
         ),
         factura_corta=procesamiento.factura_corta,
+        contenedores_especiales=especiales,
     )
     _aplicar_resultado_tdv_europa(procesamiento, resultado)
     procesamiento.save()
@@ -212,6 +218,14 @@ def tdv_europa_cargar(request):
                 semana=datos["semana"],
                 anio=datos["anio"],
                 destino_ui=datos["destino"],
+                incluye_contenedor_especial=bool(
+                    datos.get("incluye_contenedor_especial")
+                ),
+                contenedor_especial=(
+                    datos.get("contenedor_especial") or ""
+                    if datos.get("incluye_contenedor_especial")
+                    else ""
+                ),
                 estado="procesando",
                 creado_por=request.user,
                 creado_por_nombre=nombre,
