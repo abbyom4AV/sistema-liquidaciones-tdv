@@ -200,6 +200,44 @@
 
     .bloque-especial.oculto { display: none !important; }
 
+    .fila-contenedor-especial {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.75rem;
+      align-items: end;
+    }
+
+    .fila-contenedor-especial .campo {
+      min-width: 0;
+    }
+
+    .btn-contenedor {
+      border: 1px solid var(--borde);
+      background: #fff;
+      border-radius: 10px;
+      padding: 0.7rem 0.85rem;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      height: fit-content;
+    }
+
+    .btn-contenedor.quitar {
+      color: #9b1c1c;
+    }
+
+    .acciones-contenedores {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .lista-contenedores {
+      display: grid;
+      gap: 0.75rem;
+    }
+
     .campo-checkbox {
       display: flex;
       align-items: center;
@@ -349,7 +387,8 @@
       }
 
       .fila-tres,
-      .fila-factura {
+      .fila-factura,
+      .fila-contenedor-especial {
         grid-template-columns: 1fr;
       }
 
@@ -454,18 +493,15 @@
             </label>
             <div id="bloque-contenedor-especial" class="bloque-especial oculto">
               <p class="ayuda" style="margin:0">
-                Si el PDF/Despachos traen un contenedor con guion
-                (ej. SEGU9826184-2), digítelo aquí para mapearlo
-                igual en ambos lados.
+                Si el PDF/Despachos traen contenedores con guion
+                (ej. SEGU9826184-2), indíquelos aquí para mapearlos
+                igual en ambos lados. Puede añadir varios.
               </p>
-              <div class="campo">
-                <label for="{{ formulario.contenedor_especial.id_for_label }}">
-                  {{ formulario.contenedor_especial.label }}
-                </label>
-                {{ formulario.contenedor_especial }}
-                {% for error in formulario.contenedor_especial.errors %}
-                  <div class="campo-error">{{ error }}</div>
-                {% endfor %}
+              <div id="lista-contenedores-especiales" class="lista-contenedores"></div>
+              <div class="acciones-contenedores">
+                <button type="button" class="btn-contenedor" id="btn-add-contenedor">
+                  + Añadir contenedor
+                </button>
               </div>
             </div>
           </div>
@@ -553,15 +589,89 @@
       var bloqueEsp = document.getElementById(
         "bloque-contenedor-especial"
       );
+      var listaEsp = document.getElementById(
+        "lista-contenedores-especiales"
+      );
+      var btnAddEsp = document.getElementById("btn-add-contenedor");
+      var contenedoresIniciales = {{ contenedores_especiales_json|default:"[]"|safe }};
+
+      function setBloqueInputsHabilitados(activo) {
+        if (!bloqueEsp) return;
+        bloqueEsp.querySelectorAll("input, button").forEach(function (el) {
+          if (el.id === "btn-add-contenedor") {
+            el.disabled = !activo;
+            return;
+          }
+          el.disabled = !activo;
+        });
+      }
+
+      function crearFilaContenedor(valor) {
+        if (!listaEsp) return;
+        var fila = document.createElement("div");
+        fila.className = "fila-contenedor-especial";
+
+        var campo = document.createElement("div");
+        campo.className = "campo";
+        var label = document.createElement("label");
+        label.textContent = "Contenedor especial";
+        var input = document.createElement("input");
+        input.type = "text";
+        input.name = "contenedor_especial";
+        input.placeholder = "SEGU9826184-2";
+        input.autocomplete = "off";
+        input.maxLength = 80;
+        input.value = valor || "";
+        campo.appendChild(label);
+        campo.appendChild(input);
+
+        var btnQuitar = document.createElement("button");
+        btnQuitar.type = "button";
+        btnQuitar.className = "btn-contenedor quitar";
+        btnQuitar.textContent = "Quitar";
+        btnQuitar.addEventListener("click", function () {
+          fila.remove();
+          if (!listaEsp.children.length && checkEsp && checkEsp.checked) {
+            crearFilaContenedor("");
+          }
+        });
+
+        fila.appendChild(campo);
+        fila.appendChild(btnQuitar);
+        listaEsp.appendChild(fila);
+      }
 
       function actualizarEspecial() {
         if (!checkEsp || !bloqueEsp) return;
-        bloqueEsp.classList.toggle("oculto", !checkEsp.checked);
+        var activo = checkEsp.checked;
+        bloqueEsp.classList.toggle("oculto", !activo);
+        setBloqueInputsHabilitados(activo);
+        if (activo && listaEsp && !listaEsp.children.length) {
+          crearFilaContenedor("");
+        }
       }
+
+      if (listaEsp) {
+        listaEsp.innerHTML = "";
+        if (
+          Array.isArray(contenedoresIniciales) &&
+          contenedoresIniciales.length
+        ) {
+          contenedoresIniciales.forEach(function (valor) {
+            crearFilaContenedor(valor);
+          });
+        }
+      }
+
       if (checkEsp) {
         checkEsp.addEventListener("change", actualizarEspecial);
-        actualizarEspecial();
       }
+      if (btnAddEsp) {
+        btnAddEsp.addEventListener("click", function () {
+          crearFilaContenedor("");
+        });
+      }
+      actualizarEspecial();
 
       if (!f || !b) return;
       f.addEventListener("submit", function () {

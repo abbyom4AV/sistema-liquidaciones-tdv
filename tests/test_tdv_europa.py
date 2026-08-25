@@ -197,6 +197,26 @@ class ContenedorEspecialTdvEuropaTests(unittest.TestCase):
             "SEGU9826184-2",
         )
 
+    def test_remap_varios_contenedores_especiales(self):
+        liq = _liquidacion_base(
+            lineas=(
+                _linea_producto(contenedor="SEGU9826184"),
+                _linea_producto(contenedor="TTNU80607257"),
+            )
+        )
+        remapeada = aplicar_contenedores_especiales(
+            liq,
+            ("SEGU9826184-2", "TTNU80607257-3"),
+        )
+        self.assertEqual(
+            remapeada.lineas[0].contenedor,
+            "SEGU9826184-2",
+        )
+        self.assertEqual(
+            remapeada.lineas[1].contenedor,
+            "TTNU80607257-3",
+        )
+
 
 class MermaTdvEuropaTests(unittest.TestCase):
     def test_merma_unica_coincide_con_ese_cliente(self):

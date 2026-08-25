@@ -2054,7 +2054,7 @@ class ProcesamientoTdvEuropa(models.Model):
     destino_ui = models.CharField(max_length=150, blank=True)
     incluye_contenedor_especial = models.BooleanField(default=False)
     contenedor_especial = models.CharField(
-        max_length=80,
+        max_length=500,
         blank=True,
     )
     estado = models.CharField(max_length=40)

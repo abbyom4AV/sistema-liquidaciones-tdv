@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import shutil
 import uuid
@@ -159,6 +160,40 @@ def _eliminar_procesamiento_tdv_europa(
         shutil.rmtree(carpeta, ignore_errors=True)
 
 
+def _contenedores_especiales_json(
+    formulario: FormularioCargaTdvEuropa,
+) -> str:
+    contenedores: list[str] = []
+    if formulario.is_bound and formulario.is_valid():
+        raw = formulario.cleaned_data.get("contenedor_especial") or ""
+        if raw:
+            contenedores = [
+                c.strip()
+                for c in raw.split(",")
+                if c.strip()
+            ]
+    if not contenedores and formulario.is_bound:
+        contenedores = [
+            (c or "").strip().upper()
+            for c in formulario.data.getlist("contenedor_especial")
+            if (c or "").strip()
+        ]
+    return json.dumps(contenedores)
+
+
+def _contexto_carga_tdv_europa(
+    formulario: FormularioCargaTdvEuropa,
+    **extra,
+):
+    return {
+        "formulario": formulario,
+        "contenedores_especiales_json": (
+            _contenedores_especiales_json(formulario)
+        ),
+        **extra,
+    }
+
+
 def _repreparar_procesamiento(
     procesamiento: ProcesamientoTdvEuropa,
 ) -> ResultadoPreparacionTdvEuropa:
@@ -191,7 +226,12 @@ def tdv_europa_cargar(request):
         return render(
             request,
             "procesamientos/tdv_europa_cargar.html",
-            {**ctx, "formulario": FormularioCargaTdvEuropa()},
+            {
+                **ctx,
+                **_contexto_carga_tdv_europa(
+                    FormularioCargaTdvEuropa()
+                ),
+            },
         )
 
     formulario = FormularioCargaTdvEuropa(
@@ -202,7 +242,10 @@ def tdv_europa_cargar(request):
         return render(
             request,
             "procesamientos/tdv_europa_cargar.html",
-            {**ctx, "formulario": formulario},
+            {
+                **ctx,
+                **_contexto_carga_tdv_europa(formulario),
+            },
             status=400,
         )
 
@@ -259,8 +302,10 @@ def tdv_europa_cargar(request):
             "procesamientos/tdv_europa_cargar.html",
             {
                 **ctx,
-                "formulario": formulario,
-                "error_proceso": str(error),
+                **_contexto_carga_tdv_europa(
+                    formulario,
+                    error_proceso=str(error),
+                ),
             },
             status=400,
         )
@@ -272,10 +317,12 @@ def tdv_europa_cargar(request):
             "procesamientos/tdv_europa_cargar.html",
             {
                 **ctx,
-                "formulario": formulario,
-                "error_proceso": (
-                    "Ocurrió un error inesperado al validar "
-                    "los archivos."
+                **_contexto_carga_tdv_europa(
+                    formulario,
+                    error_proceso=(
+                        "Ocurrió un error inesperado al validar "
+                        "los archivos."
+                    ),
                 ),
             },
             status=500,

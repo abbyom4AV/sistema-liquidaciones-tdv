@@ -1336,11 +1336,6 @@ class FormularioCargaTdvEuropa(forms.Form):
         label="Incluye contenedor con carácter especial",
         required=False,
     )
-    contenedor_especial = forms.CharField(
-        label="Contenedor especial (ej. SEGU9826184-2)",
-        required=False,
-        max_length=80,
-    )
 
     def clean_destino(self):
         valor = (
@@ -1360,38 +1355,48 @@ class FormularioCargaTdvEuropa(forms.Form):
             )
         return valor
 
-    def clean_contenedor_especial(self):
-        return (
-            self.cleaned_data.get("contenedor_especial") or ""
-        ).strip().upper()
-
     def clean(self):
         cleaned = super().clean()
+        cleaned["contenedor_especial"] = ""
         if not cleaned.get("incluye_contenedor_especial"):
-            cleaned["contenedor_especial"] = ""
             return cleaned
 
         from services.tdv_europa.extractor import (
             FormatoLiquidacionTdvEuropaError,
-            parsear_contenedores_especiales,
+            normalizar_contenedor_especial,
         )
 
-        valor = cleaned.get("contenedor_especial") or ""
-        if not valor:
+        especiales: list[str] = []
+        for valor in self.data.getlist("contenedor_especial"):
+            texto = (valor or "").strip()
+            if not texto:
+                continue
+            try:
+                especiales.append(
+                    normalizar_contenedor_especial(texto)
+                )
+            except FormatoLiquidacionTdvEuropaError as error:
+                self.add_error(None, str(error))
+                return cleaned
+
+        if not especiales:
             self.add_error(
-                "contenedor_especial",
+                None,
                 (
-                    "Indique el contenedor con carácter especial "
-                    "(ej. SEGU9826184-2)."
+                    "Agregue al menos un contenedor con carácter "
+                    "especial (ej. SEGU9826184-2)."
                 ),
             )
             return cleaned
-        try:
-            especiales = parsear_contenedores_especiales(valor)
-        except FormatoLiquidacionTdvEuropaError as error:
-            self.add_error("contenedor_especial", str(error))
-            return cleaned
-        cleaned["contenedor_especial"] = ", ".join(especiales)
+
+        vistos: set[str] = set()
+        unicos: list[str] = []
+        for contenedor in especiales:
+            if contenedor in vistos:
+                continue
+            vistos.add(contenedor)
+            unicos.append(contenedor)
+        cleaned["contenedor_especial"] = ", ".join(unicos)
         return cleaned
 
     def clean_archivo_despachos(self):
