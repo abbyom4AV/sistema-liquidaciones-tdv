@@ -347,13 +347,48 @@ def calibre_desde(calibre_raw: str) -> int:
     return int(match.group(1))
 
 
-def _partir_carton_y_montos(
+def _reparar_resto_pdf(resto: str) -> str:
+    """
+    Corrige artefactos típicos de extracción PDF donde dígitos
+    se mezclan con letras del cartón (p. ej. SUMM750 → SUMM7U50M,0).
+    """
+    texto = resto
+    reparos: tuple[tuple[re.Pattern[str], str], ...] = (
+        (
+            re.compile(
+                r"SUMM(\d)U(\d{2})M,([\d.,]+)\s+"
+                r"S[O0]+ELEC[O0]+T,(\d{2})\s*€",
+                re.I,
+            ),
+            r"SUMM\1\2 SELECT \1\2,\3 10,\4 €",
+        ),
+        (
+            re.compile(r"SUMM(\d)U(\d{2})M,([\d.,]+)", re.I),
+            r"SUMM\1\2 \1\2,\3",
+        ),
+        (
+            re.compile(r"S[O0]+ELEC[O0]+T,(\d{2})\s*€", re.I),
+            r"SELECT 10,\1 €",
+        ),
+    )
+    for patron, reemplazo in reparos:
+        texto = patron.sub(reemplazo, texto)
+    return texto
+
+
+def _montos_desde_bloque(montos_texto: str) -> list[Decimal]:
+    return [
+        parsear_numero(raw)
+        for raw in re.findall(
+            r"-?[\d.,]+(?=\s*€)",
+            montos_texto,
+        )
+    ]
+
+
+def _intentar_partir_carton_regex(
     resto: str,
-) -> tuple[str, Decimal, list[Decimal]]:
-    """
-    Separa cartón + cajas + montos con €.
-    Esperado: '<carton> <cajas> <n> € <n> € ...'
-    """
+) -> tuple[str, Decimal, list[Decimal]] | None:
     match = re.search(
         r"^(?P<carton>.+?)\s+"
         r"(?P<cajas>-?[\d.,]+)\s+"
@@ -362,23 +397,92 @@ def _partir_carton_y_montos(
         re.I,
     )
     if match is None:
-        raise FormatoLiquidacionTdvEuropaError(
-            f"No se pudo separar cartón/montos: {resto!r}"
-        )
-    carton = match.group("carton").strip()
-    cajas = parsear_numero(match.group("cajas"))
-    montos = [
-        parsear_numero(raw)
-        for raw in re.findall(
-            r"-?[\d.,]+(?=\s*€)",
-            match.group("montos"),
-        )
-    ]
+        return None
+    montos = _montos_desde_bloque(match.group("montos"))
     if len(montos) < 3:
-        raise FormatoLiquidacionTdvEuropaError(
-            f"Faltan montos en línea: {resto!r}"
-        )
+        return None
+    try:
+        cajas = parsear_numero(match.group("cajas"))
+    except FormatoLiquidacionTdvEuropaError:
+        return None
+    carton = match.group("carton").strip()
+    if not carton:
+        return None
     return carton, cajas, montos
+
+
+def _partir_carton_y_montos_desde_final(
+    resto: str,
+) -> tuple[str, Decimal, list[Decimal]] | None:
+    """Respaldo: toma el bloque final de montos € y separa cajas/cartón."""
+    texto = resto.strip()
+    candidatos: list[tuple[int, int, Decimal]] = []
+    for match in re.finditer(r"(-?[\d.,]+)\s*€", texto, re.I):
+        token = match.group(1)
+        if not re.fullmatch(r"-?[\d.,]+", token):
+            continue
+        try:
+            valor = parsear_numero(token)
+        except FormatoLiquidacionTdvEuropaError:
+            continue
+        candidatos.append((match.start(), match.end(), valor))
+
+    if len(candidatos) < 3:
+        return None
+
+    fin_bloque = candidatos[-1][1]
+    inicio_bloque = candidatos[-1][0]
+    montos = [candidatos[-1][2]]
+    for indice in range(len(candidatos) - 2, -1, -1):
+        inicio, fin, valor = candidatos[indice]
+        if texto[fin:inicio_bloque].strip():
+            break
+        montos.insert(0, valor)
+        inicio_bloque = inicio
+
+    if len(montos) < 3:
+        return None
+
+    prefijo = texto[:inicio_bloque].strip()
+    if not prefijo:
+        return None
+
+    cajas_match = re.search(r"(-?[\d.,]+)\s*$", prefijo)
+    if cajas_match is None:
+        return None
+    try:
+        cajas = parsear_numero(cajas_match.group(1))
+    except FormatoLiquidacionTdvEuropaError:
+        return None
+    carton = prefijo[: cajas_match.start()].strip()
+    if not carton:
+        return None
+    return carton, cajas, montos
+
+
+def _partir_carton_y_montos(
+    resto: str,
+) -> tuple[str, Decimal, list[Decimal]]:
+    """
+    Separa cartón + cajas + montos con €.
+    Esperado: '<carton> <cajas> <n> € <n> € ...'
+    """
+    variantes = (resto.strip(), _reparar_resto_pdf(resto))
+    vistos: set[str] = set()
+    for candidato in variantes:
+        if candidato in vistos:
+            continue
+        vistos.add(candidato)
+        resultado = _intentar_partir_carton_regex(candidato)
+        if resultado is not None:
+            return resultado
+        resultado = _partir_carton_y_montos_desde_final(candidato)
+        if resultado is not None:
+            return resultado
+
+    raise FormatoLiquidacionTdvEuropaError(
+        f"No se pudo separar cartón/montos: {resto!r}"
+    )
 
 
 def _parsear_linea_producto(

@@ -8,6 +8,7 @@ from services.tdv_europa.extractor import (
     LineaProductoTdvEuropa,
     _parsear_linea_producto,
     _parsear_total_general,
+    _partir_carton_y_montos,
     aplicar_contenedores_especiales,
     clave_carton,
     limpiar_carton,
@@ -181,6 +182,31 @@ class ContenedorEspecialTdvEuropaTests(unittest.TestCase):
         assert producto is not None
         self.assertEqual(producto.contenedor, "ABCD1234567890")
         self.assertEqual(producto.cajas_netas, Decimal("100.00"))
+
+    def test_partir_carton_ocr_summum_select(self):
+        resto = (
+            "SUMMUM ALTA ISLA BONITA TREE RIPE SUMM7U50M,0 S0ELEC0T,92 € "
+            "11,00 € 8.250,00 € 105,40 € 139,19 € 115,03 € 412,50 € "
+            "7.477,88 € 9,97 € 8,50 € 1,470509 € 1.102,88 €"
+        )
+        carton, cajas, montos = _partir_carton_y_montos(resto)
+        self.assertIn("SUMM750", carton.upper())
+        self.assertIn("SELECT", carton.upper())
+        self.assertEqual(cajas, Decimal("750"))
+        self.assertEqual(montos[2], Decimal("8250.00"))
+
+    def test_parsea_linea_carton_ocr_summum_select(self):
+        linea = (
+            "CGMU5152457 MERCADONA 01/02/2026 COL CAL6 "
+            "SUMMUM ALTA ISLA BONITA TREE RIPE SUMM7U50M,0 S0ELEC0T,92 € "
+            "11,00 € 8.250,00 € 105,40 € 139,19 € 115,03 € 412,50 € "
+            "7.477,88 € 9,97 € 8,50 € 1,470509 € 1.102,88 €"
+        )
+        producto = _parsear_linea_producto(linea)
+        self.assertIsNotNone(producto)
+        assert producto is not None
+        self.assertEqual(producto.cajas_netas, Decimal("750"))
+        self.assertEqual(producto.venta_bruta_eur, Decimal("8250.00"))
 
     def test_remap_base_a_especial_digitado(self):
         liq = _liquidacion_base(
