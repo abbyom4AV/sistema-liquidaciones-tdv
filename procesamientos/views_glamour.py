@@ -274,7 +274,7 @@ def glamour_cargar(request):
             },
             status=400,
         )
-    except Exception:
+    except Exception as error:
         logger.exception("Error inesperado Glamour")
         _eliminar_procesamiento_glamour(procesamiento)
         return render(
@@ -285,7 +285,7 @@ def glamour_cargar(request):
                 "formulario": formulario,
                 "error_proceso": (
                     "Ocurrió un error inesperado al validar "
-                    "los archivos."
+                    f"los archivos: {error}"
                 ),
             },
             status=500,

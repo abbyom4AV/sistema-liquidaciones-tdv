@@ -9,6 +9,7 @@ from pathlib import Path
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import RequestDataTooBig
 from django.db import IntegrityError, transaction
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -230,10 +231,28 @@ def tdv_europa_cargar(request):
             },
         )
 
-    formulario = FormularioCargaTdvEuropa(
-        request.POST,
-        request.FILES,
-    )
+    try:
+        formulario = FormularioCargaTdvEuropa(
+            request.POST,
+            request.FILES,
+        )
+    except RequestDataTooBig:
+        return render(
+            request,
+            "procesamientos/tdv_europa_cargar.html",
+            {
+                **ctx,
+                **_contexto_carga_tdv_europa(
+                    FormularioCargaTdvEuropa()
+                ),
+                "error_proceso": (
+                    "Los archivos son demasiado grandes para "
+                    "subirlos juntos. Use .xlsx/.pdf y reinicie "
+                    "el servidor si el límite no se actualizó."
+                ),
+            },
+            status=400,
+        )
     if not formulario.is_valid():
         return render(
             request,

@@ -1309,6 +1309,7 @@ class FormularioCargaTdvEuropa(forms.Form):
     )
     archivo_despachos = forms.FileField(
         label="Archivo de despachos",
+        widget=forms.ClearableFileInput(attrs={"accept": ".xlsx"}),
         error_messages={
             "required": "Seleccione el archivo de despachos.",
             "invalid": "El archivo de despachos no es válido.",
@@ -1316,6 +1317,7 @@ class FormularioCargaTdvEuropa(forms.Form):
     )
     archivo_liquidacion = forms.FileField(
         label="Liquidación TDV Europa (PDF)",
+        widget=forms.ClearableFileInput(attrs={"accept": ".pdf"}),
         error_messages={
             "required": "Seleccione el PDF de liquidación.",
             "invalid": "El archivo de liquidación no es válido.",
@@ -1323,6 +1325,7 @@ class FormularioCargaTdvEuropa(forms.Form):
     )
     archivo_cliente = forms.FileField(
         label="Archivo acumulativo del cliente",
+        widget=forms.ClearableFileInput(attrs={"accept": ".xlsx"}),
         error_messages={
             "required": (
                 "Seleccione el archivo acumulativo del cliente."
@@ -1354,6 +1357,12 @@ class FormularioCargaTdvEuropa(forms.Form):
                 "La factura corta debe tener exactamente 4 dígitos."
             )
         return valor
+
+    @staticmethod
+    def _nombre_archivo(archivo) -> str:
+        from pathlib import Path
+
+        return Path(getattr(archivo, "name", "") or "").name.strip()
 
     def clean(self):
         cleaned = super().clean()
@@ -1403,10 +1412,11 @@ class FormularioCargaTdvEuropa(forms.Form):
         archivo = self.cleaned_data.get("archivo_despachos")
         if archivo is None:
             return archivo
-        nombre = getattr(archivo, "name", "") or ""
+        nombre = self._nombre_archivo(archivo)
         if not nombre.lower().endswith(".xlsx"):
             raise forms.ValidationError(
-                "El archivo de despachos debe ser .xlsx."
+                "El archivo de despachos debe ser .xlsx "
+                f"(recibido: {nombre or 'sin nombre'})."
             )
         return archivo
 
@@ -1414,10 +1424,11 @@ class FormularioCargaTdvEuropa(forms.Form):
         archivo = self.cleaned_data.get("archivo_liquidacion")
         if archivo is None:
             return archivo
-        nombre = getattr(archivo, "name", "") or ""
+        nombre = self._nombre_archivo(archivo)
         if not nombre.lower().endswith(".pdf"):
             raise forms.ValidationError(
-                "La liquidación TDV Europa debe ser .pdf."
+                "La liquidación TDV Europa debe ser .pdf "
+                f"(recibido: {nombre or 'sin nombre'})."
             )
         return archivo
 
@@ -1425,9 +1436,12 @@ class FormularioCargaTdvEuropa(forms.Form):
         archivo = self.cleaned_data.get("archivo_cliente")
         if archivo is None:
             return archivo
-        nombre = getattr(archivo, "name", "") or ""
+        nombre = self._nombre_archivo(archivo)
         if not nombre.lower().endswith(".xlsx"):
             raise forms.ValidationError(
-                "El acumulativo del cliente debe ser .xlsx."
+                "El acumulativo del cliente debe ser .xlsx "
+                f"(recibido: {nombre or 'sin nombre'}). "
+                "Si es .xls o .xlsm, ábralo en Excel y "
+                "guárdelo como Libro de Excel (.xlsx)."
             )
         return archivo
