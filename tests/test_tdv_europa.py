@@ -196,6 +196,26 @@ class ContenedorEspecialTdvEuropaTests(unittest.TestCase):
         self.assertEqual(cajas, Decimal("750"))
         self.assertEqual(montos[2], Decimal("8250.00"))
 
+    def test_partir_carton_ocr_summum_variante_ui(self):
+        resto = (
+            "SUMMUM ALTA ISLA BONITA TREE RIPE SUMMUM7 5S0E.LOE0CT 0.92 € "
+            "11.00 € 8,250.00 € 105.40 € 139.19 € 115.03 € 412.50 € "
+            "7,477.88 € 9.97 € 8.50 € 1.470509 € 1,102.88 €"
+        )
+        carton, cajas, montos = _partir_carton_y_montos(resto)
+        self.assertEqual(cajas, Decimal("750"))
+        self.assertEqual(montos[2], Decimal("8250"))
+
+    def test_partir_carton_ocr_summum_variante_pdf004(self):
+        resto = (
+            "SUMMUM ALTA ISLA BONITA TREE RIPE SUMMUM7 5S0E.L0E0CT 0.92 € "
+            "11.00 € 8,250.00 € 105.40 € 139.19 € 115.03 € 412.50 € "
+            "7,477.88 € 9.97 € 8.50 € 1.470509 € 1,102.88 €"
+        )
+        carton, cajas, montos = _partir_carton_y_montos(resto)
+        self.assertEqual(cajas, Decimal("750"))
+        self.assertEqual(montos[2], Decimal("8250"))
+
     def test_parsea_linea_carton_ocr_summum_select(self):
         linea = (
             "CGMU5152457 MERCADONA 01/02/2026 COL CAL6 "
@@ -345,7 +365,7 @@ class MermaTdvEuropaTests(unittest.TestCase):
             Decimal("2"),
         )
 
-    def test_merma_ambigua_sin_preferido_bloquea(self):
+    def test_merma_ambigua_asigna_cualquier_cliente(self):
         cliente_a = _linea_producto(cliente="GREEN SELECT")
         cliente_b = _linea_producto(cliente="GOZALBO")
         merma = _linea_producto(
@@ -357,23 +377,42 @@ class MermaTdvEuropaTests(unittest.TestCase):
             lineas=(cliente_a, cliente_b),
             mermas=(merma,),
         )
-        _map, _atr, errores, _adv = atribuir_mermas(liquidacion)
-        self.assertEqual(len(errores), 1)
-        self.assertEqual(errores[0].codigo, "MERMA_AMBIGUA")
+        _map, atribuciones, errores, advertencias = atribuir_mermas(
+            liquidacion
+        )
+        self.assertEqual(len(errores), 0)
+        self.assertEqual(len(atribuciones), 1)
+        self.assertIn(
+            atribuciones[0].cliente,
+            {"GREEN SELECT", "GOZALBO"},
+        )
 
-    def test_merma_desempata_por_cajas_iguales(self):
+    def test_merma_desempata_por_cajas_tipo_calibre_carton(self):
+        carton = "SUPER SWEET"
         cliente_a = _linea_producto(
             cliente="GREEN SELECT",
             cajas_netas=Decimal("400"),
+            tipo_fruta="Especial",
+            calibre=6,
+            carton=carton,
+            carton_clave=carton,
         )
         cliente_b = _linea_producto(
             cliente="BLAS EL CANARIO",
             cajas_netas=Decimal("160"),
+            tipo_fruta="Especial",
+            calibre=6,
+            carton=carton,
+            carton_clave=carton,
         )
         merma = _linea_producto(
             cliente="MERMA",
             es_merma=True,
             cajas_netas=Decimal("160"),
+            tipo_fruta="Especial",
+            calibre=6,
+            carton=carton,
+            carton_clave=carton,
         )
         liquidacion = _liquidacion_base(
             lineas=(cliente_a, cliente_b),
@@ -383,19 +422,137 @@ class MermaTdvEuropaTests(unittest.TestCase):
         self.assertEqual(len(errores), 0)
         self.assertEqual(atribuciones[0].cliente, "BLAS EL CANARIO")
 
-    def test_merma_calidad_no_duplica_ni_exige_precio(self):
+    def test_merma_asigna_cliente_mismo_contenedor_sin_mismo_carton(self):
         cliente = _linea_producto(
-            cliente="ZAMBRANO MERMA CALIDAD",
+            cliente="ZAMBRANO",
+            contenedor="TTNU8602553",
             cajas_netas=Decimal("80"),
-            venta_bruta_eur=Decimal("0"),
+            tipo_fruta="Especial",
+            calibre=6,
+            calibre_raw="CAL6",
+            carton="SUPER SWEET",
+            carton_clave="SUPER SWEET",
         )
         merma = _linea_producto(
             cliente="MERMA",
             es_merma=True,
+            contenedor="TTNU8602553",
             cajas_netas=Decimal("80"),
+            tipo_fruta="Especial",
+            calibre=6,
+            calibre_raw="CAL6",
+            carton="OTRO CARTON",
+            carton_clave="OTRO CARTON",
         )
         liquidacion = _liquidacion_base(
             lineas=(cliente,),
+            mermas=(merma,),
+        )
+        _map, atribuciones, errores, advertencias = atribuir_mermas(
+            liquidacion
+        )
+        self.assertEqual(len(errores), 0)
+        self.assertEqual(atribuciones[0].cliente, "ZAMBRANO")
+        self.assertTrue(
+            any(
+                a.codigo == "MERMA_ASIGNADA_CONTENEDOR"
+                for a in advertencias
+            )
+        )
+
+    def test_dos_mermas_reparten_entre_clientes(self):
+        green = _linea_producto(
+            cliente="GREEN SELECT",
+            contenedor="TTNU8602553",
+            cajas_netas=Decimal("320"),
+            calibre=6,
+            calibre_raw="CAL6",
+            carton="SUPER SWEET",
+            carton_clave="SUPER SWEET",
+        )
+        blas = _linea_producto(
+            cliente="BLAS EL CANARIO",
+            contenedor="TTNU8602553",
+            cajas_netas=Decimal("160"),
+            calibre=6,
+            calibre_raw="CAL6",
+            carton="SUPER SWEET",
+            carton_clave="SUPER SWEET",
+        )
+        merma_a = _linea_producto(
+            cliente="MERMA",
+            es_merma=True,
+            contenedor="TTNU8602553",
+            cajas_netas=Decimal("80"),
+            calibre=6,
+            calibre_raw="CAL6",
+            carton="SUPER SWEET",
+            carton_clave="SUPER SWEET",
+        )
+        merma_b = _linea_producto(
+            cliente="MERMA",
+            es_merma=True,
+            contenedor="TTNU8602553",
+            cajas_netas=Decimal("80"),
+            calibre=6,
+            calibre_raw="CAL6",
+            carton="SUPER SWEET",
+            carton_clave="SUPER SWEET",
+        )
+        liquidacion = _liquidacion_base(
+            lineas=(green, blas),
+            mermas=(merma_a, merma_b),
+        )
+        merma_map, atribuciones, errores, _adv = atribuir_mermas(
+            liquidacion
+        )
+        self.assertEqual(len(errores), 0)
+        self.assertEqual(len(atribuciones), 2)
+        clientes = {a.cliente for a in atribuciones}
+        self.assertEqual(
+            clientes,
+            {"BLAS EL CANARIO", "GREEN SELECT"},
+        )
+        self.assertEqual(merma_map[id(green)], Decimal("80"))
+        self.assertEqual(merma_map[id(blas)], Decimal("80"))
+
+    def test_advertencia_cliente_merma_mal_escrito(self):
+        linea = _linea_producto(cliente="ZAMBRANO MERMA CALIDAD")
+        liquidacion = _liquidacion_base(lineas=(linea,))
+        resultado = validar_liquidacion_tdv_europa(
+            liquidacion=liquidacion,
+            despachos=_despachos(total_cajas=100),
+            destino_ui="AMBERES",
+            factura_ui="1234",
+        )
+        self.assertTrue(
+            any(a.codigo == "MERMA_MAL_ESCRITA" for a in resultado.advertencias)
+        )
+
+    def test_merma_calidad_duplicada_no_genera_error(self):
+        cliente_calidad = _linea_producto(
+            cliente="ZAMBRANO MERMA CALIDAD",
+            contenedor="TTNU8602553",
+            cajas_netas=Decimal("80"),
+            venta_bruta_eur=Decimal("0"),
+            calibre_raw="CAL6",
+            calibre=6,
+            carton="SUPER SWEET",
+            carton_clave="SUPER SWEET",
+        )
+        merma = _linea_producto(
+            cliente="MERMA",
+            es_merma=True,
+            contenedor="TTNU8602553",
+            cajas_netas=Decimal("80"),
+            tipo_fruta="Especial",
+            calibre=6,
+            calibre_raw="CAL6",
+            carton="SUPER SWEET",
+            carton_clave="SUPER SWEET",
+        )
+        liquidacion = _liquidacion_base(
+            lineas=(cliente_calidad,),
             mermas=(merma,),
         )
         _map, atribuciones, errores, advertencias = atribuir_mermas(
@@ -406,15 +563,79 @@ class MermaTdvEuropaTests(unittest.TestCase):
         self.assertTrue(
             any(a.codigo == "MERMA_YA_EN_CALIDAD" for a in advertencias)
         )
+        linea = _linea_producto(cliente="ZAMBRANO MERMA CALIDAD")
+        liquidacion = _liquidacion_base(lineas=(linea,))
         resultado = validar_liquidacion_tdv_europa(
             liquidacion=liquidacion,
-            despachos=_despachos(total_cajas=80),
+            despachos=_despachos(total_cajas=100),
             destino_ui="AMBERES",
             factura_ui="1234",
+        )
+        self.assertTrue(
+            any(a.codigo == "MERMA_MAL_ESCRITA" for a in resultado.advertencias)
         )
         self.assertFalse(
             any(e.codigo == "PRECIO_INVALIDO" for e in resultado.errores)
         )
+
+    def test_merma_unico_cliente_mismo_producto(self):
+        cliente_venta = _linea_producto(
+            cliente="ZAMBRANO",
+            cajas_netas=Decimal("320"),
+            tipo_fruta="Especial",
+            calibre=6,
+        )
+        merma = _linea_producto(
+            cliente="MERMA",
+            es_merma=True,
+            cajas_netas=Decimal("80"),
+            tipo_fruta="Especial",
+            calibre=6,
+        )
+        liquidacion = _liquidacion_base(
+            lineas=(cliente_venta,),
+            mermas=(merma,),
+        )
+        _map, atribuciones, errores, _adv = atribuir_mermas(liquidacion)
+        self.assertEqual(len(errores), 0)
+        self.assertEqual(atribuciones[0].cliente, "ZAMBRANO")
+        self.assertEqual(_map[id(cliente_venta)], Decimal("80"))
+
+    def test_merma_calidad_mismo_producto_asigna_por_cajas(self):
+        carton = "SUPER SWEET"
+        cliente_venta = _linea_producto(
+            cliente="ZAMBRANO",
+            cajas_netas=Decimal("320"),
+            tipo_fruta="Especial",
+            calibre=6,
+            carton=carton,
+            carton_clave=carton,
+        )
+        otro = _linea_producto(
+            cliente="GOZALBO",
+            cajas_netas=Decimal("80"),
+            tipo_fruta="Especial",
+            calibre=6,
+            carton=carton,
+            carton_clave=carton,
+        )
+        merma = _linea_producto(
+            cliente="MERMA",
+            es_merma=True,
+            cajas_netas=Decimal("80"),
+            tipo_fruta="Especial",
+            calibre=6,
+            carton=carton,
+            carton_clave=carton,
+        )
+        liquidacion = _liquidacion_base(
+            lineas=(cliente_venta, otro),
+            mermas=(merma,),
+        )
+        _map, atribuciones, errores, _adv = atribuir_mermas(liquidacion)
+        self.assertEqual(len(errores), 0)
+        self.assertEqual(atribuciones[0].cliente, "GOZALBO")
+        self.assertEqual(_map[id(otro)], Decimal("80"))
 
 
 class ValidacionTdvEuropaTests(unittest.TestCase):

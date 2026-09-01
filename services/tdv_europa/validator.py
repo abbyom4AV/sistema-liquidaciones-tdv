@@ -117,36 +117,62 @@ def _nave_coincide(a: str, b: str) -> bool:
     return na == nb or na in nb or nb in na
 
 
+def _contenedor_normalizado(contenedor: str) -> str:
+    return normalizar_texto(contenedor).replace(" ", "")
+
+
 def _es_cliente_merma_calidad(cliente: str) -> bool:
     nombre = normalizar_texto(cliente)
     return "MERMA" in nombre and nombre != "MERMA"
 
 
+def _hay_mercadona_o_irmadona(
+    candidatos: list[LineaProductoTdvEuropa],
+) -> bool:
+    return any(
+        "MERCADONA" in normalizar_texto(c.cliente)
+        or "IRMADONA" in normalizar_texto(c.cliente)
+        for c in candidatos
+    )
+
+
 def _filtrar_candidatos_merma(
     candidatos: list[LineaProductoTdvEuropa],
 ) -> list[LineaProductoTdvEuropa]:
-    venta = [
+    return [
         c
         for c in candidatos
         if not _es_cliente_merma_calidad(c.cliente)
     ]
-    return venta or candidatos
+
+
+def _coincide_producto_merma(
+    candidato: LineaProductoTdvEuropa,
+    merma: LineaProductoTdvEuropa,
+) -> bool:
+    return (
+        candidato.cajas_netas == merma.cajas_netas
+        and candidato.tipo_fruta == merma.tipo_fruta
+        and candidato.calibre == merma.calibre
+        and candidato.carton_clave == merma.carton_clave
+    )
 
 
 def _resolver_cliente_merma(
     candidatos: list[LineaProductoTdvEuropa],
-    cajas_merma: Decimal,
+    merma: LineaProductoTdvEuropa,
 ) -> LineaProductoTdvEuropa | None:
     """
-    Desempate con mismo contenedor+calibre+cartón:
+    Mismo contenedor + calibre + cartón:
     - 1 coincidencia → ese cliente
     - varias y hay una MERCADONA única → MERCADONA
     - varias sin MERCADONA y hay una IRMADONA única → IRMADONA
-    - cajas de merma = netas de un solo candidato → ese cliente
-    - varias con mismas cajas que la merma → el primero por nombre
+    - sin Mercadona ni Irmadona: cajas + tipo + calibre + cartón
     - resto → None (bloqueo)
     """
     candidatos = _filtrar_candidatos_merma(candidatos)
+    if not candidatos:
+        return None
     if len(candidatos) == 1:
         return candidatos[0]
     mercadonas = [
@@ -164,17 +190,55 @@ def _resolver_cliente_merma(
     if len(irmadonas) == 1:
         return irmadonas[0]
 
-    por_cajas = [
-        c
-        for c in candidatos
-        if c.cajas_netas == cajas_merma
-    ]
-    if len(por_cajas) == 1:
-        return por_cajas[0]
-    if len(por_cajas) > 1:
-        return sorted(por_cajas, key=lambda c: c.cliente)[0]
+    if not _hay_mercadona_o_irmadona(candidatos):
+        por_producto = [
+            c
+            for c in candidatos
+            if _coincide_producto_merma(c, merma)
+        ]
+        if len(por_producto) == 1:
+            return por_producto[0]
+        if len(por_producto) > 1:
+            return sorted(por_producto, key=lambda c: c.cliente)[0]
 
     return None
+
+
+def _candidatos_contenedor(
+    lineas: tuple[LineaProductoTdvEuropa, ...],
+    merma: LineaProductoTdvEuropa,
+) -> list[LineaProductoTdvEuropa]:
+    contenedor = _contenedor_normalizado(merma.contenedor)
+    return sorted(
+        (
+            linea
+            for linea in lineas
+            if _contenedor_normalizado(linea.contenedor) == contenedor
+            and not _es_cliente_merma_calidad(linea.cliente)
+        ),
+        key=lambda c: c.cliente,
+    )
+
+
+def _asignar_merma_rotativa(
+    candidatos: list[LineaProductoTdvEuropa],
+    ya_asignados: set[int],
+) -> LineaProductoTdvEuropa | None:
+    """
+    Reparte varias mermas iguales entre clientes del mismo producto
+    cuando no hay match por cajas (p. ej. dos filas MERMA 80).
+    """
+    libres = sorted(
+        (
+            c
+            for c in _filtrar_candidatos_merma(candidatos)
+            if id(c) not in ya_asignados
+        ),
+        key=lambda c: c.cliente,
+    )
+    if not libres:
+        return None
+    return libres[0]
 
 
 def atribuir_mermas(
@@ -203,35 +267,21 @@ def atribuir_mermas(
         lambda: Decimal("0")
     )
     atribuciones: list[AtribucionMermaTdvEuropa] = []
+    asignados_por_clave: dict[
+        tuple[str, str, str],
+        set[int],
+    ] = defaultdict(set)
+    asignados_por_contenedor: dict[str, set[int]] = defaultdict(set)
 
     for merma in liquidacion.mermas:
         clave = _clave_merma(merma)
         candidatos = por_clave.get(clave, [])
-        if len(candidatos) == 0:
-            errores.append(
-                IncidenciaValidacionTdvEuropa(
-                    codigo="MERMA_SIN_MATCH",
-                    nivel="error",
-                    mensaje=(
-                        "Hay merma sin línea de cliente "
-                        "coincidente (contenedor + calibre + "
-                        "cartón)."
-                    ),
-                    detalles={
-                        "contenedor": merma.contenedor,
-                        "calibre_raw": merma.calibre_raw,
-                        "carton": merma.carton,
-                        "cajas": str(merma.cajas_netas),
-                    },
-                )
-            )
-            continue
 
         calidad = [
             c
             for c in candidatos
             if _es_cliente_merma_calidad(c.cliente)
-            and c.cajas_netas == merma.cajas_netas
+            and _coincide_producto_merma(c, merma)
         ]
         if len(calidad) == 1:
             advertencias.append(
@@ -239,8 +289,8 @@ def atribuir_mermas(
                     codigo="MERMA_YA_EN_CALIDAD",
                     nivel="advertencia",
                     mensaje=(
-                        "La merma ya está reflejada en la "
-                        f"línea {calidad[0].cliente}."
+                        "La merma ya figura en la línea "
+                        f"{calidad[0].cliente}; no se duplica."
                     ),
                     detalles={
                         "contenedor": merma.contenedor,
@@ -254,35 +304,79 @@ def atribuir_mermas(
             continue
 
         candidatos_venta = _filtrar_candidatos_merma(candidatos)
-        cliente = _resolver_cliente_merma(
-            candidatos_venta,
-            merma.cajas_netas,
-        )
+        cliente = _resolver_cliente_merma(candidatos_venta, merma)
+        fallback_contenedor = False
+
+        if (
+            cliente is None
+            and candidatos_venta
+            and not _hay_mercadona_o_irmadona(candidatos_venta)
+        ):
+            cliente = _asignar_merma_rotativa(
+                candidatos_venta,
+                asignados_por_clave[clave],
+            )
+
+        if cliente is None:
+            contenedor = _contenedor_normalizado(merma.contenedor)
+            candidatos_contenedor = _candidatos_contenedor(
+                liquidacion.lineas,
+                merma,
+            )
+            cliente = _asignar_merma_rotativa(
+                candidatos_contenedor,
+                asignados_por_contenedor[contenedor],
+            )
+            if cliente is not None:
+                fallback_contenedor = True
+
         if cliente is None:
             errores.append(
                 IncidenciaValidacionTdvEuropa(
-                    codigo="MERMA_AMBIGUA",
+                    codigo="MERMA_SIN_MATCH",
                     nivel="error",
                     mensaje=(
-                        "La merma coincide con más de una "
-                        "línea de cliente y no se pudo "
-                        "desempatar (sin MERCADONA/IRMADONA "
-                        "única)."
+                        "Hay merma sin ningún cliente en el "
+                        "mismo contenedor."
+                    ),
+                    detalles={
+                        "contenedor": merma.contenedor,
+                        "calibre_raw": merma.calibre_raw,
+                        "carton": merma.carton,
+                        "tipo_fruta": merma.tipo_fruta,
+                        "calibre": merma.calibre,
+                        "cajas": str(merma.cajas_netas),
+                    },
+                )
+            )
+            continue
+
+        if fallback_contenedor:
+            advertencias.append(
+                IncidenciaValidacionTdvEuropa(
+                    codigo="MERMA_ASIGNADA_CONTENEDOR",
+                    nivel="advertencia",
+                    mensaje=(
+                        f"Merma atribuida a {cliente.cliente} "
+                        "(sin coincidencia exacta; mismo "
+                        "contenedor)."
                     ),
                     detalles={
                         "contenedor": merma.contenedor,
                         "calibre_raw": merma.calibre_raw,
                         "carton": merma.carton,
                         "cajas": str(merma.cajas_netas),
-                        "clientes": [
-                            c.cliente for c in candidatos_venta
-                        ],
+                        "cliente_elegido": cliente.cliente,
                     },
                 )
             )
-            continue
 
-        if len(candidatos_venta) > 1:
+        asignados_por_clave[clave].add(id(cliente))
+        asignados_por_contenedor[
+            _contenedor_normalizado(merma.contenedor)
+        ].add(id(cliente))
+
+        if len(candidatos_venta) > 1 and not fallback_contenedor:
             elegido_n = normalizar_texto(cliente.cliente)
             if "MERCADONA" in elegido_n:
                 motivo = "MERCADONA"
@@ -296,13 +390,14 @@ def atribuir_mermas(
                     nivel="advertencia",
                     mensaje=(
                         f"Merma ambigua atribuida a {motivo} "
-                        "(había varias líneas con el mismo "
-                        "contenedor/calibre/cartón)."
+                        "(había varias líneas candidatas)."
                     ),
                     detalles={
                         "contenedor": merma.contenedor,
                         "calibre_raw": merma.calibre_raw,
                         "carton": merma.carton,
+                        "tipo_fruta": merma.tipo_fruta,
+                        "calibre": merma.calibre,
                         "cajas": str(merma.cajas_netas),
                         "cliente_elegido": cliente.cliente,
                         "candidatos": [
@@ -350,6 +445,25 @@ def validar_liquidacion_tdv_europa(
                 mensaje=mensaje,
             )
         )
+
+    for linea in liquidacion.lineas:
+        if _es_cliente_merma_calidad(linea.cliente):
+            advertencias.append(
+                IncidenciaValidacionTdvEuropa(
+                    codigo="MERMA_MAL_ESCRITA",
+                    nivel="advertencia",
+                    mensaje=(
+                        f"El PDF trae '{linea.cliente}' en lugar "
+                        "de MERMA "
+                        f"({linea.contenedor} {linea.calibre_raw})."
+                    ),
+                    detalles={
+                        "cliente": linea.cliente,
+                        "contenedor": linea.contenedor,
+                        "calibre_raw": linea.calibre_raw,
+                    },
+                )
+            )
 
     if liquidacion.rubros_no_mapeados:
         for etiqueta, monto in liquidacion.rubros_no_mapeados:

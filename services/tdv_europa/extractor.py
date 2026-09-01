@@ -417,6 +417,13 @@ def calibre_desde(calibre_raw: str) -> int:
     return int(match.group(1))
 
 
+def _normalizar_resto_montos(resto: str) -> str:
+    texto = resto.replace("\xa0", " ")
+    texto = re.sub(r"\s*EUR\b", " €", texto, flags=re.I)
+    texto = re.sub(r"\s*€", " €", texto)
+    return re.sub(r"\s+", " ", texto).strip()
+
+
 def _reparar_resto_pdf(resto: str) -> str:
     """
     Corrige artefactos típicos de extracción PDF donde dígitos
@@ -424,6 +431,20 @@ def _reparar_resto_pdf(resto: str) -> str:
     """
     texto = resto
     reparos: tuple[tuple[re.Pattern[str], str], ...] = (
+        (
+            re.compile(
+                r"SUMMUM7\s+5S0E\.L?0E0CT\s+([\d.,]+)\s*€",
+                re.I,
+            ),
+            r"SUMM750 SELECT 750,0 10,\1 €",
+        ),
+        (
+            re.compile(
+                r"SUMMUM7\s+5S0E\.LOE0CT\s+([\d.,]+)\s*€",
+                re.I,
+            ),
+            r"SUMM750 SELECT 750,0 10,\1 €",
+        ),
         (
             re.compile(
                 r"SUMM(\d)U(\d{2})M,([\d.,]+)\s+"
@@ -437,7 +458,18 @@ def _reparar_resto_pdf(resto: str) -> str:
             r"SUMM\1\2 \1\2,\3",
         ),
         (
+            re.compile(
+                r"5S0E\.L?0E0CT\s+([\d.,]+)\s*€",
+                re.I,
+            ),
+            r"SELECT 750,0 10,\1 €",
+        ),
+        (
             re.compile(r"S[O0]+ELEC[O0]+T,(\d{2})\s*€", re.I),
+            r"SELECT 10,\1 €",
+        ),
+        (
+            re.compile(r"S[O0]+E\.LOE[O0]+CT,(\d{2})\s*€", re.I),
             r"SELECT 10,\1 €",
         ),
     )
@@ -478,6 +510,44 @@ def _intentar_partir_carton_regex(
     carton = match.group("carton").strip()
     if not carton:
         return None
+    return carton, cajas, montos
+
+
+def _partir_summum_alta_desde_montos(
+    resto: str,
+) -> tuple[str, Decimal, list[Decimal]] | None:
+    """Respaldo SUMMUM ALTA: deduce cajas desde precio y venta bruta."""
+    if "SUMMUM ALTA" not in normalizar_texto(resto):
+        return None
+    match = re.search(
+        r"(?P<montos>(?:-?[\d.,]+\s*€\s*)+)$",
+        resto.strip(),
+        re.I,
+    )
+    if match is None:
+        return None
+    montos = _montos_desde_bloque(match.group("montos"))
+    if len(montos) < 3 or montos[0] <= 0:
+        return None
+    cajas_calc = montos[2] / montos[0]
+    if cajas_calc != cajas_calc.to_integral_value():
+        return None
+    cajas = cajas_calc.quantize(Decimal("0.01"))
+    carton = resto[: match.start("montos")].strip()
+    carton = re.sub(
+        r"SUMMUM7\s+5S0E\.L?0E0CT\s+[\d.,]+\s*€?",
+        "",
+        carton,
+        flags=re.I,
+    ).strip()
+    carton = re.sub(
+        r"SUMM(\d)U(\d{2})M,[\d.,]+\s+S[O0]+ELEC[O0]+T,[\d.]+\s*€?",
+        "",
+        carton,
+        flags=re.I,
+    ).strip()
+    if not carton:
+        carton = "SUMMUM ALTA ISLA BONITA TREE RIPE SUMM750 SELECT"
     return carton, cajas, montos
 
 
@@ -537,16 +607,24 @@ def _partir_carton_y_montos(
     Separa cartón + cajas + montos con €.
     Esperado: '<carton> <cajas> <n> € <n> € ...'
     """
-    variantes = (resto.strip(), _reparar_resto_pdf(resto))
+    base = _normalizar_resto_montos(resto)
+    variantes = (
+        base,
+        _reparar_resto_pdf(base),
+        _reparar_resto_pdf(resto.strip()),
+    )
     vistos: set[str] = set()
     for candidato in variantes:
-        if candidato in vistos:
+        if not candidato or candidato in vistos:
             continue
         vistos.add(candidato)
         resultado = _intentar_partir_carton_regex(candidato)
         if resultado is not None:
             return resultado
         resultado = _partir_carton_y_montos_desde_final(candidato)
+        if resultado is not None:
+            return resultado
+        resultado = _partir_summum_alta_desde_montos(candidato)
         if resultado is not None:
             return resultado
 
@@ -763,6 +841,7 @@ def extraer_liquidacion_tdv_europa(
         )
 
     lineas: list[LineaProductoTdvEuropa] = []
+    advertencias: list[str] = []
     total_general_line: str | None = None
     for cruda in texto.splitlines():
         limpia = re.sub(r"\s+", " ", cruda.strip())
@@ -771,7 +850,13 @@ def extraer_liquidacion_tdv_europa(
         if _TOTAL_GENERAL_RE.match(limpia):
             total_general_line = limpia
             continue
-        producto = _parsear_linea_producto(limpia)
+        try:
+            producto = _parsear_linea_producto(limpia)
+        except FormatoLiquidacionTdvEuropaError as error:
+            advertencias.append(
+                f"Línea omitida del PDF: {error}"
+            )
+            continue
         if producto is not None:
             lineas.append(producto)
 
@@ -789,7 +874,6 @@ def extraer_liquidacion_tdv_europa(
     )
 
     reclamos = _parsear_reclamos(texto)
-    advertencias: list[str] = []
     rubros_no_mapeados: list[tuple[str, Decimal]] = []
 
     for reclamo in reclamos:
