@@ -103,9 +103,12 @@ CLIENTES_PANEL = (
     {
         "codigo": "eurobanan",
         "nombre": "EUROBANAN",
-        "descripcion": "Módulo de liquidaciones EUROBANAN.",
-        "disponible": False,
-        "url_name": None,
+        "descripcion": (
+            "Validar liquidaciones PDF, cruzar Despachos "
+            "y generar el acumulativo."
+        ),
+        "disponible": True,
+        "url_name": "procesamientos:eurobanan_cargar",
     },
     {
         "codigo": "fruver",

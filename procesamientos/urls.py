@@ -2,6 +2,7 @@ from django.urls import path
 
 from procesamientos import (
     views,
+    views_eurobanan,
     views_glamour,
     views_nufri,
     views_kraaijeveld,
@@ -189,6 +190,39 @@ urlpatterns = [
         "glamour/",
         views_glamour.glamour_cargar,
         name="glamour_cargar",
+    ),
+    path(
+        "eurobanan/",
+        views_eurobanan.eurobanan_cargar,
+        name="eurobanan_cargar",
+    ),
+    path(
+        "eurobanan/<uuid:procesamiento_id>/",
+        views_eurobanan.eurobanan_validacion,
+        name="eurobanan_validacion",
+    ),
+    path(
+        "eurobanan/<uuid:procesamiento_id>/mapear-gastos/",
+        views_eurobanan.eurobanan_mapear_gastos,
+        name="eurobanan_mapear_gastos",
+    ),
+    path(
+        "eurobanan/<uuid:procesamiento_id>/generar/",
+        views_eurobanan.eurobanan_generar,
+        name="eurobanan_generar",
+    ),
+    path(
+        "eurobanan/generaciones/<uuid:generacion_id>/",
+        views_eurobanan.eurobanan_generacion_detalle,
+        name="eurobanan_generacion_detalle",
+    ),
+    path(
+        (
+            "eurobanan/generaciones/<uuid:generacion_id>/"
+            "descargar/"
+        ),
+        views_eurobanan.eurobanan_generacion_descargar,
+        name="eurobanan_generacion_descargar",
     ),
     path(
         "glamour/<uuid:procesamiento_id>/",

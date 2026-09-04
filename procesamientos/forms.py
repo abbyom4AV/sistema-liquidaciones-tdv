@@ -1637,3 +1637,126 @@ class FormularioCargaTdvEuropa(forms.Form):
                 "guárdelo como Libro de Excel (.xlsx)."
             )
         return archivo
+
+
+class FormularioCargaEurobanan(forms.Form):
+    semana = forms.IntegerField(
+        label="Semana",
+        min_value=1,
+        max_value=53,
+    )
+    anio = forms.IntegerField(
+        label="Año",
+        min_value=2024,
+        max_value=2100,
+        initial=2026,
+    )
+    destino = forms.CharField(label="Destino", max_length=150)
+    factura_corta = forms.CharField(
+        label="Factura (4 dígitos)",
+        max_length=4,
+        min_length=4,
+    )
+    archivo_despachos = forms.FileField(
+        label="Archivo de despachos",
+    )
+    archivo_liquidacion = forms.FileField(
+        label="Liquidación EUROBANAN (PDF)",
+    )
+    archivo_cliente = forms.FileField(
+        label="Archivo acumulativo del cliente",
+    )
+
+    def clean_destino(self):
+        valor = (
+            self.cleaned_data.get("destino") or ""
+        ).strip().upper()
+        if not valor:
+            raise forms.ValidationError("Indique el destino.")
+        return valor
+
+    def clean_factura_corta(self):
+        valor = (
+            self.cleaned_data.get("factura_corta") or ""
+        ).strip()
+        if len(valor) != 4 or not valor.isdigit():
+            raise forms.ValidationError(
+                "La factura corta debe tener exactamente 4 dígitos."
+            )
+        return valor
+
+    def clean_archivo_despachos(self):
+        archivo = self.cleaned_data.get("archivo_despachos")
+        if archivo and not (
+            getattr(archivo, "name", "") or ""
+        ).lower().endswith(".xlsx"):
+            raise forms.ValidationError(
+                "El archivo de despachos debe ser .xlsx."
+            )
+        return archivo
+
+    def clean_archivo_liquidacion(self):
+        archivo = self.cleaned_data.get("archivo_liquidacion")
+        if archivo and not (
+            getattr(archivo, "name", "") or ""
+        ).lower().endswith(".pdf"):
+            raise forms.ValidationError(
+                "La liquidación EUROBANAN debe ser .pdf."
+            )
+        return archivo
+
+    def clean_archivo_cliente(self):
+        archivo = self.cleaned_data.get("archivo_cliente")
+        if archivo and not (
+            getattr(archivo, "name", "") or ""
+        ).lower().endswith(".xlsx"):
+            raise forms.ValidationError(
+                "El acumulativo del cliente debe ser .xlsx."
+            )
+        return archivo
+
+
+class FormularioMapeoGastoEurobanan(forms.Form):
+    def __init__(
+        self,
+        rubros: list[dict],
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        from services.eurobanan.extractor import COLUMNAS_GASTO
+
+        self._rubros_por_campo: dict[str, dict] = {}
+        opciones = [("", "— Seleccione columna —")] + [
+            (col, col) for col in COLUMNAS_GASTO
+        ]
+        for indice, rubro in enumerate(rubros):
+            etiqueta = str(rubro.get("etiqueta") or "").strip()
+            if not etiqueta:
+                continue
+            campo = f"columna_{indice}"
+            self.fields[campo] = forms.ChoiceField(
+                label=etiqueta,
+                choices=opciones,
+                required=True,
+            )
+            self._rubros_por_campo[campo] = rubro
+
+    def rubros_resueltos(self) -> list[dict]:
+        resultado: list[dict] = []
+        for campo, rubro in getattr(
+            self,
+            "_rubros_por_campo",
+            {},
+        ).items():
+            columna = self.cleaned_data.get(campo)
+            if not columna:
+                continue
+            resultado.append(
+                {
+                    "etiqueta": rubro.get("etiqueta"),
+                    "monto": rubro.get("monto"),
+                    "columna_destino": columna,
+                }
+            )
+        return resultado

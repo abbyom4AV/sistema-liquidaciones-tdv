@@ -10,15 +10,18 @@ from procesamientos.models import (
     GeneracionGlamour,
     GeneracionKraaijeveld,
     GeneracionMaster,
+    GeneracionEurobanan,
     GeneracionNufri,
     GeneracionSifa,
     GeneracionTdvEuropa,
     MapeoGastoGlamour,
+    MapeoGastoEurobanan,
     MapeoGastoNufri,
     ProcesamientoDimanno,
     ProcesamientoGlamour,
     ProcesamientoKraaijeveld,
     ProcesamientoMaster,
+    ProcesamientoEurobanan,
     ProcesamientoNufri,
     ProcesamientoSifa,
     ProcesamientoTdvEuropa,
@@ -676,4 +679,47 @@ class GeneracionNufriAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         return False
+
+
+@admin.register(ProcesamientoEurobanan)
+class ProcesamientoEurobananAdmin(admin.ModelAdmin):
+    list_display = (
+        "factura_corta",
+        "semana",
+        "anio",
+        "estado",
+        "destino_final",
+        "creado_en",
+    )
+    list_filter = ("estado", "anio")
+    search_fields = ("factura_corta", "destino_ui")
+
+
+@admin.register(MapeoGastoEurobanan)
+class MapeoGastoEurobananAdmin(admin.ModelAdmin):
+    list_display = (
+        "etiqueta_original",
+        "etiqueta_normalizada",
+        "columna_destino",
+    )
+
+
+@admin.register(GeneracionEurobanan)
+class GeneracionEurobananAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "procesamiento",
+        "estado",
+        "solicitado_por_nombre",
+        "solicitado_en",
+        "intentos",
+    )
+    list_filter = ("estado",)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
 
