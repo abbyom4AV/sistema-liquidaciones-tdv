@@ -3,6 +3,7 @@ from django.urls import path
 from procesamientos import (
     views,
     views_glamour,
+    views_nufri,
     views_kraaijeveld,
     views_master,
     views_orsero,
@@ -216,6 +217,39 @@ urlpatterns = [
         ),
         views_glamour.glamour_generacion_descargar,
         name="glamour_generacion_descargar",
+    ),
+    path(
+        "nufri/",
+        views_nufri.nufri_cargar,
+        name="nufri_cargar",
+    ),
+    path(
+        "nufri/<uuid:procesamiento_id>/",
+        views_nufri.nufri_validacion,
+        name="nufri_validacion",
+    ),
+    path(
+        "nufri/<uuid:procesamiento_id>/mapear-gastos/",
+        views_nufri.nufri_mapear_gastos,
+        name="nufri_mapear_gastos",
+    ),
+    path(
+        "nufri/<uuid:procesamiento_id>/generar/",
+        views_nufri.nufri_generar,
+        name="nufri_generar",
+    ),
+    path(
+        "nufri/generaciones/<uuid:generacion_id>/",
+        views_nufri.nufri_generacion_detalle,
+        name="nufri_generacion_detalle",
+    ),
+    path(
+        (
+            "nufri/generaciones/<uuid:generacion_id>/"
+            "descargar/"
+        ),
+        views_nufri.nufri_generacion_descargar,
+        name="nufri_generacion_descargar",
     ),
     path(
         "tdv-europa/",

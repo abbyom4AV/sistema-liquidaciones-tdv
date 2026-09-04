@@ -1,0 +1,206 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mapear gastos Nufri</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fondo: #f3f6f2;
+      --tarjeta: #ffffff;
+      --texto: #1f2a24;
+      --muted: #6b7a71;
+      --borde: #d9e3dc;
+      --acento: #375a4d;
+      --acento-oscuro: #284e40;
+      --error: #9b1c1c;
+      --aviso: #8a6116;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Outfit", "Segoe UI", sans-serif;
+      color: var(--texto);
+      background: var(--fondo);
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.75rem 1.5rem 2.5rem;
+    }
+
+    .nav-volver { margin: 0 0 1rem; }
+
+    .nav-volver a {
+      color: var(--muted);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    h1 { margin: 0 0 0.35rem; font-size: 1.85rem; }
+
+    .intro {
+      margin: 0 0 1.25rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .aviso {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: var(--aviso);
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .error-proceso {
+      background: #fff5f5;
+      border: 1px solid #feb2b2;
+      color: var(--error);
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .tarjeta {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 16px;
+      padding: 1.2rem 1.25rem;
+      box-shadow: 0 8px 20px rgba(36, 111, 83, 0.04);
+    }
+
+    .rubro {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 160px minmax(220px, 1fr);
+      gap: 1rem;
+      align-items: end;
+      padding: 0.85rem 0;
+      border-bottom: 1px solid var(--borde);
+    }
+
+    .rubro:last-child { border-bottom: 0; }
+
+    .rubro strong {
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .rubro .monto {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      font-size: 0.88rem;
+    }
+
+    select {
+      width: 100%;
+      padding: 0.75rem 0.85rem;
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      font: inherit;
+      background: #fff;
+    }
+
+    .campo-error {
+      color: var(--error);
+      font-size: 0.88rem;
+      margin-top: 0.35rem;
+    }
+
+    .acciones {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 1.25rem;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      background: var(--acento);
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      padding: 0.85rem 1.45rem;
+      cursor: pointer;
+    }
+
+    button:hover { background: var(--acento-oscuro); }
+
+    @media (max-width: 760px) {
+      .rubro { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="nav-volver">
+      <a href="{% url 'procesamientos:nufri_validacion' procesamiento.id %}">
+        ← Volver a validación
+      </a>
+    </p>
+
+    <h1>Mapear gastos del PDF</h1>
+    <p class="intro">
+      Factura {{ procesamiento.factura_corta }} · Semana {{ procesamiento.semana }} · {{ procesamiento.anio }}
+    </p>
+
+    <div class="aviso">
+      Asigne cada rubro del PDF a una columna digitada del acumulativo.
+      El mapeo se guardará y se aplicará automáticamente en las próximas liquidaciones.
+    </div>
+
+    {% if error_proceso %}
+      <div class="error-proceso">{{ error_proceso }}</div>
+    {% endif %}
+
+    <section class="tarjeta">
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% for field in formulario %}
+          <div class="rubro">
+            <div>
+              <strong>{{ field.label }}</strong>
+              {% for rubro in rubros %}
+                {% if rubro.etiqueta == field.label %}
+                  <span class="monto">{{ rubro.monto }} EUR</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <div></div>
+            <div>
+              <label for="{{ field.id_for_label }}">Columna destino</label>
+              {{ field }}
+              {% for error in field.errors %}
+                <div class="campo-error">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+        {% empty %}
+          <p>No hay rubros pendientes de mapeo.</p>
+        {% endfor %}
+
+        {% if rubros %}
+          <div class="acciones">
+            <button type="submit">Guardar mapeos y revalidar</button>
+          </div>
+        {% endif %}
+      </form>
+    </section>
+  </main>
+</body>
+</html>

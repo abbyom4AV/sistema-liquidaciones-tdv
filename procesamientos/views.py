@@ -150,9 +150,12 @@ CLIENTES_PANEL = (
     {
         "codigo": "nufri",
         "nombre": "NUFRI",
-        "descripcion": "Módulo de liquidaciones NUFRI.",
-        "disponible": False,
-        "url_name": None,
+        "descripcion": (
+            "Validar liquidaciones PDF por página, cruzar "
+            "Despachos y generar el acumulativo."
+        ),
+        "disponible": True,
+        "url_name": "procesamientos:nufri_cargar",
     },
     {
         "codigo": "orsero",

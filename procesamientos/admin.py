@@ -10,13 +10,16 @@ from procesamientos.models import (
     GeneracionGlamour,
     GeneracionKraaijeveld,
     GeneracionMaster,
+    GeneracionNufri,
     GeneracionSifa,
     GeneracionTdvEuropa,
     MapeoGastoGlamour,
+    MapeoGastoNufri,
     ProcesamientoDimanno,
     ProcesamientoGlamour,
     ProcesamientoKraaijeveld,
     ProcesamientoMaster,
+    ProcesamientoNufri,
     ProcesamientoSifa,
     ProcesamientoTdvEuropa,
     ResolucionDestinoDimanno,
@@ -624,6 +627,49 @@ class GeneracionFruverAdmin(admin.ModelAdmin):
         "rango_tabla",
         "intentos",
     )
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(ProcesamientoNufri)
+class ProcesamientoNufriAdmin(admin.ModelAdmin):
+    list_display = (
+        "factura_corta",
+        "semana",
+        "anio",
+        "pagina_pdf",
+        "estado",
+        "destino_final",
+        "creado_en",
+    )
+    list_filter = ("estado", "anio")
+    search_fields = ("factura_corta", "destino_ui")
+
+
+@admin.register(MapeoGastoNufri)
+class MapeoGastoNufriAdmin(admin.ModelAdmin):
+    list_display = (
+        "etiqueta_original",
+        "etiqueta_normalizada",
+        "columna_destino",
+    )
+
+
+@admin.register(GeneracionNufri)
+class GeneracionNufriAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "procesamiento",
+        "estado",
+        "solicitado_por_nombre",
+        "solicitado_en",
+        "intentos",
+    )
+    list_filter = ("estado",)
 
     def has_add_permission(self, request):
         return False

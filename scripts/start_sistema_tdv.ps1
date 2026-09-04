@@ -61,6 +61,7 @@ $Workers = @(
     "procesar_generaciones_kraaijeveld",
     "procesar_generaciones_sifa",
     "procesar_generaciones_glamour",
+    "procesar_generaciones_nufri",
     "procesar_generaciones_tdv_europa",
     "procesar_generaciones_fruver"
 )
