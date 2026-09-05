@@ -903,9 +903,6 @@ def extraer_liquidacion_tdv_europa(
     for rubro in rubros_header:
         if rubro not in conocidos:
             rubros_no_mapeados.append((rubro, Decimal("0")))
-            advertencias.append(
-                f"Rubro de gasto no mapeado en el PDF: {rubro}"
-            )
 
     clientes = tuple(l for l in lineas if not l.es_merma)
     mermas = tuple(l for l in lineas if l.es_merma)

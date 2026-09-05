@@ -14,6 +14,7 @@ from services.sifa.matcher import (
     CLIENTE_SIFA_RAW,
     ResultadoMatcherSifa,
 )
+from services.mensajes_gastos import mensaje_gastos_no_mapeados
 
 
 NivelIncidencia = Literal["error", "advertencia"]
@@ -105,13 +106,14 @@ def validar_liquidacion_sifa(
             )
         )
 
-    for rubro in liquidacion.rubros_no_mapeados:
-        advertencias.append(
+    if liquidacion.rubros_no_mapeados:
+        rubros = list(liquidacion.rubros_no_mapeados)
+        errores.append(
             IncidenciaValidacionSifa(
                 codigo="GASTO_NO_MAPEADO",
-                nivel="advertencia",
-                mensaje=f"Rubro de costo sin columna digitada: {rubro}",
-                detalles={"rubro": rubro},
+                nivel="error",
+                mensaje=mensaje_gastos_no_mapeados(rubros),
+                detalles={"rubros": rubros},
             )
         )
 

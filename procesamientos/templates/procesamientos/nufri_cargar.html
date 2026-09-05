@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
@@ -6,53 +6,44 @@
   <title>Validar liquidación</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=cab-orden">
   <style>
     :root {
-      --fondo: #f3f6f2;
+      --fondo: #f5f5f5;
       --tarjeta: #ffffff;
-      --suave: #eef3ef;
-      --acento: #375a4d;
-      --acento-oscuro: #284e40;
-      --acento-proceso: #1f3d32;
-      --panel: #1f3d32;
-      --panel-suave: #2a5243;
-      --texto: #1f2a24;
-      --muted: #6b7a71;
-      --borde: #d9e3dc;
-      --error: #9b1c1c;
+      --suave: #f0f0f0;
+      --acento: #111111;
+      --acento-oscuro: #111111;
+      --acento-proceso: #111111;
+      --panel: #111111;
+      --panel-suave: #111111;
+      --texto: #111111;
+      --muted: #6b6b6b;
+      --borde: #e6e6e6;
+      --error: #111111;
     }
 
     * { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: "Outfit", "Segoe UI", sans-serif;
-      color: var(--texto);
-      background:
-        radial-gradient(circle at top right, #e7f3ec 0%, transparent 42%),
-        var(--fondo);
-    }
+    /* body layout: tdv-app.css */
 
     .envoltorio {
       max-width: 1280px;
       margin: 0 auto;
-      padding: 1.75rem 1.5rem 3rem;
+      padding: 0 0 1.5rem;
     }
 
     .cabecera {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 1rem;
-      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.35rem;
       margin-bottom: 1.25rem;
     }
 
-    .nav-volver {
-      margin: 0 0 0.85rem;
-    }
+    .nav-volver { margin: 0 0 0.1rem; }
 
     .nav-volver a {
       color: var(--muted);
@@ -72,10 +63,11 @@
     }
 
     .intro-corta {
-      margin: 0;
+      margin: 0.1rem 0 0;
       color: var(--muted);
       font-size: 0.95rem;
-      max-width: 28rem;
+      max-width: 36rem;
+      line-height: 1.45;
     }
 
     .layout {
@@ -87,8 +79,8 @@
 
     .tarjeta-formulario,
     .tarjeta-guia {
-      border-radius: 22px;
-      box-shadow: 0 14px 36px rgba(31, 61, 50, 0.08);
+      border-radius: var(--radius);
+      box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
     }
 
     .tarjeta-formulario {
@@ -150,20 +142,21 @@
       width: 100%;
       padding: 0.8rem 0.95rem;
       border: 1px solid var(--borde);
-      border-radius: 14px;
+      border-radius: var(--radius-sm);
       font: inherit;
-      background: var(--suave);
+      background: #f5f5f5;
       color: var(--texto);
     }
 
     input[type="file"] {
-      background: #fff;
+      background: #f5f5f5;
       padding: 0.7rem 0.85rem;
     }
 
     input:focus {
-      outline: 2px solid rgba(47, 143, 107, 0.35);
-      outline-offset: 1px;
+      outline: none;
+      border-color: #111111;
+      box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.28);
     }
 
     .ayuda {
@@ -190,10 +183,10 @@
 
     .errores,
     .error-proceso {
-      background: #fff5f5;
-      border: 1px solid #feb2b2;
+      background: #eeeeee;
+      border: 1px solid #111111;
       color: var(--error);
-      border-radius: 14px;
+      border-radius: var(--radius-sm);
       padding: 0.85rem 1rem;
       margin: 0 0 1rem;
     }
@@ -211,15 +204,15 @@
 
     .acciones-form {
       display: flex;
-      justify-content: flex-end;
+      justify-content: flex-start;
       padding-top: 0.35rem;
     }
 
     button {
       border: 0;
-      border-radius: 999px;
+      border-radius: var(--radius-sm);
       background: var(--acento);
-      color: #fff;
+      color: #ffffff;
       font: inherit;
       font-weight: 700;
       padding: 0.9rem 1.55rem;
@@ -228,12 +221,14 @@
       transition: background 0.15s ease, opacity 0.15s ease;
     }
 
-    button:hover {
-      background: var(--acento-oscuro);
+    button:hover, button:focus, button:active {
+      background: #111111;
+      color: #ffffff;
     }
 
     button.procesando {
-      background: var(--acento-proceso);
+      background: #111111;
+      color: #ffffff;
       cursor: wait;
       opacity: 0.95;
     }
@@ -242,38 +237,27 @@
       cursor: wait;
     }
 
-    .tarjeta-guia {
-      background: linear-gradient(165deg, var(--panel) 0%, var(--panel-suave) 100%);
-      color: #fff;
-      padding: 1.55rem 1.4rem;
-      position: relative;
-      overflow: hidden;
+        .tarjeta-guia {
+      background: var(--tarjeta);
+      color: var(--texto);
+      border: 1px solid var(--borde);
+      box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+      padding: 1.2rem 1.15rem;
     }
 
-    .tarjeta-guia::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 72px;
-      height: 72px;
-      background: rgba(255, 255, 255, 0.08);
-      clip-path: polygon(100% 0, 0 0, 100% 100%);
-    }
+    .tarjeta-guia::after { display: none; }
 
     .tarjeta-guia h2 {
-      margin: 0 0 0.55rem;
-      font-size: 1.25rem;
-      position: relative;
-      z-index: 1;
+      margin: 0 0 0.45rem;
+      font-size: 1.05rem;
+      font-weight: 650;
     }
 
     .tarjeta-guia > p {
-      margin: 0 0 1.25rem;
-      opacity: 0.88;
+      margin: 0 0 1rem;
+      color: var(--muted);
       line-height: 1.45;
-      position: relative;
-      z-index: 1;
+      font-size: 0.88rem;
     }
 
     .pasos {
@@ -286,11 +270,11 @@
       z-index: 1;
     }
 
-    .pasos li {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
-      padding: 0.85rem 0.95rem;
+        .pasos li {
+      background: var(--suave);
+      border: 1px solid var(--borde);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 0.85rem;
     }
 
     .pasos strong {
@@ -306,19 +290,17 @@
       line-height: 1.4;
     }
 
-    .nota-guia {
-      margin: 1.25rem 0 0;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.16);
-      font-size: 0.88rem;
-      opacity: 0.88;
+        .nota-guia {
+      margin: 1rem 0 0;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--borde);
+      font-size: 0.84rem;
+      color: var(--muted);
       line-height: 1.45;
-      position: relative;
-      z-index: 1;
     }
 
     .nota-guia a {
-      color: #b8ecd5;
+      color: var(--acento-oscuro);
       font-weight: 600;
       text-decoration: none;
     }
@@ -348,13 +330,15 @@
     }
   </style>
 </head>
-<body>
+<body class="tdv-app">
+  {% include "procesamientos/_sidebar.html" %}
+  <div class="contenido modulo-vista">
   <div class="envoltorio">
-    <p class="nav-volver">
-      <a href="{% url 'procesamientos:panel' %}">← Panel de control</a>
-    </p>
+    <header class="cabecera cabecera-modulo">
+      <p class="nav-volver">
+        <a href="{% url 'procesamientos:panel' %}">← Panel de control</a>
+      </p>
 
-    <header class="cabecera">
       <h1>Validar liquidación</h1>
       <p class="intro-corta">
         Cargue los archivos y valide antes de generar el acumulativo.
@@ -535,5 +519,6 @@
       });
     })();
   </script>
+  </div>
 </body>
 </html>

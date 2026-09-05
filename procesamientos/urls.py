@@ -27,6 +27,11 @@ urlpatterns = [
         name="bitacoras",
     ),
     path(
+        "ingresos/",
+        views.ingresos,
+        name="ingresos",
+    ),
+    path(
         "dimanno/",
         views.cargar_dimanno,
         name="dimanno_cargar",

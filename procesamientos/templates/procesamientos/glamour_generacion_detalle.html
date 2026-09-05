@@ -3,52 +3,35 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Generación del archivo</title>
+  <title>Generación del archivo — Glamour</title>
   {% if recargar_automaticamente %}
     <meta http-equiv="refresh" content="10">
   {% endif %}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=estado-pend">
   <style>
     :root {
-      --fondo: #f3f6f2;
+      --fondo: #f5f5f5;
       --tarjeta: #ffffff;
-      --texto: #1f2a24;
-      --muted: #6b7a71;
-      --borde: #d9e3dc;
-      --ok: #246f53;
-      --aviso: #8a6116;
-      --error: #9b1c1c;
-      --acento: #375a4d;
-      --acento-oscuro: #284e40;
+      --texto: #111111;
+      --muted: #6b6b6b;
+      --borde: #e6e6e6;
+      --acento: #111111;
+      --suave: #f0f0f0;
     }
 
-    * { box-sizing: border-box; }
+    main { max-width: 1100px; margin: 0 auto; padding: 0 0 1.5rem; }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: "Outfit", "Segoe UI", sans-serif;
-      color: var(--texto);
-      background: var(--fondo);
-    }
-
-    main {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 1.75rem 1.5rem 3rem;
-    }
-
-    .nav-volver { margin: 0 0 1rem; }
-
+    .nav-volver { margin: 0 0 0.85rem; }
     .nav-volver a {
       color: var(--muted);
       font-weight: 600;
       text-decoration: none;
+      font-size: 0.88rem;
     }
-
-    .nav-volver a:hover { color: var(--acento); }
 
     .cabecera {
       display: flex;
@@ -56,209 +39,280 @@
       gap: 1rem;
       flex-wrap: wrap;
       align-items: flex-end;
-      margin-bottom: 1.25rem;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 1.85rem;
-    }
-
-    .meta-cabecera {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .mensajes {
-      list-style: none;
-      margin: 0 0 1rem;
-      padding: 0;
-    }
-
-    .mensajes li {
-      background: #f1f5f9;
-      border: 1px solid var(--borde);
-      color: var(--texto);
-      border-radius: 12px;
-      padding: 0.75rem 1rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .aviso, .error-box {
-      border-radius: 12px;
-      padding: 0.9rem 1rem;
       margin-bottom: 1rem;
     }
+    h1 { margin: 0; font-size: 1.4rem; font-weight: 650; letter-spacing: -0.02em; }
+    .meta-cabecera { color: var(--muted); font-size: 0.88rem; }
 
-    .aviso {
-      background: #fffbeb;
-      border: 1px solid #fde68a;
-      color: var(--aviso);
+    .banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      border-radius: var(--radius);
+      padding: 0.9rem 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--borde);
     }
-
-    .error-box {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: var(--error);
+    .banner-error {
+      background: #eeeeee;
+      border-color: #111111;
+      color: #111111;
     }
+    .banner strong { display: block; margin-bottom: 0.15rem; }
+    .banner p { margin: 0; font-size: 0.9rem; line-height: 1.4; }
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr);
-      gap: 1rem;
+      grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.9fr);
+      gap: 0.9rem;
       align-items: start;
     }
 
-    .tarjeta {
-      background: var(--tarjeta);
-      border: 1px solid var(--borde);
-      border-radius: 16px;
-      padding: 1.2rem 1.25rem;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
-      margin-bottom: 1rem;
-    }
+    .col { display: grid; gap: 0.9rem; }
 
+    .tarjeta {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid var(--borde);
+      border-radius: var(--radius);
+      padding: 1.05rem 1.1rem;
+      box-shadow: var(--shadow);
+    }
     .tarjeta h2 {
       margin: 0 0 0.85rem;
-      font-size: 1rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       color: var(--muted);
       font-weight: 700;
+    }
+
+    /* Resumen: filas limpias, sin cajitas */
+    .lista-resumen {
+      display: grid;
+      gap: 0;
+    }
+    .lista-resumen .fila {
+      display: grid;
+      grid-template-columns: minmax(140px, 0.42fr) minmax(0, 1fr);
+      gap: 0.75rem 1.25rem;
+      align-items: baseline;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid #eeeeee;
+    }
+    .lista-resumen .fila:first-child { padding-top: 0; }
+    .lista-resumen .fila:last-child { border-bottom: 0; padding-bottom: 0; }
+    .lista-resumen .fila strong {
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .lista-resumen .fila span {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--texto);
+    }
+    .lista-resumen .fila .estado {
+      width: fit-content;
+      max-width: 100%;
+      justify-self: start;
+      align-self: center;
+      line-height: 1.3;
+    }
+
+    .banner-proceso {
+      background: #eeeeee;
+      border-left: 4px solid #111111;
+      color: #111111;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .kpi-box {
+      background: #f7f7f7;
+      border: 0;
+      border-radius: var(--radius);
+      padding: 1.05rem 1.15rem;
+    }
+    .kpi-box:first-child {
+      background: #111111;
+      color: #ffffff;
+    }
+    .kpi-box:first-child strong { color: rgba(255,255,255,.65); }
+    .kpi-box:first-child span { color: #ffffff; }
+    .kpi-box strong {
+      display: block;
+      font-size: 0.68rem;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-    }
-
-    .resumen {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.9rem 1rem;
-    }
-
-    .dato strong {
-      display: block;
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.35rem;
       font-weight: 600;
+      color: var(--muted);
+    }
+    .kpi-box span {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      font-family: var(--font-mono);
     }
 
     .estado {
       display: inline-block;
-      padding: 0.2rem 0.55rem;
+      padding: 0.2rem 0.65rem;
       border-radius: 999px;
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.78rem;
+      background: #efefef;
+      color: #111111 !important;
     }
-
+    .estado-error {
+      background: #fef2f2 !important;
+      border: 1px solid #fecaca;
+      color: #991b1b !important;
+    }
+    .estado-completado,
+    .estado-completada {
+      background: #111111 !important;
+      color: #ffffff !important;
+    }
     .estado-pendiente,
     .estado-procesando {
-      background: #fffbeb;
-      color: var(--aviso);
+      background: #efefef !important;
+      color: #111111 !important;
+      border: 1px solid #d8d8d8;
     }
 
-    .estado-completado {
-      background: #ecfdf5;
-      color: var(--ok);
-    }
-
-    .estado-error {
-      background: #fef2f2;
-      color: var(--error);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.93rem;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 0.55rem 0.2rem;
-      border-bottom: 1px solid var(--borde);
-    }
-
-    th { color: var(--muted); font-size: 0.82rem; }
-    tr:last-child td { border-bottom: 0; }
-
-    .panel-resultado {
-      background: #fff;
-      border: 1px solid var(--borde);
-      border-radius: 16px;
-      padding: 1.25rem;
+    .panel {
+      background: #ffffff;
+      border: 0;
+      border-radius: var(--radius);
+      padding: 1.2rem;
+      box-shadow: var(--shadow);
       position: sticky;
       top: 1rem;
-    }
-
-    .panel-resultado h2 {
-      margin: 0 0 0.35rem;
-      font-size: 1.15rem;
-      color: var(--texto);
-      text-transform: none;
-      letter-spacing: 0;
-    }
-
-    .panel-resultado .intro {
-      margin: 0 0 1rem;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .metricas {
       display: grid;
-      gap: 0.75rem;
-      margin-bottom: 1.15rem;
+      gap: 0.85rem;
     }
+    .panel h2 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+      text-transform: none;
+    }
+    .panel .intro {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .pasos-estado {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0;
+      border-left: 2px solid #eeeeee;
+      margin-left: 4px;
+    }
+    .pasos-estado li {
+      display: grid;
+      grid-template-columns: 12px 1fr;
+      gap: 0.7rem;
+      align-items: start;
+      padding: 0.35rem 0 0.85rem 0.85rem;
+      font-size: 0.88rem;
+      position: relative;
+      border: 0;
+      background: transparent;
+    }
+    .pasos-estado .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #eeeeee;
+      margin-top: 0.3rem;
+      margin-left: -1.15rem;
+      border: 2px solid #f5f5f5;
+      box-sizing: border-box;
+    }
+    .pasos-estado li.activo .dot { background: #111111; }
+    .pasos-estado li.hecho .dot { background: #111111; }
 
     .metrica {
-      background: #f8fafc;
-      border-radius: 12px;
-      padding: 0.75rem 0.85rem;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid #eeeeee;
+      background: transparent;
+      border-radius: 0;
     }
-
+    .metrica:last-of-type { border-bottom: 0; }
     .metrica strong {
       display: block;
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-bottom: 0.15rem;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.2rem;
+      font-weight: 600;
     }
 
-    .acciones {
-      display: grid;
-      gap: 0.65rem;
-    }
+    .acciones { display: grid; gap: 0.55rem; margin-top: 0.25rem; }
 
-    a.boton {
-      display: block;
-      text-align: center;
+    /* Botones: Pale Gold = acción (nunca negro) */
+    a.boton, button.boton {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-decoration: none;
-      border-radius: 12px;
+      border: 0;
+      border-radius: var(--radius-pill);
+      background: #111111;
+      color: #ffffff;
+      font: inherit;
       font-weight: 700;
-      padding: 0.8rem 1rem;
+      padding: 0.8rem 1.15rem;
+      cursor: pointer;
+      letter-spacing: 0.01em;
     }
-
-    a.boton-primario {
-      background: var(--acento);
-      color: #fff;
+    a.boton:hover, a.boton:focus, a.boton:active,
+    button.boton:hover, button.boton:focus, button.boton:active {
+      background: #2a2a2a;
+      color: #ffffff;
     }
-
+    button.boton:disabled, button.procesando {
+      background: #eeeeee;
+      color: #111111;
+    }
     a.boton-secundario {
-      background: #dfe4db;
-      color: var(--texto);
+      background: transparent;
+      border: 1.5px solid #111111;
+      color: #111111;
+    }
+    a.boton-secundario:hover,
+    a.boton-secundario:focus,
+    a.boton-secundario:active {
+      background: #eeeeee;
+      color: #111111;
+      border-color: #2a2a2a;
     }
 
     @media (max-width: 900px) {
-      .layout { grid-template-columns: 1fr; }
-      .resumen { grid-template-columns: 1fr 1fr; }
-      .panel-resultado { position: static; }
+      .layout, .kpis { grid-template-columns: 1fr; }
+      .lista-resumen .fila { grid-template-columns: 1fr; gap: 0.2rem; }
+      .panel { position: static; }
     }
   </style>
 </head>
-<body>
+<body class="tdv-app">
+  {% include "procesamientos/_sidebar.html" %}
+  <div class="contenido modulo-vista">
   <main>
     <p class="nav-volver">
-      <a href="{% url 'procesamientos:glamour_cargar' %}">
-        ← Volver a adjuntar archivos
-      </a>
+      <a href="{% url 'procesamientos:glamour_cargar' %}">← Volver a adjuntar archivos</a>
     </p>
 
     <header class="cabecera">
@@ -271,126 +325,129 @@
     </header>
 
     {% if messages %}
-      <ul class="mensajes">
-        {% for message in messages %}
-          <li>{{ message }}</li>
-        {% endfor %}
-      </ul>
+      {% for message in messages %}
+        <div class="banner banner-proceso"><p>{{ message }}</p></div>
+      {% endfor %}
     {% endif %}
 
     {% if generacion.esta_activa %}
-      <div class="aviso">
-        La generación está en proceso. Esta operación puede
-        tardar varios minutos.
+      <div class="banner banner-proceso">
+        <div>
+          <strong>Generación en proceso</strong>
+          <p>Puede tardar varios minutos. Esta página se actualiza sola.</p>
+        </div>
       </div>
     {% endif %}
 
     {% if generacion.tiene_error %}
-      <div class="error-box">
-        <strong>No fue posible generar el archivo.</strong>
-        <div>{{ generacion.mensaje_error }}</div>
+      <div class="banner banner-error">
+        <div>
+          <strong>No fue posible generar el archivo</strong>
+          <p>{{ generacion.mensaje_error }}</p>
+        </div>
       </div>
     {% endif %}
 
     <div class="layout">
-      <div>
+      <div class="col">
         <section class="tarjeta">
           <h2>Resumen de la solicitud</h2>
-          <div class="resumen">
-            <div class="dato">
+          <div class="lista-resumen">
+            <div class="fila">
               <strong>Estado</strong>
-              <span class="estado estado-{{ generacion.estado }}">
-                {{ generacion.estado_legible }}
-              </span>
+              <span class="estado estado-{{ generacion.estado }}">{{ generacion.estado_legible }}</span>
             </div>
-            <div class="dato">
+            <div class="fila">
               <strong>Solicitado por</strong>
-              {{ generacion.solicitado_por_nombre }}
+              <span>{{ generacion.solicitado_por_nombre }}</span>
             </div>
-            <div class="dato">
+            <div class="fila">
               <strong>Intentos</strong>
-              {{ generacion.intentos }}
+              <span>{{ generacion.intentos }}</span>
             </div>
-            <div class="dato">
+            <div class="fila">
               <strong>Solicitado en</strong>
-              {{ generacion.solicitado_en }}
+              <span>{{ generacion.solicitado_en }}</span>
             </div>
-            <div class="dato">
+            <div class="fila">
               <strong>Iniciado en</strong>
-              {{ generacion.iniciado_en|default:"—" }}
+              <span>{{ generacion.iniciado_en|default:"—" }}</span>
             </div>
-            <div class="dato">
+            <div class="fila">
               <strong>Finalizado en</strong>
-              {{ generacion.finalizado_en|default:"—" }}
+              <span>{{ generacion.finalizado_en|default:"—" }}</span>
             </div>
-            <div class="dato">
+            <div class="fila">
               <strong>Destino aplicado</strong>
-              {{ generacion.destino_aplicado }}
+              <span>{{ generacion.destino_aplicado }}</span>
             </div>
           </div>
         </section>
 
         <section class="tarjeta">
           <h2>Resumen financiero</h2>
-          <div class="resumen">
-            <div class="dato">
+          <div class="kpis">
+            <div class="kpi-box">
               <strong>Total venta EUR</strong>
-              {{ procesamiento.total_venta_eur|floatformat:2 }}
+              <span>{{ procesamiento.total_venta_eur|floatformat:2 }}</span>
             </div>
-            <div class="dato">
+            <div class="kpi-box">
               <strong>Total gastos EUR</strong>
-              {{ procesamiento.total_gastos_eur|floatformat:2 }}
+              <span>{{ procesamiento.total_gastos_eur|floatformat:2 }}</span>
             </div>
           </div>
         </section>
       </div>
 
-      <aside class="panel-resultado">
+      <aside class="panel">
         {% if generacion.esta_completada %}
           <h2>Archivo listo</h2>
-          <p class="intro">Descargue el acumulativo generado o vuelva a la bitácora.</p>
-          <div class="metricas">
-            <div class="metrica">
-              <strong>Filas agregadas</strong>
-              {{ generacion.filas_agregadas|default:"—" }}
-            </div>
-            <div class="metrica">
-              <strong>Filas</strong>
-              {{ generacion.fila_inicial|default:"—" }} – {{ generacion.fila_final|default:"—" }}
-            </div>
-            <div class="metrica">
-              <strong>Rango de tabla</strong>
-              {{ generacion.rango_tabla|default:"—" }}
-            </div>
+          <p class="intro">Descargue el acumulativo o vuelva a cargar otra liquidación.</p>
+          <div class="metrica">
+            <strong>Filas agregadas</strong>
+            {{ generacion.filas_agregadas|default:"—" }}
+          </div>
+          <div class="metrica">
+            <strong>Rango de filas</strong>
+            {{ generacion.fila_inicial|default:"—" }} – {{ generacion.fila_final|default:"—" }}
+          </div>
+          <div class="metrica">
+            <strong>Rango de tabla</strong>
+            {{ generacion.rango_tabla|default:"—" }}
           </div>
           <div class="acciones">
-            <a
-              class="boton boton-primario"
-              href="{% url 'procesamientos:glamour_generacion_descargar' generacion.id %}"
-            >
+            <a class="boton" href="{% url 'procesamientos:glamour_generacion_descargar' generacion.id %}">
               Descargar archivo
             </a>
-            <a
-              class="boton boton-secundario"
-              href="{% url 'procesamientos:glamour_cargar' %}"
-            >
-              Volver a adjuntar archivos
+            <a class="boton boton-secundario" href="{% url 'procesamientos:glamour_cargar' %}">
+              Nueva carga
             </a>
           </div>
         {% else %}
           <h2>Seguimiento</h2>
           <p class="intro">
             {% if generacion.esta_activa %}
-              Espere a que finalice el proceso. La página se actualizará sola.
+              El worker está escribiendo el acumulativo. No cierre esta sesión.
             {% else %}
-              Revise el estado o consulte la bitácora de movimientos.
+              Revise el estado o vuelva a la carga de archivos.
             {% endif %}
           </p>
+          <ul class="pasos-estado">
+            <li class="hecho">
+              <span class="dot" aria-hidden="true"></span>
+              <span>Solicitud registrada</span>
+            </li>
+            <li class="{% if generacion.esta_activa or generacion.esta_completada %}activo{% endif %}{% if generacion.esta_completada %} hecho{% endif %}">
+              <span class="dot" aria-hidden="true"></span>
+              <span>Procesando archivo</span>
+            </li>
+            <li class="{% if generacion.esta_completada %}hecho{% endif %}">
+              <span class="dot" aria-hidden="true"></span>
+              <span>Listo para descargar</span>
+            </li>
+          </ul>
           <div class="acciones">
-            <a
-              class="boton boton-secundario"
-              href="{% url 'procesamientos:glamour_cargar' %}"
-            >
+            <a class="boton boton-secundario" href="{% url 'procesamientos:glamour_cargar' %}">
               Volver a adjuntar archivos
             </a>
           </div>
@@ -409,5 +466,6 @@
       });
     })();
   </script>
+  </div>
 </body>
 </html>

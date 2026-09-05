@@ -3,51 +3,36 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Resultado de validación</title>
+  <title>Resultado de validación — Glamour</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=aviso-rojo">
   <style>
     :root {
-      --fondo: #f3f6f2;
+      --fondo: #f5f5f5;
       --tarjeta: #ffffff;
-      --texto: #1f2a24;
-      --muted: #6b7a71;
-      --borde: #d9e3dc;
-      --suave: #f0f3ef;
-      --acento: #375a4d;
-      --acento-oscuro: #284e40;
-      --acento-suave: #e6f4ee;
-      --aviso: #8a6116;
-      --error: #9b1c1c;
+      --texto: #111111;
+      --muted: #6b6b6b;
+      --borde: #e6e6e6;
+      --suave: #f0f0f0;
+      --acento: #111111;
+      --acento-oscuro: #111111;
+      --acento-suave: #eeeeee;
+      --aviso: #111111;
+      --error: #111111;
     }
 
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: "Outfit", "Segoe UI", sans-serif;
-      color: var(--texto);
-      background: var(--fondo);
-    }
-
-    main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1.75rem 1.5rem 2.5rem;
-    }
+    main { max-width: 1320px; margin: 0 auto; padding: 0 0 1.5rem; }
 
     .nav-volver { margin: 0 0 0.85rem; }
-
     .nav-volver a {
       color: var(--muted);
       font-weight: 600;
       text-decoration: none;
-      font-size: 0.92rem;
+      font-size: 0.88rem;
     }
-
-    .nav-volver a:hover { color: var(--acento-oscuro); }
 
     .cabecera {
       display: flex;
@@ -55,59 +40,41 @@
       gap: 1rem;
       flex-wrap: wrap;
       align-items: flex-end;
-      margin-bottom: 1.1rem;
+      margin-bottom: 1rem;
     }
+    h1 { margin: 0; font-size: 1.4rem; font-weight: 650; letter-spacing: -0.02em; }
+    .meta-cabecera { color: var(--muted); font-size: 0.88rem; }
 
-    h1 {
-      margin: 0;
-      font-size: 1.85rem;
-    }
-
-    .meta-cabecera {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .mensajes {
-      list-style: none;
-      margin: 0 0 1rem;
-      padding: 0;
-    }
-
+    .mensajes { list-style: none; margin: 0 0 0.85rem; padding: 0; }
     .mensajes li {
-      background: var(--acento-suave);
-      border: 1px solid #c5d4c8;
-      color: var(--acento-oscuro);
-      border-radius: 12px;
-      padding: 0.75rem 1rem;
-      margin-bottom: 0.5rem;
+      background: #111111;
+      border: 1px solid #111111;
+      color: #111111;
+      border-radius: var(--radius-sm);
+      padding: 0.7rem 0.9rem;
+      margin-bottom: 0.45rem;
     }
 
     .grid-principal {
       display: grid;
-      grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
-      gap: 1rem;
+      grid-template-columns: minmax(0, 1.65fr) minmax(270px, 0.85fr);
+      gap: 0.9rem;
       align-items: start;
-      margin-bottom: 1rem;
     }
-
-    .col-principal {
-      display: grid;
-      gap: 1rem;
-    }
+    .col-principal { display: grid; gap: 0.85rem; }
 
     .tarjeta {
-      background: var(--tarjeta);
+      background: rgba(255, 255, 255, 0.94);
       border: 1px solid var(--borde);
-      border-radius: 16px;
-      padding: 1.1rem 1.2rem;
-      box-shadow: 0 8px 20px rgba(36, 111, 83, 0.04);
+      border-radius: var(--radius);
+      padding: 1.05rem 1.1rem;
+      box-shadow: var(--shadow);
     }
 
     .seccion-titulo {
-      margin: 0 0 0.75rem;
-      font-size: 0.78rem;
-      letter-spacing: 0.05em;
+      margin: 0 0 0.7rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--muted);
       font-weight: 700;
@@ -115,123 +82,58 @@
 
     .metrics {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 0.65rem;
-      margin-bottom: 0.9rem;
+      margin-bottom: 0.95rem;
     }
-
     .metric {
-      background: var(--suave);
-      border-radius: 12px;
-      padding: 0.7rem 0.8rem;
+      background: #f7f7f7;
+      border: 0;
+      border-radius: var(--radius-sm);
+      padding: 0.8rem 0.9rem;
     }
-
     .metric strong {
       display: block;
-      font-size: 0.75rem;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
       color: var(--muted);
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.25rem;
       font-weight: 600;
     }
-
-    .metric span {
-      font-size: 1.02rem;
-      font-weight: 700;
-    }
+    .metric span { font-size: 0.98rem; font-weight: 700; color: var(--texto); }
 
     .estado {
       display: inline-block;
-      padding: 0.2rem 0.55rem;
+      padding: 0.16rem 0.55rem;
       border-radius: 999px;
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.78rem;
+      background: #111111;
+      color: #ffffff !important;
+      line-height: 1.25;
     }
-
-    .estado-pendiente_mapeo_gastos {
-      background: #fff3c4;
-      color: var(--aviso);
-    }
-
-    .estado-listo {
-      background: var(--acento-suave);
-      color: var(--acento-oscuro);
-    }
-
-    .estado-requiere_destino {
-      background: #fff3c4;
-      color: var(--aviso);
-    }
-
     .estado-invalido {
-      background: #ffe3e3;
-      color: var(--error);
+      background: #eeeeee;
+      border: 1px solid #111111;
+      color: #111111 !important;
     }
 
     .detalle-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.65rem 1rem;
-      padding-top: 0.85rem;
+      gap: 0.55rem 0.85rem;
+      padding-top: 0.8rem;
       border-top: 1px solid var(--borde);
     }
-
     .dato strong {
       display: block;
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-bottom: 0.15rem;
-    }
-
-    .panel-lateral {
-      background: var(--tarjeta);
-      border: 1px solid var(--borde);
-      border-radius: 16px;
-      padding: 1.1rem 1.2rem;
-      box-shadow: 0 8px 20px rgba(36, 111, 83, 0.04);
-    }
-
-    .panel-lateral h2 {
-      margin: 0 0 0.3rem;
-      font-size: 1.1rem;
-    }
-
-    .panel-lateral .intro {
-      margin: 0 0 0.9rem;
-      color: var(--muted);
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-
-    .chips {
-      display: grid;
-      gap: 0.5rem;
-      margin-bottom: 0.85rem;
-    }
-
-    .chip {
-      background: var(--suave);
-      border-radius: 10px;
-      padding: 0.6rem 0.75rem;
-      font-size: 0.9rem;
-    }
-
-    .chip strong {
-      display: block;
-      font-size: 0.72rem;
-      color: var(--muted);
-      margin-bottom: 0.15rem;
+      font-size: 0.68rem;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-
-    .alerta-destino {
-      background: #fff8e6;
-      border: 1px solid #f0d58a;
-      border-radius: 12px;
-      padding: 0.85rem;
-      margin-bottom: 0.85rem;
-      color: var(--aviso);
-      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 0.15rem;
+      font-weight: 600;
     }
 
     .incidencias {
@@ -239,158 +141,175 @@
       grid-template-columns: 1fr 1fr;
       gap: 0.75rem;
     }
-
-    .lista {
-      margin: 0;
-      padding-left: 1.1rem;
-      font-size: 0.92rem;
+    .lista { margin: 0; padding-left: 1.1rem; font-size: 0.88rem; }
+    .errores { color: #991b1b; }
+    .advertencias { color: #9f1239; }
+    .tarjeta-aviso {
+      background: rgba(239, 68, 68, 0.10) !important;
+      border: 1px solid rgba(239, 68, 68, 0.28) !important;
+      box-shadow: none !important;
     }
-
-    .errores { color: var(--error); }
-    .advertencias { color: var(--aviso); }
-    .vacio { margin: 0; color: var(--muted); font-size: 0.92rem; }
+    .tarjeta-aviso .seccion-titulo { color: #b91c1c; }
+    .tarjeta-error {
+      background: rgba(239, 68, 68, 0.14) !important;
+      border: 1px solid rgba(185, 28, 28, 0.35) !important;
+      box-shadow: none !important;
+    }
+    .tarjeta-error .seccion-titulo { color: #991b1b; }
+    .vacio { margin: 0; color: var(--muted); font-size: 0.88rem; }
 
     .bloque-tablas {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 1rem;
-      margin-bottom: 1.1rem;
-      align-items: start;
+      gap: 0.85rem;
+      min-width: 0;
+    }
+    .col-lateral {
+      display: grid;
+      gap: 0.85rem;
+      align-content: start;
+      min-width: 0;
+    }
+    .cabecera-bloque { margin-bottom: 0.55rem; }
+    .cabecera-bloque h2 { margin: 0; font-size: 1rem; font-weight: 650; }
+    .tabla-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tabla-lineas {
+      min-width: 640px;
+      table-layout: auto;
+    }
+    .tabla-lineas th,
+    .tabla-lineas td {
+      white-space: nowrap;
+      padding: 0.55rem 0.55rem;
+    }
+    .tabla-lineas td:nth-child(3) {
+      white-space: normal;
+      min-width: 9rem;
     }
 
-    .cabecera-bloque {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.65rem;
-    }
-
-    .cabecera-bloque h2 {
-      margin: 0;
-      font-size: 1.05rem;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-    }
-
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
     th, td {
       text-align: left;
       padding: 0.5rem 0.3rem;
       border-bottom: 1px solid var(--borde);
       vertical-align: top;
     }
-
     th {
       color: var(--muted);
-      font-size: 0.78rem;
+      font-size: 0.68rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.04em;
     }
-
     td.num, th.num { text-align: right; }
 
-    tfoot td {
-      font-weight: 700;
-      border-bottom: 0;
-      padding-top: 0.7rem;
-    }
-
-    .etiqueta-modificado {
-      display: inline-block;
-      margin-left: 0.35rem;
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--aviso);
-      background: #fff3c4;
-      border-radius: 999px;
-      padding: 0.1rem 0.4rem;
-    }
-
-    .acciones-finales {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.65rem;
-    }
-
-    a.boton, button.boton {
-      display: inline-block;
-      text-decoration: none;
-      border: 0;
-      border-radius: 12px;
-      background: var(--acento);
-      color: #fff;
-      font: inherit;
-      font-weight: 700;
-      padding: 0.7rem 1.05rem;
-      cursor: pointer;
-    }
-
-    a.boton:hover, button.boton:hover {
-      background: var(--acento-oscuro);
-    }
-
-    a.boton-secundario, button.boton-secundario {
-      background: #dfe4db;
-      color: var(--texto);
-    }
-
-    a.boton-secundario:hover, button.boton-secundario:hover {
-      background: #d0d6cb;
-    }
-
-    a.boton-suave {
-      background: #fff;
-      color: var(--texto);
+    .panel-lateral {
+      background: rgba(255, 255, 255, 0.96);
       border: 1px solid var(--borde);
+      border-radius: var(--radius);
+      padding: 1.1rem;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 0.75rem;
+    }
+    .panel-lateral h2 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+    }
+    .panel-lateral .intro {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.4;
     }
 
-    a.boton-suave:hover {
-      background: var(--suave);
+    .chips {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+    .chip {
+      background: #f5f5f5;
+      border: 1px solid var(--borde);
+      border-radius: var(--radius-sm);
+      padding: 0.55rem 0.65rem;
+      font-size: 0.86rem;
+    }
+    .chip strong {
+      display: block;
+      font-size: 0.66rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+      font-weight: 600;
     }
 
     .cta-generacion {
-      background: var(--suave);
-      border-radius: 12px;
-      padding: 0.85rem;
-      margin-bottom: 0.75rem;
-      font-size: 0.92rem;
-      color: var(--muted);
+      background: #eeeeee;
+      border-left: 4px solid #111111;
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 0.85rem;
+      font-size: 0.88rem;
+      color: #111111;
     }
-
     .cta-generacion strong {
       display: block;
-      color: var(--texto);
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.15rem;
+      font-weight: 700;
     }
 
-    .panel-acciones {
-      display: grid;
-      gap: 0.5rem;
-    }
+    .panel-acciones { display: grid; gap: 0.5rem; }
 
-    .panel-acciones a.boton,
-    .panel-acciones button.boton {
+    a.boton, button.boton {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: #111111;
+      color: #ffffff;
+      font: inherit;
+      font-weight: 700;
+      padding: 0.7rem 1rem;
+      cursor: pointer;
       width: 100%;
-      text-align: center;
     }
+    a.boton:hover, a.boton:focus, a.boton:active,
+    button.boton:hover, button.boton:focus, button.boton:active {
+      background: #2a2a2a;
+      color: #ffffff;
+    }
+    a.boton-secundario, button.boton-secundario {
+      background: transparent;
+      color: #111111;
+      border: 1.5px solid #111111;
+    }
+    a.boton-secundario:hover {
+      background: #eeeeee;
+      color: #111111;
+      border-color: #2a2a2a;
+    }
+
+    .acciones-finales { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+    .acciones-finales .boton,
+    .acciones-finales .boton-secundario { width: auto; }
 
     @media (max-width: 980px) {
       .grid-principal,
-      .bloque-tablas,
       .incidencias,
-      .metrics,
-      .detalle-grid {
-        grid-template-columns: 1fr;
-      }
+      .detalle-grid,
+      .chips { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-<body>
+<body class="tdv-app">
+  {% include "procesamientos/_sidebar.html" %}
+  <div class="contenido modulo-vista">
   {% load dimanno_extras %}
   <main>
     <p class="nav-volver">
@@ -398,9 +317,7 @@
     </p>
 
     <header class="cabecera">
-      <div>
-        <h1>Resultado de validación</h1>
-      </div>
+      <div><h1>Resultado de validación</h1></div>
       <div class="meta-cabecera">
         Factura {{ procesamiento.factura_corta }} · Semana {{ procesamiento.semana }} · {{ procesamiento.anio }}
       </div>
@@ -475,8 +392,9 @@
           </div>
         </section>
 
+        {% if procesamiento.errores or procesamiento.advertencias %}
         <div class="incidencias">
-          <section class="tarjeta">
+          <section class="tarjeta tarjeta-error">
             <p class="seccion-titulo">Errores</p>
             {% if procesamiento.errores %}
               <ul class="lista errores">
@@ -488,7 +406,7 @@
               <p class="vacio">Sin errores.</p>
             {% endif %}
           </section>
-          <section class="tarjeta">
+          <section class="tarjeta tarjeta-aviso">
             <p class="seccion-titulo">Advertencias</p>
             {% if procesamiento.advertencias %}
               <ul class="lista advertencias">
@@ -501,17 +419,59 @@
             {% endif %}
           </section>
         </div>
+        {% endif %}
+
+        <div class="bloque-tablas">
+          <section class="tarjeta">
+            <div class="cabecera-bloque"><h2>Líneas preparadas</h2></div>
+            {% if procesamiento.lineas_preparadas %}
+              <div class="tabla-scroll">
+                <table class="tabla-lineas">
+                  <thead>
+                    <tr>
+                      <th>Contenedor</th>
+                      <th>Fruta</th>
+                      <th>Cartón</th>
+                      <th>Calibre</th>
+                      <th class="num">Cajas</th>
+                      <th class="num">EUR</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for linea in lineas %}
+                      <tr>
+                        <td>{{ linea.contenedor }}</td>
+                        <td>{{ linea.tipo_fruta }}</td>
+                        <td>{{ linea.carton }}</td>
+                        <td>{{ linea.calibre }}</td>
+                        <td class="num">{{ linea.total_cajas }}</td>
+                        <td class="num">{{ linea.precio_venta_eur }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <p class="vacio">No hay líneas preparadas.</p>
+            {% endif %}
+          </section>
+        </div>
+
+        <div class="acciones-finales">
+          <a class="boton boton-secundario" href="{% url 'procesamientos:glamour_cargar' %}">
+            ← Volver a adjuntar archivos
+          </a>
+        </div>
       </div>
 
+      <div class="col-lateral">
       <aside class="panel-lateral">
-        <h2>Destino y generación</h2>
-        <p class="intro">
-          Destino tomado de Despachos y siguiente paso del proceso.
-        </p>
+        <h2>Generar archivo</h2>
+        <p class="intro">Confirme destino y genere el acumulativo.</p>
 
         <div class="chips">
           <div class="chip">
-            <strong>Destino final</strong>
+            <strong>Destino</strong>
             {{ procesamiento.destino_final|default:"—" }}
           </div>
           <div class="chip">
@@ -523,7 +483,7 @@
             {{ procesamiento.total_cajas_liquidacion|floatformat:0 }}
           </div>
           <div class="chip">
-            <strong>Cajas Despachos</strong>
+            <strong>Cajas desp.</strong>
             {{ procesamiento.total_cajas_despachos|floatformat:0 }}
           </div>
         </div>
@@ -531,13 +491,10 @@
         {% if procesamiento.estado == "pendiente_mapeo_gastos" %}
           <div class="cta-generacion">
             <strong>Gastos sin mapear</strong>
-            Debe asignar columnas a los rubros del PDF antes de generar.
+            Asigne columnas a los rubros del PDF antes de generar.
           </div>
           <div class="panel-acciones">
-            <a
-              class="boton"
-              href="{% url 'procesamientos:glamour_mapear_gastos' procesamiento.id %}"
-            >
+            <a class="boton" href="{% url 'procesamientos:glamour_mapear_gastos' procesamiento.id %}">
               Mapear gastos
             </a>
           </div>
@@ -547,10 +504,7 @@
             {{ generacion_activa.estado_legible }}
           </div>
           <div class="panel-acciones">
-            <a
-              class="boton"
-              href="{% url 'procesamientos:glamour_generacion_detalle' generacion_activa.id %}"
-            >
+            <a class="boton" href="{% url 'procesamientos:glamour_generacion_detalle' generacion_activa.id %}">
               Ver generación
             </a>
           </div>
@@ -560,20 +514,12 @@
             Puede crear el archivo acumulativo.
           </div>
           <div class="panel-acciones">
-            <form
-              method="post"
-              action="{% url 'procesamientos:glamour_generar' procesamiento.id %}"
-            >
+            <form method="post" action="{% url 'procesamientos:glamour_generar' procesamiento.id %}">
               {% csrf_token %}
-              <button class="boton" type="submit" style="width: 100%;">
-                Generar archivo
-              </button>
+              <button class="boton" type="submit">Generar archivo</button>
             </form>
             {% if ultima_completada %}
-              <a
-                class="boton boton-secundario"
-                href="{% url 'procesamientos:glamour_generacion_descargar' ultima_completada.id %}"
-              >
+              <a class="boton boton-secundario" href="{% url 'procesamientos:glamour_generacion_descargar' ultima_completada.id %}">
                 Descargar último
               </a>
             {% endif %}
@@ -581,61 +527,20 @@
         {% else %}
           <div class="cta-generacion">
             <strong>Generación no disponible</strong>
-            Revise cajas, contenedores, destino y totales de venta/gastos.
+            Revise cajas, contenedores, destino y totales.
           </div>
           {% if ultima_completada %}
             <div class="panel-acciones">
-              <a
-                class="boton boton-secundario"
-                href="{% url 'procesamientos:glamour_generacion_descargar' ultima_completada.id %}"
-              >
+              <a class="boton boton-secundario" href="{% url 'procesamientos:glamour_generacion_descargar' ultima_completada.id %}">
                 Descargar último
               </a>
             </div>
           {% endif %}
         {% endif %}
       </aside>
-    </div>
-
-    <div class="bloque-tablas">
-      <section class="tarjeta">
-        <div class="cabecera-bloque">
-          <h2>Líneas preparadas</h2>
-        </div>
-        {% if procesamiento.lineas_preparadas %}
-          <table>
-            <thead>
-              <tr>
-                <th>Contenedor</th>
-                <th>Fruta</th>
-                <th>Cartón</th>
-                <th>Calibre</th>
-                <th class="num">Cajas</th>
-                <th class="num">EUR</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for linea in lineas %}
-                <tr>
-                  <td>{{ linea.contenedor }}</td>
-                  <td>{{ linea.tipo_fruta }}</td>
-                  <td>{{ linea.carton }}</td>
-                  <td>{{ linea.calibre }}</td>
-                  <td class="num">{{ linea.total_cajas }}</td>
-                  <td class="num">{{ linea.precio_venta_eur }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        {% else %}
-          <p class="vacio">No hay líneas preparadas.</p>
-        {% endif %}
-      </section>
 
       <section class="tarjeta">
-        <div class="cabecera-bloque">
-          <h2>Gastos mapeados</h2>
-        </div>
+        <div class="cabecera-bloque"><h2>Gastos mapeados</h2></div>
         {% if gastos_items %}
           <table>
             <thead>
@@ -657,12 +562,7 @@
           <p class="vacio">No hay gastos con valor distinto de cero.</p>
         {% endif %}
       </section>
-    </div>
-
-    <div class="acciones-finales">
-      <a class="boton boton-secundario" href="{% url 'procesamientos:glamour_cargar' %}">
-        ← Volver a adjuntar archivos
-      </a>
+      </div>
     </div>
   </main>
   <script>
@@ -676,5 +576,6 @@
       });
     })();
   </script>
+  </div>
 </body>
 </html>

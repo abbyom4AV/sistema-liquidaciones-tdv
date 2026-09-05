@@ -3,34 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=cab-orden">
   <title>TDV Europa — Generación del archivo</title>
   {% if recargar_automaticamente %}<meta http-equiv="refresh" content="10">{% endif %}
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --fondo: #f3f6f2;
+      --fondo: #f5f5f5;
       --tarjeta: #fff;
-      --texto: #1f2a24;
-      --muted: #6b7a71;
-      --borde: #d9e3dc;
-      --suave: #f0f3ef;
-      --ok: #246f53;
-      --aviso: #8a6116;
-      --error: #9b1c1c;
-      --acento: #375a4d;
+      --texto: #111111;
+      --muted: #6b6b6b;
+      --borde: #e6e6e6;
+      --suave: #f0f0f0;
+      --ok: #111111;
+      --aviso: #111111;
+      --error: #111111;
+      --acento: #111111;
     }
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: "Outfit", sans-serif;
-      color: var(--texto);
-      background: var(--fondo);
-      line-height: 1.45;
-    }
+    /* body layout: tdv-app.css */
     main {
       max-width: 1180px;
       margin: 0 auto;
-      padding: 1.75rem 1.5rem 2.5rem;
+      padding: 0 0 1.5rem;
     }
     .nav-volver { margin: 0 0 1rem; }
     .nav-volver a {
@@ -61,7 +59,7 @@
     .tarjeta {
       background: var(--tarjeta);
       border: 1px solid var(--borde);
-      border-radius: 16px;
+      border-radius: var(--radius);
       padding: 1.25rem 1.35rem;
       margin-bottom: 1.15rem;
       height: fit-content;
@@ -100,17 +98,17 @@
       background: #ecfdf5;
       color: var(--ok);
       padding: .25rem .6rem;
-      border-radius: 999px;
+      border-radius: var(--radius-sm);
       font-weight: 700;
     }
     .estado-pendiente,
     .estado-procesando {
       display: inline-flex;
       width: fit-content;
-      background: #fffbeb;
+      background: #eeeeee;
       color: var(--aviso);
       padding: .25rem .6rem;
-      border-radius: 999px;
+      border-radius: var(--radius-sm);
       font-weight: 700;
     }
     .estado-error {
@@ -119,7 +117,7 @@
       background: #fef2f2;
       color: var(--error);
       padding: .25rem .6rem;
-      border-radius: 999px;
+      border-radius: var(--radius-sm);
       font-weight: 700;
     }
     .financiero {
@@ -153,7 +151,7 @@
     }
     a.boton-primario {
       background: var(--acento);
-      color: #fff;
+      color: #ffffff;
       flex: 1 1 180px;
     }
     a.boton-secundario {
@@ -162,8 +160,8 @@
       flex: 1 1 140px;
     }
     .aviso {
-      background: #fffbeb;
-      border: 1px solid #fde68a;
+      background: #eeeeee;
+      border: 1px solid #111111;
       color: var(--aviso);
       border-radius: 12px;
       padding: .9rem 1rem;
@@ -185,7 +183,9 @@
     }
   </style>
 </head>
-<body>
+<body class="tdv-app">
+  {% include "procesamientos/_sidebar.html" %}
+  <div class="contenido modulo-vista">
   <main>
     <p class="nav-volver"><a href="{% url 'procesamientos:tdv_europa_cargar' %}">← Volver a adjuntar archivos</a></p>
     <header>
@@ -253,5 +253,6 @@
       </aside>
     </div>
   </main>
+  </div>
 </body>
 </html>

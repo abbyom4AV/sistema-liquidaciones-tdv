@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
@@ -6,36 +6,32 @@
   <title>Resultado de validación</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=aviso-rojo">
   <style>
     :root {
-      --fondo: #f3f6f2;
+      --fondo: #f5f5f5;
       --tarjeta: #ffffff;
-      --texto: #1f2a24;
-      --muted: #6b7a71;
-      --borde: #d9e3dc;
-      --suave: #f0f3ef;
-      --acento: #375a4d;
-      --acento-oscuro: #284e40;
-      --acento-suave: #e6f4ee;
-      --aviso: #8a6116;
-      --error: #9b1c1c;
+      --texto: #111111;
+      --muted: #6b6b6b;
+      --borde: #e6e6e6;
+      --suave: #f0f0f0;
+      --acento: #111111;
+      --acento-oscuro: #111111;
+      --acento-suave: #eeeeee;
+      --aviso: #111111;
+      --error: #111111;
     }
 
     * { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: "Outfit", "Segoe UI", sans-serif;
-      color: var(--texto);
-      background: var(--fondo);
-    }
+    /* body layout: tdv-app.css */
 
     main {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 1.75rem 1.5rem 2.5rem;
+      padding: 0 0 1.5rem;
     }
 
     .nav-volver { margin: 0 0 0.85rem; }
@@ -76,7 +72,7 @@
 
     .mensajes li {
       background: var(--acento-suave);
-      border: 1px solid #c5d4c8;
+      border: 1px solid #eeeeee;
       color: var(--acento-oscuro);
       border-radius: 12px;
       padding: 0.75rem 1rem;
@@ -99,9 +95,9 @@
     .tarjeta {
       background: var(--tarjeta);
       border: 1px solid var(--borde);
-      border-radius: 16px;
+      border-radius: var(--radius);
       padding: 1.1rem 1.2rem;
-      box-shadow: 0 8px 20px rgba(36, 111, 83, 0.04);
+      box-shadow: var(--shadow);
     }
 
     .seccion-titulo {
@@ -115,7 +111,7 @@
 
     .metrics {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 0.65rem;
       margin-bottom: 0.9rem;
     }
@@ -142,13 +138,13 @@
     .estado {
       display: inline-block;
       padding: 0.2rem 0.55rem;
-      border-radius: 999px;
+      border-radius: var(--radius-sm);
       font-weight: 700;
       font-size: 0.85rem;
     }
 
     .estado-pendiente_mapeo_gastos {
-      background: #fff3c4;
+      background: #111111;
       color: var(--aviso);
     }
 
@@ -158,12 +154,12 @@
     }
 
     .estado-requiere_destino {
-      background: #fff3c4;
+      background: #111111;
       color: var(--aviso);
     }
 
     .estado-invalido {
-      background: #ffe3e3;
+      background: #eeeeee;
       color: var(--error);
     }
 
@@ -185,9 +181,9 @@
     .panel-lateral {
       background: var(--tarjeta);
       border: 1px solid var(--borde);
-      border-radius: 16px;
+      border-radius: var(--radius);
       padding: 1.1rem 1.2rem;
-      box-shadow: 0 8px 20px rgba(36, 111, 83, 0.04);
+      box-shadow: var(--shadow);
     }
 
     .panel-lateral h2 {
@@ -225,8 +221,8 @@
     }
 
     .alerta-destino {
-      background: #fff8e6;
-      border: 1px solid #f0d58a;
+      background: #eeeeee;
+      border: 1px solid #111111;
       border-radius: 12px;
       padding: 0.85rem;
       margin-bottom: 0.85rem;
@@ -247,7 +243,7 @@
     }
 
     .errores { color: var(--error); }
-    .advertencias { color: var(--aviso); }
+    .advertencias { color: #9f1239; }
     .vacio { margin: 0; color: var(--muted); font-size: 0.92rem; }
 
     .bloque-tablas {
@@ -306,8 +302,8 @@
       font-size: 0.72rem;
       font-weight: 700;
       color: var(--aviso);
-      background: #fff3c4;
-      border-radius: 999px;
+      background: #111111;
+      border-radius: var(--radius-sm);
       padding: 0.1rem 0.4rem;
     }
 
@@ -323,15 +319,17 @@
       border: 0;
       border-radius: 12px;
       background: var(--acento);
-      color: #fff;
+      color: #ffffff;
       font: inherit;
       font-weight: 700;
       padding: 0.7rem 1.05rem;
       cursor: pointer;
     }
 
-    a.boton:hover, button.boton:hover {
-      background: var(--acento-oscuro);
+    a.boton:hover, a.boton:focus, a.boton:active,
+    button.boton:hover, button.boton:focus, button.boton:active {
+      background: #eeeeee;
+      color: #111111;
     }
 
     a.boton-secundario, button.boton-secundario {
@@ -390,7 +388,9 @@
     }
   </style>
 </head>
-<body>
+<body class="tdv-app">
+  {% include "procesamientos/_sidebar.html" %}
+  <div class="contenido modulo-vista">
   {% load dimanno_extras %}
   <main>
     <p class="nav-volver">
@@ -476,7 +476,7 @@
         </section>
 
         <div class="incidencias">
-          <section class="tarjeta">
+          <section class="tarjeta tarjeta-error">
             <p class="seccion-titulo">Errores</p>
             {% if procesamiento.errores %}
               <ul class="lista errores">
@@ -488,7 +488,7 @@
               <p class="vacio">Sin errores.</p>
             {% endif %}
           </section>
-          <section class="tarjeta">
+          <section class="tarjeta tarjeta-aviso">
             <p class="seccion-titulo">Advertencias</p>
             {% if procesamiento.advertencias %}
               <ul class="lista advertencias">
@@ -676,5 +676,6 @@
       });
     })();
   </script>
+  </div>
 </body>
 </html>

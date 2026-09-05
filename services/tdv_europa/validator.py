@@ -16,6 +16,10 @@ from services.tdv_europa.extractor import (
 from services.tdv_europa.matcher import (
     ResultadoMatcherTdvEuropa,
 )
+from services.mensajes_gastos import (
+    etiquetas_rubros,
+    mensaje_gastos_no_mapeados,
+)
 
 
 NivelIncidencia = Literal["error", "advertencia"]
@@ -466,20 +470,25 @@ def validar_liquidacion_tdv_europa(
             )
 
     if liquidacion.rubros_no_mapeados:
-        for etiqueta, monto in liquidacion.rubros_no_mapeados:
-            advertencias.append(
-                IncidenciaValidacionTdvEuropa(
-                    codigo="RUBRO_NO_MAPEADO",
-                    nivel="advertencia",
-                    mensaje=(
-                        f"Rubro de gasto no mapeado: {etiqueta}."
-                    ),
-                    detalles={
-                        "etiqueta": etiqueta,
-                        "monto": str(monto),
-                    },
-                )
+        rubros = etiquetas_rubros(liquidacion.rubros_no_mapeados)
+        errores.append(
+            IncidenciaValidacionTdvEuropa(
+                codigo="RUBROS_NO_MAPEADOS",
+                nivel="error",
+                mensaje=mensaje_gastos_no_mapeados(rubros),
+                detalles={
+                    "rubros": [
+                        {
+                            "etiqueta": etiqueta,
+                            "monto": str(monto),
+                        }
+                        for etiqueta, monto in (
+                            liquidacion.rubros_no_mapeados
+                        )
+                    ]
+                },
             )
+        )
 
     factura = (liquidacion.factura_corta or "").strip()
     factura_form = (factura_ui or "").strip()

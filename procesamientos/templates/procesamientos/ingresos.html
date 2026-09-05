@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ingresos — Sistema TDV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=cab-orden">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <style>
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(250px, 0.9fr);
+      gap: 0.75rem;
+    }
+    .tarjeta { padding: 0.9rem 0.95rem 1rem; }
+    .tarjeta h2 {
+      margin: 0 0 0.7rem;
+      font-size: 0.92rem;
+      font-weight: 650;
+    }
+    .chart-wrap { position: relative; height: 320px; }
+    .ranking { display: grid; gap: 0.15rem; }
+    .rank-item {
+      display: grid;
+      grid-template-columns: 8px 1fr auto;
+      gap: 0.55rem;
+      align-items: center;
+      padding: 0.5rem 0.05rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .rank-item:last-child { border-bottom: 0; }
+    .dot { width: 8px; height: 8px; border-radius: 2px; }
+    .rank-item span { color: var(--muted); font-size: 0.86rem; }
+    .rank-item strong {
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+    .filtros-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+      align-items: end;
+    }
+    @media (max-width: 1100px) {
+      .layout, .filtros-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="tdv-app">
+  {% include "procesamientos/_sidebar.html" %}
+
+  <div class="contenido">
+    <header class="cabecera">
+      <div>
+        <p class="cabecera-kicker">Analytics operativo</p>
+        <h1>Ingresos</h1>
+        <p class="intro">
+          Generaciones completadas por día y por cliente.
+        </p>
+      </div>
+    </header>
+
+    <form class="filtros" method="get">
+      <div class="filtros-grid">
+        <div>
+          <label for="fecha_desde">Desde</label>
+          <input id="fecha_desde" type="date" name="fecha_desde" value="{{ filtros.fecha_desde }}">
+        </div>
+        <div>
+          <label for="fecha_hasta">Hasta</label>
+          <input id="fecha_hasta" type="date" name="fecha_hasta" value="{{ filtros.fecha_hasta }}">
+        </div>
+        <div>
+          <label for="cliente">Cliente</label>
+          <select id="cliente" name="cliente">
+            <option value="">Todos</option>
+            {% for nombre in resumen.clientes %}
+              <option value="{{ nombre }}" {% if filtros.cliente == nombre %}selected{% endif %}>
+                {{ nombre }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="filtros-acciones">
+          <button type="submit">Actualizar</button>
+          <a class="limpiar" href="{% url 'procesamientos:ingresos' %}">Limpiar</a>
+        </div>
+      </div>
+    </form>
+
+    <section class="kpis">
+      <article class="kpi">
+        <span>Total periodo</span>
+        <strong>{{ resumen.total_periodo }}</strong>
+      </article>
+      <article class="kpi">
+        <span>Días</span>
+        <strong>{{ resumen.dias_count }}</strong>
+      </article>
+      <article class="kpi">
+        <span>Clientes con ingresos</span>
+        <strong>{{ resumen.clientes_con_ingresos }}</strong>
+      </article>
+    </section>
+
+    <div class="layout">
+      <section class="tarjeta">
+        <h2>Ingresos por día</h2>
+        {% if resumen.total_periodo %}
+          <div class="chart-wrap">
+            <canvas id="chartIngresos" aria-label="Gráfico de ingresos diarios"></canvas>
+          </div>
+        {% else %}
+          <p class="vacio">No hay generaciones completadas en el rango seleccionado.</p>
+        {% endif %}
+      </section>
+
+      <aside class="tarjeta">
+        <h2>Por cliente</h2>
+        <div class="ranking">
+          {% for item in resumen.ranking_activos %}
+            <div class="rank-item">
+              <span class="dot" style="background: {{ item.color }}"></span>
+              <span>{{ item.cliente }}</span>
+              <strong>{{ item.total }}</strong>
+            </div>
+          {% empty %}
+            <p class="vacio">Sin ingresos en el periodo.</p>
+          {% endfor %}
+          {% if resumen.ranking_cero %}
+            <p class="rank-group-title">Sin actividad</p>
+            {% for item in resumen.ranking_cero %}
+              <div class="rank-item cero">
+                <span class="dot" style="background: {{ item.color }}"></span>
+                <span>{{ item.cliente }}</span>
+                <strong>0</strong>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  {{ chart_payload|json_script:"ingresos-chart-data" }}
+  <script>
+    (function () {
+      var el = document.getElementById("ingresos-chart-data");
+      var canvas = document.getElementById("chartIngresos");
+      if (!el || !canvas || typeof Chart === "undefined") return;
+      var payload = JSON.parse(el.textContent);
+      if (!payload.datasets || !payload.datasets.length) return;
+      new Chart(canvas, {
+        type: "bar",
+        data: { labels: payload.labels, datasets: payload.datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: "index", intersect: false },
+          datasets: {
+            bar: { borderRadius: 6, borderSkipped: false, maxBarThickness: 28 }
+          },
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                boxWidth: 10,
+                usePointStyle: true,
+                pointStyle: "rectRounded",
+                padding: 16,
+                font: { family: "IBM Plex Sans", size: 11 }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                footer: function (items) {
+                  var total = 0;
+                  items.forEach(function (i) { total += i.parsed.y || 0; });
+                  return "Total día: " + total;
+                }
+              }
+            }
+          },
+          scales: {
+            x: { stacked: true, grid: { display: false } },
+            y: {
+              stacked: true,
+              beginAtZero: true,
+              ticks: { precision: 0 },
+              grid: { color: "#eeeeee" }
+            }
+          }
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

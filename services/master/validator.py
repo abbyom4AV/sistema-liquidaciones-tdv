@@ -11,6 +11,10 @@ from services.master.matcher import (
     ResultadoMatcherMaster,
     normalizar_texto,
 )
+from services.mensajes_gastos import (
+    etiquetas_rubros,
+    mensaje_gastos_no_mapeados,
+)
 
 
 NivelIncidencia = Literal["error", "advertencia"]
@@ -68,19 +72,13 @@ def validar_liquidacion_master(
     advertencias: list[IncidenciaValidacionMaster] = []
 
     if liquidacion.rubros_no_mapeados:
+        rubros = etiquetas_rubros(liquidacion.rubros_no_mapeados)
         errores.append(
             IncidenciaValidacionMaster(
                 codigo="RUBROS_NO_MAPEADOS",
                 nivel="error",
-                mensaje=(
-                    "La liquidación contiene rubros de costo "
-                    "sin columna digitada asignada."
-                ),
-                detalles={
-                    "rubros": list(
-                        liquidacion.rubros_no_mapeados
-                    )
-                },
+                mensaje=mensaje_gastos_no_mapeados(rubros),
+                detalles={"rubros": rubros},
             )
         )
 

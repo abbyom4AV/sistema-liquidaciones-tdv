@@ -108,6 +108,7 @@ class LiquidacionOrsero:
     precios: tuple[LineaPrecioOrsero, ...]
     gastos: dict[str, Decimal]
     texto_ocr: str
+    rubros_no_mapeados: tuple[str, ...] = ()
 
 
 def normalizar_texto(valor: Any) -> str:
@@ -409,7 +410,9 @@ def _extraer_precios(texto: str) -> tuple[LineaPrecioOrsero, ...]:
     return tuple(precios)
 
 
-def _extraer_gastos(texto: str) -> dict[str, Decimal]:
+def _extraer_gastos(
+    texto: str,
+) -> tuple[dict[str, Decimal], tuple[str, ...]]:
     gastos: dict[str, Decimal] = {
         "Costo en Origen Form.": Decimal("0"),
         "Inland Form.": Decimal("0"),
@@ -421,6 +424,8 @@ def _extraer_gastos(texto: str) -> dict[str, Decimal]:
         "Transport In Form.": Decimal("0"),
         "Comision Form": Decimal("0"),
     }
+    no_mapeados: list[str] = []
+    vistos: set[str] = set()
     for linea in texto.splitlines():
         norma = normalizar_texto(linea)
         if not norma or any(
@@ -435,11 +440,30 @@ def _extraer_gastos(texto: str) -> dict[str, Decimal]:
             if etiqueta in norma:
                 rubro = columna
                 break
+        montos = _numeros_en_linea(linea)
         if rubro is None:
+            # Línea de costo con monto pero sin columna digitada.
+            if montos and re.search(
+                r"[A-Za-zÁÉÍÓÚáéíóúüÜñÑ]{3,}",
+                linea,
+            ):
+                etiqueta = re.sub(
+                    r"[\d.,€$%\-\s]+$",
+                    "",
+                    linea,
+                ).strip(" :.-")
+                clave = normalizar_texto(etiqueta)
+                if (
+                    etiqueta
+                    and clave
+                    and clave not in vistos
+                    and clave not in GASTOS_IGNORADOS
+                ):
+                    vistos.add(clave)
+                    no_mapeados.append(etiqueta)
             continue
 
         # Preferir el último monto de la línea (columna $).
-        montos = _numeros_en_linea(linea)
         if not montos:
             continue
         # Comisión: evitar tomar el 8% como monto.
@@ -453,7 +477,7 @@ def _extraer_gastos(texto: str) -> dict[str, Decimal]:
                 continue
         gastos[rubro] = valor
 
-    return gastos
+    return gastos, tuple(no_mapeados)
 
 
 def parsear_texto_liquidacion_orsero(
@@ -463,7 +487,7 @@ def parsear_texto_liquidacion_orsero(
     nave, semana = _extraer_semana_nave(texto)
     cambio = _extraer_tipo_cambio(texto)
     precios = _extraer_precios(texto)
-    gastos = _extraer_gastos(texto)
+    gastos, rubros_no_mapeados = _extraer_gastos(texto)
     total_cajas = sum(p.total_cajas for p in precios)
     return LiquidacionOrsero(
         archivo=archivo,
@@ -474,6 +498,7 @@ def parsear_texto_liquidacion_orsero(
         precios=precios,
         gastos=gastos,
         texto_ocr=texto,
+        rubros_no_mapeados=rubros_no_mapeados,
     )
 
 

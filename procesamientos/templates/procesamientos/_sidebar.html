@@ -24,6 +24,12 @@
     >
       Bitácoras
     </a>
+    <a
+      class="nav-item {% if nav_activo == 'ingresos' %}activo{% endif %}"
+      href="{% url 'procesamientos:ingresos' %}"
+    >
+      Ingresos
+    </a>
   </nav>
 
   <div class="sidebar-pie">

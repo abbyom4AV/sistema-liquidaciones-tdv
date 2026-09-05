@@ -24,15 +24,8 @@ from procesamientos.forms import (
 from procesamientos.models import (
     RUBROS_GASTOS_DEFINICION,
     CorreccionGastoDimanno,
-    CorreccionGastoMaster,
-    CorreccionGastoOrsero,
     GastoProcesamientoDimanno,
     GeneracionDimanno,
-    GeneracionFruver,
-    GeneracionKraaijeveld,
-    GeneracionMaster,
-    GeneracionOrsero,
-    GeneracionSifa,
     ProcesamientoDimanno,
     ProcesamientoFruver,
     ProcesamientoKraaijeveld,
@@ -40,6 +33,11 @@ from procesamientos.models import (
     ProcesamientoOrsero,
     ProcesamientoSifa,
     ResolucionDestinoDimanno,
+)
+from procesamientos.services.bitacoras import (
+    filtrar_eventos_bitacora,
+    recolectar_eventos_bitacora,
+    resumen_ingresos_diarios,
 )
 from procesamientos.services.generacion_dimanno import (
     NOMBRE_DESCARGA_DIMANNO,
@@ -339,332 +337,16 @@ def panel_control(request):
 
 @login_required
 def bitacoras(request):
-    eventos: list[dict] = []
-
-    correcciones = CorreccionGastoDimanno.objects.select_related(
-        "gasto",
-        "gasto__procesamiento",
-    ).order_by("-creado_en")[:120]
-    for item in correcciones:
-        procesamiento = item.gasto.procesamiento
-        eventos.append(
-            {
-                "tipo": "Corrección de gasto",
-                "estado": "Cambiada",
-                "estado_clase": "cambiada",
-                "cliente": "Di Manno",
-                "detalle": (
-                    f"{item.gasto.nombre}: "
-                    f"{item.valor_anterior} → "
-                    f"{item.valor_nuevo}"
-                ),
-                "usuario": item.usuario_nombre or "—",
-                "fecha": item.creado_en,
-                "factura": procesamiento.factura_corta or "—",
-                "url_detalle": (
-                    "procesamientos:dimanno_detalle",
-                    procesamiento.id,
-                ),
-            }
-        )
-
-    resoluciones = ResolucionDestinoDimanno.objects.select_related(
-        "procesamiento",
-    ).order_by("-creado_en")[:120]
-    for item in resoluciones:
-        eventos.append(
-            {
-                "tipo": "Resolución de destino",
-                "estado": "Cambiada",
-                "estado_clase": "cambiada",
-                "cliente": "Di Manno",
-                "detalle": (
-                    f"Destino actualizado: "
-                    f"{item.destino_anterior or 'sin definir'} → "
-                    f"{item.destino_nuevo}"
-                ),
-                "usuario": item.usuario_nombre or "—",
-                "fecha": item.creado_en,
-                "factura": item.procesamiento.factura_corta or "—",
-                "url_detalle": (
-                    "procesamientos:dimanno_detalle",
-                    item.procesamiento_id,
-                ),
-            }
-        )
-
-    generaciones = GeneracionDimanno.objects.select_related(
-        "procesamiento",
-    ).order_by("-solicitado_en")[:120]
-    estados_generacion = {
-        "completado": ("Transacción completada", "completada"),
-        "error": ("Error en generación", "error"),
-        "procesando": ("En proceso", "proceso"),
-        "pendiente": ("Pendiente", "proceso"),
-    }
-    for item in generaciones:
-        estado_texto, estado_clase = estados_generacion.get(
-            item.estado,
-            (item.estado_legible, "proceso"),
-        )
-        eventos.append(
-            {
-                "tipo": "Generación de archivo",
-                "estado": estado_texto,
-                "estado_clase": estado_clase,
-                "cliente": "Di Manno",
-                "detalle": estado_texto,
-                "usuario": item.solicitado_por_nombre or "—",
-                "fecha": item.solicitado_en,
-                "factura": item.procesamiento.factura_corta or "—",
-                "url_detalle": (
-                    "procesamientos:dimanno_generacion_detalle",
-                    item.id,
-                ),
-            }
-        )
-
-    correcciones_master = CorreccionGastoMaster.objects.select_related(
-        "gasto",
-        "gasto__procesamiento",
-    ).order_by("-creado_en")[:120]
-    for item in correcciones_master:
-        procesamiento = item.gasto.procesamiento
-        eventos.append(
-            {
-                "tipo": "Corrección de gasto",
-                "estado": "Cambiada",
-                "estado_clase": "cambiada",
-                "cliente": "Master Fruits",
-                "detalle": (
-                    f"{item.gasto.nombre}: "
-                    f"{item.valor_anterior} → "
-                    f"{item.valor_nuevo}"
-                ),
-                "usuario": item.usuario_nombre or "—",
-                "fecha": item.creado_en,
-                "factura": procesamiento.factura_corta or "—",
-                "url_detalle": (
-                    "procesamientos:master_detalle",
-                    procesamiento.id,
-                ),
-            }
-        )
-
-    generaciones_master = GeneracionMaster.objects.select_related(
-        "procesamiento",
-    ).order_by("-solicitado_en")[:120]
-    for item in generaciones_master:
-        estado_texto, estado_clase = estados_generacion.get(
-            item.estado,
-            (item.estado_legible, "proceso"),
-        )
-        eventos.append(
-            {
-                "tipo": "Generación de archivo",
-                "estado": estado_texto,
-                "estado_clase": estado_clase,
-                "cliente": "Master Fruits",
-                "detalle": estado_texto,
-                "usuario": item.solicitado_por_nombre or "—",
-                "fecha": item.solicitado_en,
-                "factura": item.procesamiento.factura_corta or "—",
-                "url_detalle": (
-                    "procesamientos:master_generacion_detalle",
-                    item.id,
-                ),
-            }
-        )
-
-    correcciones_orsero = CorreccionGastoOrsero.objects.select_related(
-        "gasto",
-        "gasto__procesamiento",
-    ).order_by("-creado_en")[:120]
-    for item in correcciones_orsero:
-        procesamiento = item.gasto.procesamiento
-        eventos.append(
-            {
-                "tipo": "Corrección de gasto",
-                "estado": "Cambiada",
-                "estado_clase": "cambiada",
-                "cliente": "ORSERO",
-                "detalle": (
-                    f"{item.gasto.nombre}: "
-                    f"{item.valor_anterior} → "
-                    f"{item.valor_nuevo}"
-                ),
-                "usuario": item.usuario_nombre or "—",
-                "fecha": item.creado_en,
-                "factura": procesamiento.nave_texto or "—",
-                "url_detalle": (
-                    "procesamientos:orsero_detalle",
-                    procesamiento.id,
-                ),
-            }
-        )
-
-    generaciones_orsero = GeneracionOrsero.objects.select_related(
-        "procesamiento",
-    ).order_by("-solicitado_en")[:120]
-    for item in generaciones_orsero:
-        estado_texto, estado_clase = estados_generacion.get(
-            item.estado,
-            (item.estado_legible, "proceso"),
-        )
-        eventos.append(
-            {
-                "tipo": "Generación de archivo",
-                "estado": estado_texto,
-                "estado_clase": estado_clase,
-                "cliente": "ORSERO",
-                "detalle": estado_texto,
-                "usuario": item.solicitado_por_nombre or "—",
-                "fecha": item.solicitado_en,
-                "factura": item.procesamiento.nave_texto or "—",
-                "url_detalle": (
-                    "procesamientos:orsero_generacion_detalle",
-                    item.id,
-                ),
-            }
-        )
-
-    generaciones_kraaijeveld = (
-        GeneracionKraaijeveld.objects.select_related(
-            "procesamiento",
-        ).order_by("-solicitado_en")[:120]
+    eventos = recolectar_eventos_bitacora()
+    filtrados = filtrar_eventos_bitacora(
+        eventos,
+        q=request.GET.get("q", ""),
+        cliente=request.GET.get("cliente", ""),
+        factura=request.GET.get("factura", ""),
+        usuario=request.GET.get("usuario", ""),
+        fecha_desde=request.GET.get("fecha_desde", ""),
+        fecha_hasta=request.GET.get("fecha_hasta", ""),
     )
-    for item in generaciones_kraaijeveld:
-        estado_texto, estado_clase = estados_generacion.get(
-            item.estado,
-            (item.estado_legible, "proceso"),
-        )
-        eventos.append(
-            {
-                "tipo": "Generación de archivo",
-                "estado": estado_texto,
-                "estado_clase": estado_clase,
-                "cliente": "KRAAIJEVELD",
-                "detalle": estado_texto,
-                "usuario": item.solicitado_por_nombre or "—",
-                "fecha": item.solicitado_en,
-                "factura": (
-                    item.procesamiento.destino_ui or "—"
-                ),
-                "url_detalle": (
-                    "procesamientos:kraaijeveld_generacion_detalle",
-                    item.id,
-                ),
-            }
-        )
-
-    generaciones_fruver = (
-        GeneracionFruver.objects.select_related(
-            "procesamiento",
-        ).order_by("-solicitado_en")[:120]
-    )
-    for item in generaciones_fruver:
-        estado_texto, estado_clase = estados_generacion.get(
-            item.estado,
-            (item.estado_legible, "proceso"),
-        )
-        eventos.append(
-            {
-                "tipo": "Generación de archivo",
-                "estado": estado_texto,
-                "estado_clase": estado_clase,
-                "cliente": "FRU&VER",
-                "detalle": estado_texto,
-                "usuario": item.solicitado_por_nombre or "—",
-                "fecha": item.solicitado_en,
-                "factura": (
-                    item.procesamiento.factura_corta
-                    or item.procesamiento.destino_ui
-                    or "—"
-                ),
-                "url_detalle": (
-                    "procesamientos:fruver_generacion_detalle",
-                    item.id,
-                ),
-            }
-        )
-
-    generaciones_sifa = (
-        GeneracionSifa.objects.select_related(
-            "procesamiento",
-        ).order_by("-solicitado_en")[:120]
-    )
-    for item in generaciones_sifa:
-        estado_texto, estado_clase = estados_generacion.get(
-            item.estado,
-            (item.estado_legible, "proceso"),
-        )
-        eventos.append(
-            {
-                "tipo": "Generación de archivo",
-                "estado": estado_texto,
-                "estado_clase": estado_clase,
-                "cliente": "SIFA",
-                "detalle": estado_texto,
-                "usuario": item.solicitado_por_nombre or "—",
-                "fecha": item.solicitado_en,
-                "factura": (
-                    item.procesamiento.factura_corta
-                    or item.procesamiento.destino_ui
-                    or "—"
-                ),
-                "url_detalle": (
-                    "procesamientos:sifa_generacion_detalle",
-                    item.id,
-                ),
-            }
-        )
-
-    q = (request.GET.get("q") or "").strip().lower()
-    cliente = (request.GET.get("cliente") or "").strip().lower()
-    factura = (request.GET.get("factura") or "").strip().lower()
-    usuario = (request.GET.get("usuario") or "").strip().lower()
-    fecha_desde = (request.GET.get("fecha_desde") or "").strip()
-    fecha_hasta = (request.GET.get("fecha_hasta") or "").strip()
-
-    filtrados: list[dict] = []
-    for evento in eventos:
-        fecha = evento["fecha"]
-        if fecha_desde:
-            try:
-                desde = datetime.strptime(fecha_desde, "%Y-%m-%d").date()
-                if fecha.date() < desde:
-                    continue
-            except ValueError:
-                pass
-        if fecha_hasta:
-            try:
-                hasta = datetime.strptime(fecha_hasta, "%Y-%m-%d").date()
-                if fecha.date() > hasta:
-                    continue
-            except ValueError:
-                pass
-        if cliente and cliente not in evento["cliente"].lower():
-            continue
-        if factura and factura not in str(evento["factura"]).lower():
-            continue
-        if usuario and usuario not in evento["usuario"].lower():
-            continue
-        if q:
-            haystack = " ".join(
-                [
-                    evento["tipo"],
-                    evento["estado"],
-                    evento["cliente"],
-                    str(evento["factura"]),
-                    evento["detalle"],
-                    evento["usuario"],
-                ]
-            ).lower()
-            if q not in haystack:
-                continue
-        filtrados.append(evento)
-
-    filtrados.sort(key=lambda evento: evento["fecha"], reverse=True)
     return render(
         request,
         "procesamientos/bitacoras.html",
@@ -676,8 +358,35 @@ def bitacoras(request):
                 "cliente": request.GET.get("cliente", ""),
                 "factura": request.GET.get("factura", ""),
                 "usuario": request.GET.get("usuario", ""),
-                "fecha_desde": fecha_desde,
-                "fecha_hasta": fecha_hasta,
+                "fecha_desde": request.GET.get("fecha_desde", ""),
+                "fecha_hasta": request.GET.get("fecha_hasta", ""),
+            },
+        },
+    )
+
+
+@login_required
+@require_GET
+def ingresos(request):
+    resumen = resumen_ingresos_diarios(
+        fecha_desde=request.GET.get("fecha_desde"),
+        fecha_hasta=request.GET.get("fecha_hasta"),
+        cliente_filtro=request.GET.get("cliente"),
+    )
+    return render(
+        request,
+        "procesamientos/ingresos.html",
+        {
+            **contexto_sesion(request, nav_activo="ingresos"),
+            "resumen": resumen,
+            "filtros": {
+                "fecha_desde": resumen["fecha_desde"],
+                "fecha_hasta": resumen["fecha_hasta"],
+                "cliente": request.GET.get("cliente", ""),
+            },
+            "chart_payload": {
+                "labels": resumen["etiquetas"],
+                "datasets": resumen["datasets"],
             },
         },
     )
@@ -828,11 +537,7 @@ def _eliminar_procesamiento_y_archivos(
 
 @login_required
 def cargar_dimanno(request):
-    contexto_base = {
-        "nombre_usuario_sesion": obtener_nombre_usuario(
-            request.user
-        ),
-    }
+    contexto_base = contexto_sesion(request, nav_activo="panel")
     if request.method != "POST":
         return render(
             request,
@@ -994,9 +699,7 @@ def detalle_dimanno(request, procesamiento_id):
             "total_gastos_aplicados": (
                 procesamiento.total_gastos_aplicados
             ),
-            "nombre_usuario_sesion": obtener_nombre_usuario(
-                request.user
-            ),
+            **contexto_sesion(request, nav_activo="panel"),
             "generacion_activa": generacion_activa,
             "ultima_completada": ultima_completada,
             "puede_solicitar_generacion": (
@@ -1109,7 +812,7 @@ def editar_gastos_dimanno(request, procesamiento_id):
                 "procesamiento": procesamiento,
                 "formset": formset,
                 "formulario_motivo": formulario_motivo,
-                "nombre_usuario_sesion": nombre_visible,
+                **contexto_sesion(request, nav_activo="panel"),
             },
             status=400,
         )
@@ -1124,7 +827,7 @@ def editar_gastos_dimanno(request, procesamiento_id):
             "procesamiento": procesamiento,
             "formset": formset,
             "formulario_motivo": formulario_motivo,
-            "nombre_usuario_sesion": nombre_visible,
+            **contexto_sesion(request, nav_activo="panel"),
         },
     )
 
@@ -1238,7 +941,7 @@ def resolver_destino_dimanno(request, procesamiento_id):
             {
                 "procesamiento": procesamiento_vista,
                 "formulario": formulario_invalido,
-                "nombre_usuario_sesion": nombre_visible,
+                **contexto_sesion(request, nav_activo="panel"),
             },
             status=400,
         )
@@ -1256,7 +959,7 @@ def resolver_destino_dimanno(request, procesamiento_id):
         {
             "procesamiento": procesamiento,
             "formulario": formulario,
-            "nombre_usuario_sesion": nombre_visible,
+            **contexto_sesion(request, nav_activo="panel"),
         },
     )
 
@@ -1436,9 +1139,7 @@ def detalle_generacion_dimanno(request, generacion_id):
         {
             "generacion": generacion,
             "procesamiento": generacion.procesamiento,
-            "nombre_usuario_sesion": obtener_nombre_usuario(
-                request.user
-            ),
+            **contexto_sesion(request, nav_activo="panel"),
             "recargar_automaticamente": generacion.esta_activa,
         },
     )

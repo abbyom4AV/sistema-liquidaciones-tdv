@@ -11,6 +11,10 @@ from services.orsero.matcher import (
     ResultadoMatcherOrsero,
     normalizar_texto,
 )
+from services.mensajes_gastos import (
+    etiquetas_rubros,
+    mensaje_gastos_no_mapeados,
+)
 
 
 NivelIncidencia = Literal["error", "advertencia"]
@@ -89,6 +93,17 @@ def validar_liquidacion_orsero(
 ) -> ResultadoValidacionOrsero:
     errores: list[IncidenciaValidacionOrsero] = []
     advertencias: list[IncidenciaValidacionOrsero] = []
+
+    if liquidacion.rubros_no_mapeados:
+        rubros = etiquetas_rubros(liquidacion.rubros_no_mapeados)
+        errores.append(
+            IncidenciaValidacionOrsero(
+                codigo="RUBROS_NO_MAPEADOS",
+                nivel="error",
+                mensaje=mensaje_gastos_no_mapeados(rubros),
+                detalles={"rubros": rubros},
+            )
+        )
 
     if liquidacion.semana != despachos.semana:
         errores.append(

@@ -14,6 +14,7 @@ from services.fruver.matcher import (
     LineaDespachoFruver,
     ResultadoMatcherFruver,
 )
+from services.mensajes_gastos import mensaje_gastos_no_mapeados
 
 
 NivelIncidencia = Literal["error", "advertencia"]
@@ -165,14 +166,17 @@ def validar_liquidaciones_fruver(
                 )
             )
         for rubro in liq.rubros_no_mapeados:
-            advertencias.append(
+            errores.append(
                 IncidenciaValidacionFruver(
                     codigo="GASTO_NO_MAPEADO",
-                    nivel="advertencia",
-                    mensaje=(
-                        f"Rubro de gasto sin columna digitada en "
-                        f"{liq.contenedor}: {rubro}"
+                    nivel="error",
+                    mensaje=mensaje_gastos_no_mapeados(
+                        [f"{liq.contenedor}: {rubro}"]
                     ),
+                    detalles={
+                        "contenedor": liq.contenedor,
+                        "rubro": rubro,
+                    },
                 )
             )
 

@@ -18,6 +18,10 @@ from services.dimanno.matcher import (
     buscar_lineas_despachos,
     normalizar_texto,
 )
+from services.mensajes_gastos import (
+    etiquetas_rubros,
+    mensaje_gastos_no_mapeados,
+)
 
 
 NivelIncidencia = Literal["error", "advertencia"]
@@ -107,19 +111,13 @@ def validar_liquidacion(
     # ---------------------------------------------------------
 
     if liquidacion.rubros_no_mapeados:
+        rubros = etiquetas_rubros(liquidacion.rubros_no_mapeados)
         errores.append(
             IncidenciaValidacion(
                 codigo="RUBROS_NO_MAPEADOS",
                 nivel="error",
-                mensaje=(
-                    "La liquidación contiene rubros que todavía "
-                    "no tienen una columna asignada en Raw Data."
-                ),
-                detalles={
-                    "rubros": list(
-                        liquidacion.rubros_no_mapeados
-                    )
-                },
+                mensaje=mensaje_gastos_no_mapeados(rubros),
+                detalles={"rubros": rubros},
             )
         )
 

@@ -3,34 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=estado-fix">
   <title>TDV Europa — Resultado de validación</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --fondo: #f3f6f2;
+      --fondo: #f5f5f5;
       --tarjeta: #fff;
-      --texto: #1f2a24;
-      --muted: #6b7a71;
-      --borde: #d9e3dc;
-      --suave: #f0f3ef;
-      --acento: #375a4d;
-      --acento-oscuro: #284e40;
-      --acento-suave: #e6f4ee;
-      --aviso: #8a6116;
-      --error: #9b1c1c;
+      --texto: #111111;
+      --muted: #6b6b6b;
+      --borde: #e6e6e6;
+      --suave: #f0f0f0;
+      --acento: #111111;
+      --acento-oscuro: #111111;
+      --acento-suave: #eeeeee;
+      --aviso: #111111;
+      --error: #111111;
     }
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: "Outfit", sans-serif;
-      color: var(--texto);
-      background: var(--fondo);
-      line-height: 1.45;
-    }
+    /* body layout: tdv-app.css */
     main {
       max-width: 1240px;
       margin: 0 auto;
-      padding: 1.75rem 1.5rem 2.5rem;
+      padding: 0 0 1.5rem;
     }
     .nav-volver { margin: 0 0 1rem; }
     .nav-volver a {
@@ -63,7 +61,7 @@
     .tarjeta {
       background: var(--tarjeta);
       border: 1px solid var(--borde);
-      border-radius: 16px;
+      border-radius: var(--radius);
       padding: 1.25rem 1.35rem;
       margin-bottom: 1.15rem;
       height: fit-content;
@@ -79,7 +77,7 @@
     }
     .metrics {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: .75rem;
       margin-bottom: 1rem;
     }
@@ -99,14 +97,14 @@
       background: var(--acento-suave);
       color: var(--acento-oscuro);
       padding: .2rem .55rem;
-      border-radius: 999px;
+      border-radius: var(--radius-sm);
       font-weight: 700;
     }
     .estado-invalido {
-      background: #ffe3e3;
+      background: #eeeeee;
       color: var(--error);
       padding: .2rem .55rem;
-      border-radius: 999px;
+      border-radius: var(--radius-sm);
       font-weight: 700;
     }
     .incidencias {
@@ -125,12 +123,12 @@
       align-items: center;
       gap: .4rem;
       padding: .35rem .7rem;
-      border-radius: 999px;
+      border-radius: var(--radius-sm);
       font-size: .82rem;
       font-weight: 700;
     }
     .pill-ok { background: var(--acento-suave); color: var(--acento-oscuro); }
-    .pill-error { background: #ffe3e3; color: var(--error); }
+    .pill-error { background: #eeeeee; color: var(--error); }
     .pill-aviso { background: #fff3d6; color: var(--aviso); }
     .lista {
       margin: 0 0 1rem;
@@ -170,13 +168,13 @@
     .merma-card .tag {
       flex-shrink: 0;
       background: var(--acento);
-      color: #fff;
+      color: #ffffff;
       font-size: .72rem;
       font-weight: 700;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       padding: .2rem .5rem;
-      border-radius: 999px;
+      border-radius: var(--radius-sm);
     }
     .merma-meta {
       color: var(--muted);
@@ -250,7 +248,7 @@
       border: 0;
       border-radius: 12px;
       background: var(--acento);
-      color: #fff;
+      color: #ffffff;
       font: inherit;
       font-weight: 700;
       padding: .7rem 1.05rem;
@@ -283,7 +281,9 @@
     }
   </style>
 </head>
-<body>
+<body class="tdv-app">
+  {% include "procesamientos/_sidebar.html" %}
+  <div class="contenido modulo-vista">
   <main>
     <p class="nav-volver"><a href="{% url 'procesamientos:panel' %}">← Panel de control</a></p>
     <header class="cabecera">
@@ -487,5 +487,6 @@
       <a class="boton boton-secundario" href="{% url 'procesamientos:tdv_europa_cargar' %}">← Volver a adjuntar archivos</a>
     </div>
   </main>
+  </div>
 </body>
 </html>

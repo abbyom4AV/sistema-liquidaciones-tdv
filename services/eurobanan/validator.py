@@ -17,6 +17,10 @@ from services.eurobanan.matcher import (
     LineaDespachoEurobanan,
     ResultadoMatcherEurobanan,
 )
+from services.mensajes_gastos import (
+    etiquetas_rubros,
+    mensaje_gastos_no_mapeados,
+)
 
 NivelIncidencia = Literal["error", "advertencia"]
 
@@ -156,14 +160,12 @@ def validar_liquidacion_eurobanan(
         )
 
     if liquidacion.rubros_no_mapeados:
+        rubros = etiquetas_rubros(liquidacion.rubros_no_mapeados)
         errores.append(
             IncidenciaValidacionEurobanan(
                 codigo="RUBROS_NO_MAPEADOS",
                 nivel="error",
-                mensaje=(
-                    "Hay rubros de gasto sin columna digitada. "
-                    "Debe mapearlos antes de generar."
-                ),
+                mensaje=mensaje_gastos_no_mapeados(rubros),
                 detalles={
                     "rubros": [
                         {
