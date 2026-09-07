@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Generación del archivo VISAFRUITS</title>
+  {% if recargar_automaticamente %}
+    <meta http-equiv="refresh" content="10">
+  {% endif %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=visafruits">
+  <style>
+    :root {
+      --fondo: #f5f5f5;
+      --tarjeta: #ffffff;
+      --texto: #111111;
+      --muted: #6b6b6b;
+      --borde: #e6e6e6;
+      --ok: #111111;
+      --aviso: #111111;
+      --error: #111111;
+      --acento: #111111;
+      --acento-oscuro: #111111;
+    }
+
+    * { box-sizing: border-box; }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 0 1.5rem;
+    }
+
+    .nav-volver { margin: 0 0 1rem; }
+
+    .nav-volver a {
+      color: var(--muted);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .nav-volver a:hover { color: var(--acento); }
+
+    .cabecera {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.85rem;
+    }
+
+    .meta-cabecera {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .mensajes {
+      list-style: none;
+      margin: 0 0 1rem;
+      padding: 0;
+    }
+
+    .mensajes li {
+      background: #f1f5f9;
+      border: 1px solid var(--borde);
+      color: var(--texto);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .aviso, .error-box {
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .aviso {
+      background: #eeeeee;
+      border: 1px solid #111111;
+      color: var(--aviso);
+    }
+
+    .aviso-formulas {
+      background: #fdf6e3;
+      border: 1px solid #c9a227;
+      color: #111111;
+    }
+
+    .aviso-formulas strong {
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .aviso-formulas p {
+      margin: 0.35rem 0 0;
+      font-size: 0.93rem;
+      line-height: 1.45;
+    }
+
+    .error-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: var(--error);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .tarjeta {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.25rem;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+      margin-bottom: 1rem;
+    }
+
+    .tarjeta h2 {
+      margin: 0 0 0.85rem;
+      font-size: 1rem;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .resumen {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem 1rem;
+    }
+
+    .dato strong {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 0.2rem;
+      font-weight: 600;
+    }
+
+    .estado {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .estado-pendiente,
+    .estado-procesando {
+      background: #eeeeee;
+      color: var(--aviso);
+    }
+
+    .estado-completado {
+      background: #ecfdf5;
+      color: var(--ok);
+    }
+
+    .estado-error {
+      background: #fef2f2;
+      color: var(--error);
+    }
+
+    .panel-resultado {
+      background: #fff;
+      border: 1px solid var(--borde);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      position: sticky;
+      top: 1rem;
+    }
+
+    .panel-resultado h2 {
+      margin: 0 0 0.35rem;
+      font-size: 1.15rem;
+      color: var(--texto);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .panel-resultado .intro {
+      margin: 0 0 1rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .metricas {
+      display: grid;
+      gap: 0.75rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .metrica {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 0.75rem 0.85rem;
+    }
+
+    .metrica strong {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 0.15rem;
+    }
+
+    .acciones {
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    a.boton {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 700;
+      padding: 0.8rem 1rem;
+    }
+
+    a.boton-primario {
+      background: var(--acento);
+      color: #ffffff;
+    }
+
+    a.boton-secundario {
+      background: #dfe4db;
+      color: var(--texto);
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .resumen { grid-template-columns: 1fr 1fr; }
+      .panel-resultado { position: static; }
+    }
+  </style>
+</head>
+<body class="tdv-app">
+  {% include "procesamientos/_sidebar.html" %}
+  <div class="contenido modulo-vista">
+  <main>
+    <p class="nav-volver">
+      <a href="{% url 'procesamientos:visafruits_detalle' procesamiento.id %}">
+        ← Volver a la validación
+      </a>
+    </p>
+
+    <header class="cabecera">
+      <div>
+        <h1>Generación del archivo VISAFRUITS</h1>
+      </div>
+      <div class="meta-cabecera">
+        Destino {{ procesamiento.destino_ui|default:"—" }} · Semana {{ procesamiento.semana }} · {{ procesamiento.anio }}
+      </div>
+    </header>
+
+    {% if messages %}
+      <ul class="mensajes">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if generacion.esta_activa %}
+      <div class="aviso">
+        La generación está en proceso. Esta operación puede
+        tardar varios minutos.
+      </div>
+    {% endif %}
+
+    {% if generacion.tiene_error %}
+      <div class="error-box">
+        <strong>No fue posible generar el archivo.</strong>
+        <div>{{ generacion.mensaje_error }}</div>
+      </div>
+    {% endif %}
+
+    {% if generacion.esta_completada %}
+      <div class="aviso aviso-formulas">
+        <strong>El archivo no trae las fórmulas bajadas.</strong>
+        <p>
+          Al abrirlo en Excel debe arrastrar las fórmulas de la última fila
+          que ya las tenía hacia las filas nuevas, de la fila
+          {{ generacion.fila_inicial|default:"—" }} a la fila
+          {{ generacion.fila_final|default:"—" }}.
+        </p>
+        <p>
+          Si no las arrastra, esas filas quedarán sin los cálculos del
+          acumulativo.
+        </p>
+      </div>
+    {% endif %}
+
+    <div class="layout">
+      <div>
+        <section class="tarjeta">
+          <h2>Resumen de la solicitud</h2>
+          <div class="resumen">
+            <div class="dato">
+              <strong>Estado</strong>
+              <span class="estado estado-{{ generacion.estado }}">
+                {{ generacion.estado_legible }}
+              </span>
+            </div>
+            <div class="dato">
+              <strong>Solicitado por</strong>
+              {{ generacion.solicitado_por_nombre }}
+            </div>
+            <div class="dato">
+              <strong>Intentos</strong>
+              {{ generacion.intentos }}
+            </div>
+            <div class="dato">
+              <strong>Solicitado en</strong>
+              {{ generacion.solicitado_en }}
+            </div>
+            <div class="dato">
+              <strong>Iniciado en</strong>
+              {{ generacion.iniciado_en|default:"—" }}
+            </div>
+            <div class="dato">
+              <strong>Finalizado en</strong>
+              {{ generacion.finalizado_en|default:"—" }}
+            </div>
+            <div class="dato">
+              <strong>Semana</strong>
+              {{ procesamiento.semana_texto|default:procesamiento.semana }}
+            </div>
+            <div class="dato">
+              <strong>Nave</strong>
+              {{ procesamiento.nave|default:"—" }}
+            </div>
+            <div class="dato">
+              <strong>Factura</strong>
+              {{ procesamiento.factura_corta|default:"—" }}
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="panel-resultado">
+        <h2>Seguimiento</h2>
+        <p class="intro">
+          {% if generacion.esta_activa %}
+            Espere a que finalice el proceso. La página se actualizará sola.
+          {% elif generacion.esta_completada %}
+            El archivo quedó listo. Descárguelo y arrastre las fórmulas.
+          {% else %}
+            Revise el estado o vuelva a la validación del procesamiento.
+          {% endif %}
+        </p>
+        {% include "procesamientos/_pasos_generacion.html" %}
+        {% if generacion.esta_completada %}
+          <div class="metricas">
+            <div class="metrica">
+              <strong>Filas agregadas</strong>
+              {{ generacion.filas_agregadas|default:"—" }}
+            </div>
+            <div class="metrica">
+              <strong>Filas</strong>
+              {{ generacion.fila_inicial|default:"—" }} – {{ generacion.fila_final|default:"—" }}
+            </div>
+            <div class="metrica">
+              <strong>Rango de tabla</strong>
+              {{ generacion.rango_tabla|default:"—" }}
+            </div>
+            <div class="metrica">
+              <strong>Nombre del archivo</strong>
+              {{ generacion.nombre_descarga|default:"—" }}
+            </div>
+          </div>
+          <div class="acciones">
+            <a
+              class="boton boton-primario"
+              href="{% url 'procesamientos:visafruits_generacion_descargar' generacion.id %}"
+            >
+              Descargar
+            </a>
+            <a
+              class="boton boton-secundario"
+              href="{% url 'procesamientos:visafruits_detalle' procesamiento.id %}"
+            >
+              Volver a la validación
+            </a>
+          </div>
+        {% else %}
+          <div class="acciones">
+            <a
+              class="boton boton-secundario"
+              href="{% url 'procesamientos:visafruits_detalle' procesamiento.id %}"
+            >
+              Volver a la validación
+            </a>
+          </div>
+        {% endif %}
+      </aside>
+    </div>
+  </main>
+  </div>
+</body>
+</html>

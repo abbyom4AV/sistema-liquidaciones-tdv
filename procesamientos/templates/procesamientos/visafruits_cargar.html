@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cargar liquidación VISAFRUITS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=visafruits">
+  <style>
+    :root {
+      --fondo: #f5f5f5;
+      --tarjeta: #ffffff;
+      --suave: #f0f0f0;
+      --acento: #111111;
+      --acento-oscuro: #111111;
+      --acento-proceso: #111111;
+      --panel: #111111;
+      --panel-suave: #111111;
+      --texto: #111111;
+      --muted: #6b6b6b;
+      --borde: #e6e6e6;
+      --error: #111111;
+    }
+
+    * { box-sizing: border-box; }
+
+    .envoltorio {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 0 1.5rem;
+    }
+
+    .cabecera {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.35rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .nav-volver { margin: 0 0 0.1rem; }
+
+    .nav-volver a {
+      color: var(--muted);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.92rem;
+    }
+
+    .nav-volver a:hover {
+      color: var(--acento-oscuro);
+      text-decoration: underline;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.7rem, 2.2vw, 2rem);
+    }
+
+    .intro-corta {
+      margin: 0.1rem 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 36rem;
+      line-height: 1.45;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    .tarjeta-formulario,
+    .tarjeta-guia {
+      border-radius: var(--radius);
+      box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+    }
+
+    .tarjeta-formulario {
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      padding: 1.6rem 1.55rem 1.45rem;
+    }
+
+    .tarjeta-formulario h2 {
+      margin: 0 0 0.25rem;
+      font-size: 1.2rem;
+    }
+
+    .tarjeta-formulario .subtitulo {
+      margin: 0 0 1.35rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    form {
+      display: grid;
+      gap: 1.1rem;
+    }
+
+    .fila-tres {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.4fr;
+      gap: 1rem;
+    }
+
+    .fila-factura {
+      display: grid;
+      grid-template-columns: minmax(0, 220px) 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .campo label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .campo .descripcion {
+      margin: 0 0 0.45rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.35;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 0.8rem 0.95rem;
+      border: 1px solid var(--borde);
+      border-radius: var(--radius-sm);
+      font: inherit;
+      background: #f5f5f5;
+      color: var(--texto);
+    }
+
+    input[type="file"] {
+      background: #f5f5f5;
+      padding: 0.7rem 0.85rem;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #111111;
+      box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.28);
+    }
+
+    .ayuda {
+      margin: 0.4rem 0 0;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .bloque-archivos {
+      display: grid;
+      gap: 1rem;
+      padding-top: 0.25rem;
+      border-top: 1px dashed var(--borde);
+    }
+
+    .bloque-archivos > .titulo-bloque {
+      margin: 0.35rem 0 0;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .errores,
+    .error-proceso {
+      background: #eeeeee;
+      border: 1px solid #111111;
+      color: var(--error);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      margin: 0 0 1rem;
+    }
+
+    .errores ul {
+      margin: 0.4rem 0 0;
+      padding-left: 1.2rem;
+    }
+
+    .campo-error {
+      color: var(--error);
+      font-size: 0.9rem;
+      margin-top: 0.35rem;
+    }
+
+    .acciones-form {
+      display: flex;
+      justify-content: flex-start;
+      padding-top: 0.35rem;
+    }
+
+    button {
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: var(--acento);
+      color: #ffffff;
+      font: inherit;
+      font-weight: 700;
+      padding: 0.9rem 1.55rem;
+      cursor: pointer;
+      min-width: 180px;
+      transition: background 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover, button:focus, button:active {
+      background: #111111;
+      color: #ffffff;
+    }
+
+    button.procesando {
+      background: #111111;
+      color: #ffffff;
+      cursor: wait;
+      opacity: 0.95;
+    }
+
+    button:disabled {
+      cursor: wait;
+    }
+
+    .tarjeta-guia {
+      background: var(--tarjeta);
+      color: var(--texto);
+      border: 1px solid var(--borde);
+      box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+      padding: 1.2rem 1.15rem;
+    }
+
+    .tarjeta-guia::after { display: none; }
+
+    .tarjeta-guia h2 {
+      margin: 0 0 0.45rem;
+      font-size: 1.05rem;
+      font-weight: 650;
+    }
+
+    .tarjeta-guia > p {
+      margin: 0 0 1rem;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 0.88rem;
+    }
+
+    .pasos {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.75rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pasos li {
+      background: var(--suave);
+      border: 1px solid var(--borde);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 0.85rem;
+    }
+
+    .pasos strong {
+      display: block;
+      margin-bottom: 0.2rem;
+      font-size: 0.95rem;
+    }
+
+    .pasos span {
+      display: block;
+      font-size: 0.88rem;
+      opacity: 0.85;
+      line-height: 1.4;
+    }
+
+    .nota-guia {
+      margin: 1rem 0 0;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--borde);
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .nota-guia a {
+      color: var(--acento-oscuro);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .nota-guia a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .fila-tres,
+      .fila-factura {
+        grid-template-columns: 1fr;
+      }
+
+      .acciones-form {
+        justify-content: stretch;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="tdv-app">
+  {% include "procesamientos/_sidebar.html" %}
+  <div class="contenido modulo-vista">
+  <div class="envoltorio">
+    <header class="cabecera cabecera-modulo">
+      <p class="nav-volver">
+        <a href="{% url 'procesamientos:panel' %}">← Panel de control</a>
+      </p>
+
+      <h1>Cargar liquidación VISAFRUITS</h1>
+      <p class="intro-corta">
+        Se necesitan tres archivos: el Despachos (.xlsx), la liquidación
+        que manda VISAFRUITS (.pdf) y el acumulativo del cliente (.xlsx).
+      </p>
+    </header>
+
+    {% if error_proceso %}
+      <div class="error-proceso">{{ error_proceso }}</div>
+    {% endif %}
+
+    {% if formulario.non_field_errors %}
+      <div class="errores">
+        <strong>Revise el formulario</strong>
+        <ul>
+          {% for error in formulario.non_field_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <div class="layout">
+      <section class="tarjeta-formulario">
+        <h2>Datos de la liquidación</h2>
+        <p class="subtitulo">
+          Indique semana, año, destino y factura, y adjunte los archivos.
+        </p>
+
+        <form id="form-validar" method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+
+          <div class="fila-tres">
+            <div class="campo">
+              <label for="{{ formulario.semana.id_for_label }}">
+                {{ formulario.semana.label }}
+              </label>
+              {{ formulario.semana }}
+              {% for error in formulario.semana.errors %}
+                <div class="campo-error">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="campo">
+              <label for="{{ formulario.anio.id_for_label }}">
+                {{ formulario.anio.label }}
+              </label>
+              {{ formulario.anio }}
+              {% for error in formulario.anio.errors %}
+                <div class="campo-error">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="campo">
+              <label for="{{ formulario.destino.id_for_label }}">
+                {{ formulario.destino.label }}
+              </label>
+              {{ formulario.destino }}
+              <p class="ayuda">
+                El destino que escriba manda sobre el que trae el PDF.
+              </p>
+              {% for error in formulario.destino.errors %}
+                <div class="campo-error">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="fila-factura">
+            <div class="campo">
+              <label for="{{ formulario.factura.id_for_label }}">
+                {{ formulario.factura.label }}
+              </label>
+              {{ formulario.factura }}
+              <p class="ayuda">
+                Los últimos cuatro dígitos de la factura, por ejemplo 5712.
+              </p>
+              {% for error in formulario.factura.errors %}
+                <div class="campo-error">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="bloque-archivos">
+            <p class="titulo-bloque">Archivos requeridos</p>
+
+            <div class="campo">
+              <label for="{{ formulario.archivo_despachos.id_for_label }}">
+                {{ formulario.archivo_despachos.label }}
+              </label>
+              <p class="descripcion">
+                Excel de Despachos con contenedores y cajas despachadas (.xlsx).
+              </p>
+              {{ formulario.archivo_despachos }}
+              {% for error in formulario.archivo_despachos.errors %}
+                <div class="campo-error">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="campo">
+              <label for="{{ formulario.archivo_liquidacion.id_for_label }}">
+                {{ formulario.archivo_liquidacion.label }}
+              </label>
+              <p class="descripcion">
+                La liquidación que manda VISAFRUITS en formato PDF (.pdf).
+              </p>
+              {{ formulario.archivo_liquidacion }}
+              {% for error in formulario.archivo_liquidacion.errors %}
+                <div class="campo-error">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="campo">
+              <label for="{{ formulario.archivo_cliente.id_for_label }}">
+                {{ formulario.archivo_cliente.label }}
+              </label>
+              <p class="descripcion">
+                Acumulativo del cliente sobre el que se agregarán las filas (.xlsx).
+              </p>
+              {{ formulario.archivo_cliente }}
+              {% for error in formulario.archivo_cliente.errors %}
+                <div class="campo-error">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="acciones-form">
+            <button type="submit" id="btn-validar">Validar archivos</button>
+          </div>
+        </form>
+      </section>
+
+      <aside class="tarjeta-guia">
+        <h2>Antes de continuar</h2>
+        <p>
+          Revise que semana, año y destino coincidan con Despachos
+          para evitar reprocesos.
+        </p>
+        <ul class="pasos">
+          <li>
+            <strong>1. Despachos + liquidación PDF + acumulativo</strong>
+            <span>Despachos (.xlsx), liquidación VISAFRUITS (.pdf) y el acumulativo del cliente (.xlsx).</span>
+          </li>
+          <li>
+            <strong>2. Lectura del PDF</strong>
+            <span>Se leen nave, contenedores, calibres, cajas y precios de la liquidación.</span>
+          </li>
+          <li>
+            <strong>3. Cruce con Despachos</strong>
+            <span>Se comparan cajas y venta contra Despachos usando el destino que usted escribió.</span>
+          </li>
+        </ul>
+        <p class="nota-guia">
+          ¿Necesita consultar movimientos previos?
+          <a href="{% url 'procesamientos:bitacoras' %}">Abrir bitácoras</a>
+        </p>
+      </aside>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var form = document.getElementById("form-validar");
+      var btn = document.getElementById("btn-validar");
+      if (form && btn) {
+        form.addEventListener("submit", function () {
+          btn.disabled = true;
+          btn.classList.add("procesando");
+          btn.textContent = "Validando…";
+        });
+      }
+    })();
+  </script>
+  </div>
+</body>
+</html>

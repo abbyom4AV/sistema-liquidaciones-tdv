@@ -11,6 +11,7 @@ from procesamientos.models import (
     CorreccionGastoDimanno,
     CorreccionGastoMaster,
     CorreccionGastoOrsero,
+    CorreccionGastoVisafruits,
     GeneracionDimanno,
     GeneracionEurobanan,
     GeneracionFruver,
@@ -21,6 +22,7 @@ from procesamientos.models import (
     GeneracionOrsero,
     GeneracionSifa,
     GeneracionTdvEuropa,
+    GeneracionVisafruits,
     ResolucionDestinoDimanno,
 )
 
@@ -124,6 +126,16 @@ FUENTES_GENERACION: tuple[
             or "—"
         ),
     ),
+    (
+        "VISAFRUITS",
+        GeneracionVisafruits,
+        "procesamientos:visafruits_generacion_detalle",
+        lambda g: (
+            g.procesamiento.factura_corta
+            or g.procesamiento.destino_ui
+            or "—"
+        ),
+    ),
 )
 
 CLIENTES_INGRESOS = tuple(
@@ -141,6 +153,7 @@ COLORES_CLIENTE = {
     "FRU&VER": "#8B5CF6",
     "NUFRI": "#06B6D4",
     "EUROBANAN": "#EAB308",
+    "VISAFRUITS": "#0EA5E9",
 }
 
 
@@ -271,6 +284,36 @@ def recolectar_eventos_bitacora(
                 "factura": procesamiento.nave_texto or "—",
                 "url_detalle": (
                     "procesamientos:orsero_detalle",
+                    procesamiento.id,
+                ),
+            }
+        )
+
+    for item in CorreccionGastoVisafruits.objects.select_related(
+        "gasto",
+        "gasto__procesamiento",
+    ).order_by("-creado_en")[:limite_por_fuente]:
+        procesamiento = item.gasto.procesamiento
+        eventos.append(
+            {
+                "tipo": "Corrección de gasto",
+                "estado": "Cambiada",
+                "estado_clase": "cambiada",
+                "cliente": "VISAFRUITS",
+                "detalle": (
+                    f"{item.gasto.nombre}: "
+                    f"{item.valor_anterior} → "
+                    f"{item.valor_nuevo}"
+                ),
+                "usuario": item.usuario_nombre or "—",
+                "fecha": item.creado_en,
+                "factura": (
+                    procesamiento.factura_corta
+                    or procesamiento.destino_ui
+                    or "—"
+                ),
+                "url_detalle": (
+                    "procesamientos:visafruits_detalle",
                     procesamiento.id,
                 ),
             }

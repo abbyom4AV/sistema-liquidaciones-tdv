@@ -11,6 +11,7 @@ from procesamientos import (
     views_sifa,
     views_tdv_europa,
     views_fruver,
+    views_visafruits,
 )
 
 app_name = "procesamientos"
@@ -190,6 +191,39 @@ urlpatterns = [
         ),
         views_sifa.descargar_generacion_sifa,
         name="sifa_generacion_descargar",
+    ),
+    path(
+        "visafruits/",
+        views_visafruits.cargar_visafruits,
+        name="visafruits_cargar",
+    ),
+    path(
+        "visafruits/<uuid:procesamiento_id>/",
+        views_visafruits.detalle_visafruits,
+        name="visafruits_detalle",
+    ),
+    path(
+        "visafruits/<uuid:procesamiento_id>/gastos/",
+        views_visafruits.editar_gastos_visafruits,
+        name="visafruits_gastos_editar",
+    ),
+    path(
+        "visafruits/<uuid:procesamiento_id>/generar/",
+        views_visafruits.solicitar_generacion_visafruits,
+        name="visafruits_generar",
+    ),
+    path(
+        "visafruits/generaciones/<uuid:generacion_id>/",
+        views_visafruits.detalle_generacion_visafruits,
+        name="visafruits_generacion_detalle",
+    ),
+    path(
+        (
+            "visafruits/generaciones/<uuid:generacion_id>/"
+            "descargar/"
+        ),
+        views_visafruits.descargar_generacion_visafruits,
+        name="visafruits_generacion_descargar",
     ),
     path(
         "glamour/",
