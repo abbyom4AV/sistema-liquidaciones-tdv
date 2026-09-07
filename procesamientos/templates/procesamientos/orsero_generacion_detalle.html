@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
   {% load static %}
-  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=oro-estado">
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=progreso-orsero">
   <style>
     :root {
       --fondo: #f5f5f5;
@@ -139,26 +139,170 @@
 
     .estado {
       display: inline-block;
-      padding: 0.2rem 0.55rem;
-      border-radius: var(--radius-sm);
-      font-weight: 700;
-      font-size: 0.85rem;
+      padding: 0.22rem 0.62rem;
+      border-radius: var(--radius-pill);
+      font-weight: 650;
+      font-size: 0.74rem;
     }
 
     .estado-pendiente,
     .estado-procesando {
-      background: #eeeeee;
-      color: var(--aviso);
+      background: #efefef;
+      color: #111111;
+      border: 1px solid #d8d8d8;
     }
 
     .estado-completado {
-      background: #ecfdf5;
-      color: var(--ok);
+      background: #111111;
+      color: #ffffff;
     }
 
     .estado-error {
       background: #fef2f2;
-      color: var(--error);
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    /* ——— Progreso de la generación ——— */
+    .progreso {
+      margin-bottom: 1rem;
+    }
+
+    .progreso-cabecera {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #e2e2e2;
+      border-top-color: #c9a227;
+      animation: girar 0.9s linear infinite;
+      flex: none;
+    }
+
+    @keyframes girar {
+      to { transform: rotate(360deg); }
+    }
+
+    .progreso-titulo {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .progreso-detalle {
+      margin: 0.1rem 0 0;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .barra {
+      height: 6px;
+      border-radius: 999px;
+      background: #ededed;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    .barra-relleno {
+      height: 100%;
+      border-radius: 999px;
+      background: #111111;
+      transition: width 0.4s ease;
+    }
+
+    .barra.indeterminada .barra-relleno {
+      width: 40%;
+      background: linear-gradient(
+        90deg,
+        #ededed 0%,
+        #111111 50%,
+        #ededed 100%
+      );
+      animation: recorrer 1.4s ease-in-out infinite;
+    }
+
+    @keyframes recorrer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(250%); }
+    }
+
+    .pasos-progreso {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.6rem;
+    }
+
+    .paso {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0.7rem;
+      border-radius: var(--radius-sm);
+      background: #f7f7f7;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .paso .marca {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid #d8d8d8;
+      display: grid;
+      place-items: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: #ffffff;
+      color: var(--muted);
+    }
+
+    .paso.activo {
+      background: #ffffff;
+      color: var(--texto);
+      font-weight: 650;
+      box-shadow: 0 0 0 1.5px #c9a227 inset;
+    }
+
+    .paso.activo .marca {
+      border-color: #c9a227;
+      color: #111111;
+    }
+
+    .paso.hecho {
+      background: #f2f2f2;
+      color: var(--texto);
+    }
+
+    .paso.hecho .marca {
+      background: #111111;
+      border-color: #111111;
+      color: #ffffff;
+    }
+
+    .paso.fallido {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .paso.fallido .marca {
+      background: #991b1b;
+      border-color: #991b1b;
+      color: #ffffff;
+    }
+
+    @media (max-width: 700px) {
+      .pasos-progreso { grid-template-columns: 1fr; }
     }
 
     table {
@@ -276,19 +420,84 @@
       </ul>
     {% endif %}
 
-    {% if generacion.esta_activa %}
-      <div class="aviso">
-        La generación está en proceso. Esta operación puede
-        tardar varios minutos.
-      </div>
-    {% endif %}
-
     {% if generacion.tiene_error %}
       <div class="error-box">
         <strong>No fue posible generar el archivo.</strong>
         <div>{{ generacion.mensaje_error }}</div>
       </div>
     {% endif %}
+
+    <section class="tarjeta progreso">
+      <div class="progreso-cabecera">
+        {% if generacion.esta_activa %}
+          <span class="spinner" aria-hidden="true"></span>
+        {% endif %}
+        <div>
+          <p class="progreso-titulo">
+            {% if generacion.esta_completada %}
+              Archivo generado
+            {% elif generacion.tiene_error %}
+              La generación se detuvo
+            {% elif generacion.estado == "procesando" %}
+              Escribiendo el acumulativo…
+            {% else %}
+              En cola, esperando al worker…
+            {% endif %}
+          </p>
+          <p class="progreso-detalle">
+            {% if generacion.esta_completada %}
+              Se agregaron
+              {{ generacion.filas_agregadas|default:"—" }} filas
+              al archivo del cliente.
+            {% elif generacion.tiene_error %}
+              Revise el detalle del error y vuelva a solicitarla.
+            {% else %}
+              Puede tardar varios minutos. La página se actualiza
+              sola cada 10 segundos.
+            {% endif %}
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="barra{% if generacion.esta_activa %} indeterminada{% endif %}"
+        role="progressbar"
+        aria-label="Progreso de la generación"
+      >
+        <div
+          class="barra-relleno"
+          style="width: {% if generacion.esta_completada or generacion.tiene_error %}100%{% else %}40%{% endif %};"
+        ></div>
+      </div>
+
+      <ol class="pasos-progreso">
+        <li class="paso hecho">
+          <span class="marca">✓</span>
+          <span>Solicitada</span>
+        </li>
+        <li
+          class="paso
+            {% if generacion.esta_completada %}hecho
+            {% elif generacion.tiene_error %}fallido
+            {% else %}activo{% endif %}"
+        >
+          <span class="marca">
+            {% if generacion.esta_completada %}✓
+            {% elif generacion.tiene_error %}!
+            {% else %}2{% endif %}
+          </span>
+          <span>Escritura del Excel</span>
+        </li>
+        <li
+          class="paso {% if generacion.esta_completada %}hecho{% endif %}"
+        >
+          <span class="marca">
+            {% if generacion.esta_completada %}✓{% else %}3{% endif %}
+          </span>
+          <span>Archivo listo</span>
+        </li>
+      </ol>
+    </section>
 
     <div class="layout">
       <div>

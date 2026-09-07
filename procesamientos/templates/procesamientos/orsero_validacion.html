@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
   {% load static %}
-  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=oro-estado">
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=progreso-orsero">
   <style>
     :root {
       --fondo: #f5f5f5;
@@ -79,18 +79,22 @@
       margin-bottom: 0.5rem;
     }
 
+    /* Dos columnas que fluyen solas: cada tarjeta ocupa lo que
+       necesita y no quedan huecos al final de la columna corta. */
+    .modulo-vista .grid-principal,
     .grid-principal {
       display: grid;
-      grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
+      grid-template-columns: minmax(0, 1.3fr) minmax(320px, 1fr);
       gap: 1rem;
-      align-items: stretch;
+      align-items: start;
       margin-bottom: 1rem;
     }
 
-    .col-principal {
+    .col-principal,
+    .col-lateral {
       display: grid;
-      grid-template-rows: auto 1fr;
       gap: 1rem;
+      align-content: start;
     }
 
     .tarjeta {
@@ -224,12 +228,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0.75rem;
-      align-items: stretch;
-    }
-
-    .incidencias > .tarjeta {
-      display: flex;
-      flex-direction: column;
+      align-items: start;
     }
 
     .lista {
@@ -241,14 +240,6 @@
     .errores { color: var(--error); }
     .advertencias { color: #9f1239; }
     .vacio { margin: 0; color: var(--muted); font-size: 0.92rem; }
-
-    .bloque-tablas {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 1rem;
-      margin-bottom: 1.1rem;
-      align-items: stretch;
-    }
 
     .cabecera-bloque {
       display: flex;
@@ -391,8 +382,8 @@
     }
 
     @media (max-width: 980px) {
+      .modulo-vista .grid-principal,
       .grid-principal,
-      .bloque-tablas,
       .incidencias,
       .metrics,
       .detalle-grid {
@@ -514,8 +505,50 @@
             {% endif %}
           </section>
         </div>
+
+        <section class="tarjeta">
+          <div class="cabecera-bloque">
+            <h2>Líneas preparadas</h2>
+          </div>
+          {% if procesamiento.lineas_preparadas %}
+            <table>
+              <thead>
+                <tr>
+                  <th>Contenedor</th>
+                  <th>Destino</th>
+                  <th>Cartón</th>
+                  <th>Calibre</th>
+                  <th class="num">Cajas</th>
+                  <th class="num">Precio €</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for linea in procesamiento.lineas_preparadas %}
+                  <tr>
+                    <td>{{ linea.contenedor }}</td>
+                    <td>{{ linea.destino }}</td>
+                    <td>{{ linea.carton }}</td>
+                    <td>{{ linea.calibre }}</td>
+                    <td class="num">{{ linea.total_cajas }}</td>
+                    <td class="num">
+                      {% if linea.precio_encontrado %}
+                        {{ linea.precio_venta_eur|decimal_es }}
+                      {% else %}
+                        —
+                        <span class="etiqueta-sinprecio">Sin precio</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p class="vacio">No hay líneas preparadas.</p>
+          {% endif %}
+        </section>
       </div>
 
+      <div class="col-lateral">
       <aside class="panel-lateral">
         <h2>Nave y generación</h2>
         <p class="intro">
@@ -595,49 +628,6 @@
           {% endif %}
         {% endif %}
       </aside>
-    </div>
-
-    <div class="bloque-tablas">
-      <section class="tarjeta">
-        <div class="cabecera-bloque">
-          <h2>Líneas preparadas</h2>
-        </div>
-        {% if procesamiento.lineas_preparadas %}
-          <table>
-            <thead>
-              <tr>
-                <th>Contenedor</th>
-                <th>Destino</th>
-                <th>Cartón</th>
-                <th>Calibre</th>
-                <th class="num">Cajas</th>
-                <th class="num">Precio €</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for linea in procesamiento.lineas_preparadas %}
-                <tr>
-                  <td>{{ linea.contenedor }}</td>
-                  <td>{{ linea.destino }}</td>
-                  <td>{{ linea.carton }}</td>
-                  <td>{{ linea.calibre }}</td>
-                  <td class="num">{{ linea.total_cajas }}</td>
-                  <td class="num">
-                    {% if linea.precio_encontrado %}
-                      {{ linea.precio_venta_eur|decimal_es }}
-                    {% else %}
-                      —
-                      <span class="etiqueta-sinprecio">Sin precio</span>
-                    {% endif %}
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        {% else %}
-          <p class="vacio">No hay líneas preparadas.</p>
-        {% endif %}
-      </section>
 
       <section class="tarjeta">
         <div class="cabecera-bloque">
@@ -685,6 +675,7 @@
           <p class="vacio">No se extrajeron gastos.</p>
         {% endif %}
       </section>
+      </div>
     </div>
 
     <div class="acciones-finales">
