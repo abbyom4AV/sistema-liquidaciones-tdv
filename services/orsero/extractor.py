@@ -424,8 +424,6 @@ def _extraer_gastos(
         "Transport In Form.": Decimal("0"),
         "Comision Form": Decimal("0"),
     }
-    no_mapeados: list[str] = []
-    vistos: set[str] = set()
     for linea in texto.splitlines():
         norma = normalizar_texto(linea)
         if not norma or any(
@@ -440,30 +438,11 @@ def _extraer_gastos(
             if etiqueta in norma:
                 rubro = columna
                 break
-        montos = _numeros_en_linea(linea)
         if rubro is None:
-            # Línea de costo con monto pero sin columna digitada.
-            if montos and re.search(
-                r"[A-Za-zÁÉÍÓÚáéíóúüÜñÑ]{3,}",
-                linea,
-            ):
-                etiqueta = re.sub(
-                    r"[\d.,€$%\-\s]+$",
-                    "",
-                    linea,
-                ).strip(" :.-")
-                clave = normalizar_texto(etiqueta)
-                if (
-                    etiqueta
-                    and clave
-                    and clave not in vistos
-                    and clave not in GASTOS_IGNORADOS
-                ):
-                    vistos.add(clave)
-                    no_mapeados.append(etiqueta)
             continue
 
         # Preferir el último monto de la línea (columna $).
+        montos = _numeros_en_linea(linea)
         if not montos:
             continue
         # Comisión: evitar tomar el 8% como monto.
@@ -477,7 +456,58 @@ def _extraer_gastos(
                 continue
         gastos[rubro] = valor
 
-    return gastos, tuple(no_mapeados)
+    return gastos, _rubros_no_mapeados(texto)
+
+
+def _rubros_no_mapeados(texto: str) -> tuple[str, ...]:
+    """Rubros de costo del screenshot sin columna equivalente.
+
+    Solo mira el bloque entre la cabecera de costos y la fila de
+    totales; fuera de ahí están los calibres y los subtotales, que
+    no son gastos.
+    """
+    lineas = texto.splitlines()
+    inicio: int | None = None
+    fin = len(lineas)
+    for indice, linea in enumerate(lineas):
+        norma = normalizar_texto(linea)
+        if inicio is None:
+            if norma.startswith("DESCRIPCION DEL COSTO"):
+                inicio = indice + 1
+            continue
+        if norma.startswith("COSTOS TOTALES"):
+            fin = indice
+            break
+
+    if inicio is None:
+        return ()
+
+    no_mapeados: list[str] = []
+    vistos: set[str] = set()
+    for linea in lineas[inicio:fin]:
+        norma = normalizar_texto(linea)
+        if not norma or any(
+            norma.startswith(ign) for ign in GASTOS_IGNORADOS
+        ):
+            continue
+        if any(etiqueta in norma for etiqueta, _ in MAPEO_GASTOS):
+            continue
+        # Un gasto siempre trae importe con símbolo de moneda.
+        if not re.search(r"[€$]", linea):
+            continue
+        if not _numeros_en_linea(linea):
+            continue
+        etiqueta = re.sub(r"[\d.,€$%\-\s]+$", "", linea)
+        etiqueta = etiqueta.strip(" :.-")
+        clave = normalizar_texto(etiqueta)
+        if not etiqueta or not clave or clave in vistos:
+            continue
+        if clave in GASTOS_IGNORADOS:
+            continue
+        vistos.add(clave)
+        no_mapeados.append(etiqueta)
+
+    return tuple(no_mapeados)
 
 
 def parsear_texto_liquidacion_orsero(
