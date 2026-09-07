@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
   {% load static %}
-  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=progreso-orsero">
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=pasos-generacion">
   <style>
     :root {
       --fondo: #f5f5f5;
@@ -211,39 +211,6 @@
       line-height: 1.45;
     }
 
-    .pasos-estado {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: 0;
-      border-left: 2px solid #eeeeee;
-      margin-left: 4px;
-    }
-    .pasos-estado li {
-      display: grid;
-      grid-template-columns: 12px 1fr;
-      gap: 0.7rem;
-      align-items: start;
-      padding: 0.35rem 0 0.85rem 0.85rem;
-      font-size: 0.88rem;
-      position: relative;
-      border: 0;
-      background: transparent;
-    }
-    .pasos-estado .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #eeeeee;
-      margin-top: 0.3rem;
-      margin-left: -1.15rem;
-      border: 2px solid #f5f5f5;
-      box-sizing: border-box;
-    }
-    .pasos-estado li.activo .dot { background: #111111; }
-    .pasos-estado li.hecho .dot { background: #111111; }
-
     .metrica {
       padding: 0.55rem 0;
       border-bottom: 1px solid #eeeeee;
@@ -432,20 +399,7 @@
               Revise el estado o vuelva a la carga de archivos.
             {% endif %}
           </p>
-          <ul class="pasos-estado">
-            <li class="hecho">
-              <span class="dot" aria-hidden="true"></span>
-              <span>Solicitud registrada</span>
-            </li>
-            <li class="{% if generacion.esta_activa or generacion.esta_completada %}activo{% endif %}{% if generacion.esta_completada %} hecho{% endif %}">
-              <span class="dot" aria-hidden="true"></span>
-              <span>Procesando archivo</span>
-            </li>
-            <li class="{% if generacion.esta_completada %}hecho{% endif %}">
-              <span class="dot" aria-hidden="true"></span>
-              <span>Listo para descargar</span>
-            </li>
-          </ul>
+          {% include "procesamientos/_pasos_generacion.html" %}
           <div class="acciones">
             <a class="boton boton-secundario" href="{% url 'procesamientos:glamour_cargar' %}">
               Volver a adjuntar archivos

@@ -904,10 +904,10 @@ a.enlace:hover { text-decoration: underline; }
 .modulo-vista .dato span.estado,
 .metric span.estado,
 .dato span.estado {
-  font-size: 0.74rem !important;
+  font-size: 0.88rem !important;
   font-weight: 650 !important;
   line-height: 1.35;
-  padding: 0.22rem 0.62rem;
+  padding: 0.32rem 0.8rem;
   width: fit-content;
   align-self: flex-start;
 }
@@ -933,6 +933,90 @@ a.enlace:hover { text-decoration: underline; }
   background: #efefef !important;
   color: #111111 !important;
   border: 1px solid #d8d8d8;
+}
+
+/* ——— Línea de tiempo de la generación ———
+   Tres pasos unidos por una línea; el paso en curso late para
+   indicar que el worker sigue trabajando. */
+.pasos-estado {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: grid;
+  gap: 0;
+  border-left: 2px solid #ebebeb;
+  margin-left: 4px;
+}
+
+.pasos-estado li {
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  gap: 0.7rem;
+  align-items: start;
+  padding: 0.35rem 0 0.85rem 0.85rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+  position: relative;
+  border: 0;
+  background: transparent;
+}
+
+.pasos-estado li:last-child {
+  padding-bottom: 0;
+}
+
+.pasos-estado .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e6e6e6;
+  margin-top: 0.3rem;
+  margin-left: -1.15rem;
+  border: 2px solid #ffffff;
+  box-sizing: border-box;
+}
+
+.pasos-estado li.hecho {
+  color: var(--texto);
+}
+
+.pasos-estado li.hecho .dot {
+  background: #111111;
+}
+
+.pasos-estado li.activo {
+  color: var(--texto);
+  font-weight: 650;
+}
+
+.pasos-estado li.activo .dot {
+  background: #c9a227;
+  animation: latido-paso 1.3s ease-in-out infinite;
+}
+
+.pasos-estado li.fallido {
+  color: #991b1b;
+  font-weight: 650;
+}
+
+.pasos-estado li.fallido .dot {
+  background: #991b1b;
+}
+
+@keyframes latido-paso {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(201, 162, 39, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(201, 162, 39, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pasos-estado li.activo .dot {
+    animation: none;
+  }
 }
 
 .modulo-vista .lista-resumen .estado,

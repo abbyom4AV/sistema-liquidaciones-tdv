@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
   {% load static %}
-  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=progreso-orsero">
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=pasos-generacion">
   <title>TDV Europa — Generación del archivo</title>
   {% if recargar_automaticamente %}<meta http-equiv="refresh" content="10">{% endif %}
   <style>
@@ -246,6 +246,7 @@
           </div>
         {% else %}
           <h2>Seguimiento</h2>
+          {% include "procesamientos/_pasos_generacion.html" %}
           <div class="acciones">
             <a class="boton boton-secundario" href="{% url 'procesamientos:tdv_europa_cargar' %}">Volver a adjuntar</a>
           </div>

@@ -1,0 +1,26 @@
+{% comment %}
+Línea de tiempo del avance de una generación. Se incluye en el
+panel de seguimiento de todos los módulos.
+{% endcomment %}
+<ul class="pasos-estado">
+  <li class="hecho">
+    <span class="dot" aria-hidden="true"></span>
+    <span>Solicitud registrada</span>
+  </li>
+  <li
+    class="{% if generacion.tiene_error %}fallido{% elif generacion.esta_completada %}hecho{% elif generacion.esta_activa %}activo{% endif %}"
+  >
+    <span class="dot" aria-hidden="true"></span>
+    <span>
+      {% if generacion.tiene_error %}
+        La generación se detuvo
+      {% else %}
+        Procesando archivo
+      {% endif %}
+    </span>
+  </li>
+  <li class="{% if generacion.esta_completada %}hecho{% endif %}">
+    <span class="dot" aria-hidden="true"></span>
+    <span>Listo para descargar</span>
+  </li>
+</ul>
