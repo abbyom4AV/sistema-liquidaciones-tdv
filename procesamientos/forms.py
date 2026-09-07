@@ -423,6 +423,8 @@ FormsetGastosMaster = modelformset_factory(
 
 EXTENSIONES_IMAGEN_ORSERO = (".png", ".jpg", ".jpeg")
 
+NOMBRE_CAMPO_DESTINO_ORSERO = "destino"
+
 
 class FormularioCargaOrsero(forms.Form):
     anio = forms.IntegerField(
@@ -496,6 +498,32 @@ class FormularioCargaOrsero(forms.Form):
                 "El acumulativo del cliente debe ser .xlsx."
             )
         return archivo
+
+    def destinos_ingresados(self) -> list[str]:
+        """Destinos escritos a mano, en el orden del formulario."""
+        datos = self.data
+        if hasattr(datos, "getlist"):
+            crudos = datos.getlist(NOMBRE_CAMPO_DESTINO_ORSERO)
+        else:
+            crudos = []
+        destinos: list[str] = []
+        for valor in crudos:
+            texto = (valor or "").strip().upper()
+            if texto and texto not in destinos:
+                destinos.append(texto)
+        return destinos
+
+    def clean(self):
+        cleaned = super().clean()
+        destinos = self.destinos_ingresados()
+        if not destinos:
+            self.add_error(
+                None,
+                "Indique al menos un destino. El destino que "
+                "escriba manda sobre el que trae el screenshot.",
+            )
+        cleaned["destinos"] = destinos
+        return cleaned
 
 
 class FormularioValorGastoOrsero(forms.ModelForm):

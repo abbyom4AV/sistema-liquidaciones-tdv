@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
   {% load static %}
-  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=oro-hover">
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=oro-estado">
   <style>
     :root {
       --fondo: #f5f5f5;
@@ -153,14 +153,78 @@
       color: var(--muted);
     }
 
-    .bloque-archivos {
+    .bloque-archivos,
+    .bloque-destinos {
       display: grid;
       gap: 1rem;
       padding-top: 0.25rem;
       border-top: 1px dashed var(--borde);
     }
 
-    .bloque-archivos > .titulo-bloque {
+    .bloque-destinos { gap: 0.6rem; }
+
+    .bloque-destinos > .descripcion {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.4;
+    }
+
+    .lista-destinos {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .fila-destino {
+      display: grid;
+      grid-template-columns: 1.5rem 1fr auto;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .indice-destino {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 650;
+      text-align: right;
+    }
+
+    .fila-destino input[type="text"] {
+      text-transform: uppercase;
+    }
+
+    .quitar-destino,
+    .agregar-destino {
+      border: 1px solid var(--borde);
+      background: #ffffff;
+      color: var(--texto);
+      border-radius: var(--radius-pill);
+      font: inherit;
+      font-size: 0.85rem;
+      font-weight: 650;
+      padding: 0.5rem 0.9rem;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .quitar-destino:hover,
+    .quitar-destino:focus,
+    .agregar-destino:hover,
+    .agregar-destino:focus {
+      background: #ffffff;
+      color: var(--texto);
+      border-color: #c9a227;
+      box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.16);
+    }
+
+    .agregar-destino { justify-self: start; }
+
+    .lista-destinos.una-sola .quitar-destino {
+      visibility: hidden;
+    }
+
+    .bloque-archivos > .titulo-bloque,
+    .bloque-destinos > .titulo-bloque {
       margin: 0.35rem 0 0;
       font-size: 0.8rem;
       letter-spacing: 0.06em;
@@ -372,6 +436,51 @@
             </div>
           </div>
 
+          <div class="bloque-destinos">
+            <p class="titulo-bloque">Destinos de la liquidación</p>
+            <p class="descripcion">
+              Escriba el destino tal como aparece en Despachos. Lo que
+              indique aquí manda sobre el nombre que trae el screenshot.
+              Si el screenshot trae varios destinos, agréguelos en el
+              mismo orden en que aparecen sus tablas de precios.
+            </p>
+
+            <div id="lista-destinos" class="lista-destinos">
+              {% for destino in destinos_ingresados %}
+                <div class="fila-destino">
+                  <span class="indice-destino"></span>
+                  <input
+                    type="text"
+                    name="destino"
+                    value="{{ destino }}"
+                    placeholder="Ej. SETUBAL"
+                    autocomplete="off"
+                  >
+                  <button type="button" class="quitar-destino" title="Quitar">
+                    Quitar
+                  </button>
+                </div>
+              {% empty %}
+                <div class="fila-destino">
+                  <span class="indice-destino"></span>
+                  <input
+                    type="text"
+                    name="destino"
+                    placeholder="Ej. SETUBAL"
+                    autocomplete="off"
+                  >
+                  <button type="button" class="quitar-destino" title="Quitar">
+                    Quitar
+                  </button>
+                </div>
+              {% endfor %}
+            </div>
+
+            <button type="button" id="agregar-destino" class="agregar-destino">
+              + Agregar otro destino
+            </button>
+          </div>
+
           <div class="bloque-archivos">
             <p class="titulo-bloque">Archivos requeridos</p>
 
@@ -450,6 +559,41 @@
     </div>
   </div>
   <script>
+    (function () {
+      var lista = document.getElementById("lista-destinos");
+      var agregar = document.getElementById("agregar-destino");
+      if (!lista || !agregar) return;
+
+      function renumerar() {
+        var filas = lista.querySelectorAll(".fila-destino");
+        filas.forEach(function (fila, indice) {
+          var etiqueta = fila.querySelector(".indice-destino");
+          if (etiqueta) etiqueta.textContent = indice + 1 + ".";
+        });
+        lista.classList.toggle("una-sola", filas.length <= 1);
+      }
+
+      lista.addEventListener("click", function (evento) {
+        var boton = evento.target.closest(".quitar-destino");
+        if (!boton) return;
+        if (lista.querySelectorAll(".fila-destino").length <= 1) return;
+        boton.closest(".fila-destino").remove();
+        renumerar();
+      });
+
+      agregar.addEventListener("click", function () {
+        var ultima = lista.querySelector(".fila-destino:last-child");
+        if (!ultima) return;
+        var copia = ultima.cloneNode(true);
+        copia.querySelector("input").value = "";
+        lista.appendChild(copia);
+        renumerar();
+        copia.querySelector("input").focus();
+      });
+
+      renumerar();
+    })();
+
     (function () {
       var form = document.getElementById("form-validar");
       var btn = document.getElementById("btn-validar");

@@ -5,7 +5,7 @@ import json
 from dataclasses import asdict, dataclass, is_dataclass
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, Sequence
 
 from services.orsero.extractor import (
     LiquidacionOrsero,
@@ -45,6 +45,7 @@ def preparar_procesamiento_orsero(
     anio: int,
     cliente: str = CLIENTE_ORSERO,
     texto_ocr: str | None = None,
+    destinos_manuales: Sequence[str] = (),
 ) -> ResultadoPreparacionOrsero:
     if texto_ocr is not None:
         liquidacion = parsear_texto_liquidacion_orsero(
@@ -66,6 +67,7 @@ def preparar_procesamiento_orsero(
     validacion = validar_liquidacion_orsero(
         liquidacion=liquidacion,
         despachos=despachos,
+        destinos_manuales=destinos_manuales,
     )
 
     if not validacion.es_valido:

@@ -248,6 +248,7 @@ def reconstruir_resultado_para_escritura_orsero(
     )
     validacion = ResultadoValidacionOrsero(
         es_valido=True,
+        destinos_aplicados=destinos,
         destinos_despachos=destinos,
         total_cajas_liquidacion=total_liq or total_desp,
         total_cajas_despachos=total_desp,

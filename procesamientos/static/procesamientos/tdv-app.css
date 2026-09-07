@@ -898,14 +898,27 @@ a.enlace:hover { text-decoration: underline; }
   border-radius: var(--radius-sm) !important;
 }
 
-.modulo-vista .metric .estado,
-.metric span.estado {
+/* Estados "buenos": pastilla negra con texto blanco. */
+.modulo-vista .metric .estado-listo,
+.modulo-vista .metric .estado-completado,
+.modulo-vista .metric .estado-completada,
+.metric span.estado-listo,
+.metric span.estado-completado,
+.metric span.estado-completada {
+  background: #111111 !important;
   color: #ffffff !important;
 }
 
+/* Estados de atención: pastilla clara con texto oscuro. */
 .modulo-vista .metric .estado-invalido,
-.metric span.estado-invalido {
+.modulo-vista .metric .estado-pendiente,
+.modulo-vista .metric .estado-procesando,
+.metric span.estado-invalido,
+.metric span.estado-pendiente,
+.metric span.estado-procesando {
+  background: #efefef !important;
   color: #111111 !important;
+  border: 1px solid #d8d8d8;
 }
 
 .modulo-vista .lista-resumen .estado,

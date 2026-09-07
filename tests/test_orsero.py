@@ -126,6 +126,72 @@ class ValidacionOrseroTests(TestCase):
             resultado.lineas_preparadas[1].precio_encontrado
         )
 
+    def test_destino_manual_manda_sobre_el_del_screenshot(self):
+        liq = parsear_texto_liquidacion_orsero(TEXTO_OCR_MUESTRA)
+        primer_bloque = liq.precios[0]
+        desp = ResultadoMatcherOrsero(
+            archivo="d.xlsx",
+            hoja="Base Datos",
+            cliente_buscado="ORSERO",
+            semana=24,
+            anio=2026,
+            semana_texto="24-2026",
+            lineas=(
+                self._despacho(
+                    "PUERTO NUEVO",
+                    primer_bloque.calibre,
+                    primer_bloque.total_cajas,
+                ),
+            ),
+            total_cajas=primer_bloque.total_cajas,
+            contenedores=("CONT1",),
+            destinos=("PUERTO NUEVO",),
+        )
+
+        sin_manual = validar_liquidacion_orsero(liq, desp)
+        self.assertFalse(
+            sin_manual.lineas_preparadas[0].precio_encontrado
+        )
+
+        con_manual = validar_liquidacion_orsero(
+            liq,
+            desp,
+            destinos_manuales=["puerto nuevo"],
+        )
+        linea = con_manual.lineas_preparadas[0]
+        self.assertTrue(linea.precio_encontrado)
+        self.assertEqual(
+            linea.precio_venta_eur,
+            primer_bloque.precio_eur,
+        )
+        self.assertEqual(
+            con_manual.destinos_aplicados,
+            ("PUERTO NUEVO",),
+        )
+
+    def test_avisa_si_faltan_destinos_para_los_bloques(self):
+        liq = parsear_texto_liquidacion_orsero(TEXTO_OCR_MUESTRA)
+        desp = ResultadoMatcherOrsero(
+            archivo="d.xlsx",
+            hoja="Base Datos",
+            cliente_buscado="ORSERO",
+            semana=24,
+            anio=2026,
+            semana_texto="24-2026",
+            lineas=(self._despacho("SETUBAL", 5, 840),),
+            total_cajas=840,
+            contenedores=("CONT1",),
+            destinos=("SETUBAL",),
+        )
+        resultado = validar_liquidacion_orsero(
+            liq,
+            desp,
+            destinos_manuales=["SETUBAL"],
+        )
+        codigos = {a.codigo for a in resultado.advertencias}
+        self.assertIn("DESTINOS_INSUFICIENTES", codigos)
+        self.assertTrue(resultado.es_valido)
+
 
 class ReconstruccionOrseroTests(TestCase):
     def test_reconstruye_sin_ocr(self):

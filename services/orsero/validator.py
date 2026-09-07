@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from decimal import Decimal
-from typing import Any, Literal
+from typing import Any, Literal, Sequence
 
-from services.orsero.extractor import LiquidacionOrsero
+from services.orsero.extractor import (
+    LineaPrecioOrsero,
+    LiquidacionOrsero,
+)
 from services.orsero.matcher import (
     LineaDespachoOrsero,
     ResultadoMatcherOrsero,
@@ -43,6 +46,7 @@ class LineaPreparadaOrsero:
 @dataclass(frozen=True)
 class ResultadoValidacionOrsero:
     es_valido: bool
+    destinos_aplicados: tuple[str, ...]
     destinos_despachos: tuple[str, ...]
     total_cajas_liquidacion: int
     total_cajas_despachos: int
@@ -64,14 +68,60 @@ def describir_clave(clave: tuple[str, int]) -> str:
     return f"{destino.title()}, calibre {calibre}"
 
 
+def _bloques_de_precios(
+    precios: Sequence[LineaPrecioOrsero],
+) -> tuple[str, ...]:
+    """Destinos del screenshot, en el orden en que aparecen."""
+    orden: list[str] = []
+    for precio in precios:
+        if precio.destino not in orden:
+            orden.append(precio.destino)
+    return tuple(orden)
+
+
+def aplicar_destinos_manuales(
+    precios: Sequence[LineaPrecioOrsero],
+    destinos_manuales: Sequence[str],
+) -> tuple[tuple[LineaPrecioOrsero, ...], tuple[str, ...]]:
+    """Renombra los bloques del screenshot con los destinos dados.
+
+    El destino indicado manda sobre el que leyó el OCR y se asigna
+    por orden: el primero que escribe el usuario corresponde al
+    primer bloque del screenshot.
+    """
+    limpios = tuple(
+        texto.strip().upper()
+        for texto in destinos_manuales
+        if texto and texto.strip()
+    )
+    if not limpios:
+        return tuple(precios), ()
+
+    bloques = _bloques_de_precios(precios)
+    equivalencias = {
+        original: limpios[indice]
+        for indice, original in enumerate(bloques)
+        if indice < len(limpios)
+    }
+    renombrados = tuple(
+        replace(
+            precio,
+            destino=equivalencias.get(precio.destino, precio.destino),
+        )
+        for precio in precios
+    )
+    return renombrados, limpios
+
+
 def _mejor_precio_para_destino(
     precios: dict[tuple[str, int], Decimal],
     destino: str,
     calibre: int,
-) -> Decimal | None:
+) -> tuple[Decimal | None, bool]:
+    """Precio del screenshot y si el destino coincidió."""
     clave = clave_destino_calibre(destino, calibre)
     if clave in precios:
-        return precios[clave]
+        return precios[clave], True
 
     destino_n = clave[0]
     # Tolerancia: destino Despachos puede ser más largo
@@ -83,16 +133,57 @@ def _mejor_precio_para_destino(
             dest_liq in destino_n
             or destino_n in dest_liq
         ):
-            return precio
-    return None
+            return precio, True
+
+    return None, False
 
 
 def validar_liquidacion_orsero(
     liquidacion: LiquidacionOrsero,
     despachos: ResultadoMatcherOrsero,
+    destinos_manuales: Sequence[str] = (),
 ) -> ResultadoValidacionOrsero:
     errores: list[IncidenciaValidacionOrsero] = []
     advertencias: list[IncidenciaValidacionOrsero] = []
+
+    precios_liquidacion, destinos_aplicados = aplicar_destinos_manuales(
+        liquidacion.precios,
+        destinos_manuales,
+    )
+    bloques = _bloques_de_precios(liquidacion.precios)
+    if destinos_aplicados and len(destinos_aplicados) < len(bloques):
+        advertencias.append(
+            IncidenciaValidacionOrsero(
+                codigo="DESTINOS_INSUFICIENTES",
+                nivel="advertencia",
+                mensaje=(
+                    f"Indicó {len(destinos_aplicados)} destino(s) "
+                    f"y el screenshot trae {len(bloques)}. Los "
+                    "bloques restantes conservan el nombre leído "
+                    "por OCR."
+                ),
+                detalles={
+                    "destinos_indicados": list(destinos_aplicados),
+                    "bloques_screenshot": list(bloques),
+                },
+            )
+        )
+    elif destinos_aplicados and len(destinos_aplicados) > len(bloques):
+        advertencias.append(
+            IncidenciaValidacionOrsero(
+                codigo="DESTINOS_SOBRANTES",
+                nivel="advertencia",
+                mensaje=(
+                    f"Indicó {len(destinos_aplicados)} destino(s) "
+                    f"y el screenshot solo trae {len(bloques)} "
+                    "bloque(s) de precios."
+                ),
+                detalles={
+                    "destinos_indicados": list(destinos_aplicados),
+                    "bloques_screenshot": list(bloques),
+                },
+            )
+        )
 
     if liquidacion.rubros_no_mapeados:
         rubros = etiquetas_rubros(liquidacion.rubros_no_mapeados)
@@ -124,7 +215,7 @@ def validar_liquidacion_orsero(
     precios: dict[tuple[str, int], Decimal] = {}
     cajas_liq: dict[tuple[str, int], int] = defaultdict(int)
 
-    for producto in liquidacion.precios:
+    for producto in precios_liquidacion:
         clave = clave_destino_calibre(
             producto.destino,
             producto.calibre,
@@ -197,12 +288,11 @@ def validar_liquidacion_orsero(
     lineas_preparadas: list[LineaPreparadaOrsero] = []
     for linea in despachos.lineas:
         destino = linea.puerto_destino.strip().upper()
-        precio = _mejor_precio_para_destino(
+        precio, encontrado = _mejor_precio_para_destino(
             precios,
             destino,
             linea.calibre,
         )
-        encontrado = precio is not None
         if not encontrado:
             advertencias.append(
                 IncidenciaValidacionOrsero(
@@ -239,6 +329,7 @@ def validar_liquidacion_orsero(
     es_valido = not errores
     return ResultadoValidacionOrsero(
         es_valido=es_valido,
+        destinos_aplicados=destinos_aplicados,
         destinos_despachos=despachos.destinos,
         total_cajas_liquidacion=liquidacion.total_cajas,
         total_cajas_despachos=despachos.total_cajas,

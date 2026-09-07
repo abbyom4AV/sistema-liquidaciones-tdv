@@ -880,6 +880,10 @@ class ProcesamientoOrsero(models.Model):
         default=list,
         blank=True,
     )
+    destinos_indicados = models.JSONField(
+        default=list,
+        blank=True,
+    )
     cantidad_contenedores = models.PositiveIntegerField(
         default=0,
     )

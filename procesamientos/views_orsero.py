@@ -104,6 +104,9 @@ def _aplicar_resultado_orsero(
     procesamiento.destinos_despachos = list(
         validacion.destinos_despachos
     )
+    procesamiento.destinos_indicados = list(
+        validacion.destinos_aplicados
+    )
     procesamiento.cantidad_contenedores = len(
         despachos.contenedores
     )
@@ -192,7 +195,13 @@ def cargar_orsero(request):
         return render(
             request,
             "procesamientos/orsero_cargar.html",
-            {**ctx, "formulario": formulario},
+            {
+                **ctx,
+                "formulario": formulario,
+                "destinos_ingresados": (
+                    formulario.destinos_ingresados()
+                ),
+            },
             status=400,
         )
 
@@ -230,6 +239,7 @@ def cargar_orsero(request):
                 ),
                 anio=procesamiento.anio,
                 cliente=CLIENTE_ORSERO,
+                destinos_manuales=datos["destinos"],
             )
             _aplicar_resultado_orsero(
                 procesamiento,
@@ -255,6 +265,7 @@ def cargar_orsero(request):
             {
                 **ctx,
                 "formulario": formulario,
+                "destinos_ingresados": datos["destinos"],
                 "error_proceso": str(error),
             },
             status=400,
@@ -268,6 +279,7 @@ def cargar_orsero(request):
             {
                 **ctx,
                 "formulario": formulario,
+                "destinos_ingresados": datos["destinos"],
                 "error_proceso": (
                     "Ocurrió un error inesperado al validar "
                     "los archivos."
