@@ -32,6 +32,10 @@
   --warn: #6b6b6b;
   --info: #111111;
 
+  /* Oro piña: solo en interacción (hover / foco) */
+  --oro: #c9a227;
+  --oro-soft: rgba(201, 162, 39, 0.16);
+
   --radius: 22px;
   --radius-sm: 14px;
   --radius-pill: 999px;
@@ -432,6 +436,7 @@ h1 {
 .boton {
   background: #111111;
   color: #ffffff;
+  transition: background 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .filtros button:hover,
@@ -440,8 +445,9 @@ h1 {
 .boton:hover,
 .boton:focus,
 .boton:active {
-  background: #2a2a2a;
+  background: #111111;
   color: #ffffff;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--oro);
 }
 
 .filtros button:disabled,
@@ -451,12 +457,22 @@ button.procesando,
   background: #d8d8d8;
   color: #6b6b6b;
   cursor: wait;
+  box-shadow: none;
 }
 
 .filtros a.limpiar {
   background: #ffffff;
   color: var(--ink);
   border: 1px solid var(--line-strong);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.filtros a.limpiar:hover,
+.filtros a.limpiar:focus {
+  background: #ffffff;
+  color: var(--ink);
+  border-color: var(--oro);
+  box-shadow: 0 0 0 3px var(--oro-soft);
 }
 
 .tarjeta {
@@ -666,8 +682,10 @@ a.enlace:hover { text-decoration: underline; }
 .modulo .boton:hover,
 .modulo .boton:focus,
 .modulo .boton:active {
-  background: #111111 !important;
-  color: #ffffff !important;
+  background: #ffffff !important;
+  color: #111111 !important;
+  border-color: var(--oro) !important;
+  box-shadow: 0 0 0 3px var(--oro-soft) !important;
 }
 
 .boton-deshabilitado {
@@ -800,9 +818,13 @@ a.enlace:hover { text-decoration: underline; }
 }
 
 .modulo-vista .boton-secundario:hover,
-.modulo-vista a.boton-secundario:hover {
-  background: #efefef;
-  border-color: #111111;
+.modulo-vista .boton-secundario:focus,
+.modulo-vista a.boton-secundario:hover,
+.modulo-vista a.boton-secundario:focus {
+  background: #ffffff;
+  color: var(--ink);
+  border-color: var(--oro);
+  box-shadow: 0 0 0 3px var(--oro-soft);
 }
 
 .modulo-vista .tarjeta-formulario,
@@ -926,6 +948,7 @@ a.enlace:hover { text-decoration: underline; }
 .modulo-vista a.boton:not(.boton-secundario):not(.boton-suave) {
   background: #111111 !important;
   color: #ffffff !important;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
 }
 
 .modulo-vista button[type="submit"]:hover,
@@ -937,14 +960,16 @@ a.enlace:hover { text-decoration: underline; }
 .modulo-vista a.boton:not(.boton-secundario):hover,
 .modulo-vista a.boton:not(.boton-secundario):focus,
 .modulo-vista a.boton:not(.boton-secundario):active {
-  background: #2a2a2a !important;
+  background: #111111 !important;
   color: #ffffff !important;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--oro) !important;
 }
 
 .modulo-vista button[type="submit"]:disabled,
 .modulo-vista button.procesando {
   background: #d8d8d8 !important;
   color: #6b6b6b !important;
+  box-shadow: none !important;
 }
 
 .modulo-vista .rank-cero,
