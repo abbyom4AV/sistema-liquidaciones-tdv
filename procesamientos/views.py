@@ -32,6 +32,7 @@ from procesamientos.models import (
     ProcesamientoMaster,
     ProcesamientoOrsero,
     ProcesamientoSifa,
+    ProcesamientoVisafruits,
     ResolucionDestinoDimanno,
 )
 from procesamientos.services.bitacoras import (
@@ -199,8 +200,8 @@ CLIENTES_PANEL = (
         "codigo": "visafruits",
         "nombre": "VISAFRUITS",
         "descripcion": "Módulo de liquidaciones VISAFRUITS.",
-        "disponible": False,
-        "url_name": None,
+        "disponible": True,
+        "url_name": "procesamientos:visafruits_cargar",
     },
 )
 
@@ -301,13 +302,31 @@ def panel_control(request):
             "-creado_en"
         )[:10]
     ]
+    recientes_visafruits = [
+        {
+            "cliente": "VISAFRUITS",
+            "factura_corta": (
+                item.factura_corta or item.destino_ui
+            ),
+            "semana": item.semana,
+            "anio": item.anio,
+            "estado_legible": item.estado_legible,
+            "creado_en": item.creado_en,
+            "url_name": "procesamientos:visafruits_detalle",
+            "id": item.id,
+        }
+        for item in ProcesamientoVisafruits.objects.order_by(
+            "-creado_en"
+        )[:10]
+    ]
     recientes = sorted(
         recientes_dimanno
         + recientes_master
         + recientes_orsero
         + recientes_kraaijeveld
         + recientes_fruver
-        + recientes_sifa,
+        + recientes_sifa
+        + recientes_visafruits,
         key=lambda item: item["creado_en"],
         reverse=True,
     )[:5]
@@ -327,6 +346,7 @@ def panel_control(request):
                 + ProcesamientoKraaijeveld.objects.count()
                 + ProcesamientoFruver.objects.count()
                 + ProcesamientoSifa.objects.count()
+                + ProcesamientoVisafruits.objects.count()
             ),
             "clientes_panel": CLIENTES_PANEL,
             "total_clientes": len(CLIENTES_PANEL),
