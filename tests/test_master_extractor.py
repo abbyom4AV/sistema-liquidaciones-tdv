@@ -18,6 +18,20 @@ from services.master.extractor import (
 )
 from services.master.processor import preparar_procesamiento_master
 
+# La carpeta del cliente cambia de nombre entre equipos, así que se toma
+# la primera que haya dentro. Devuelve None cuando el OneDrive no está
+# montado, como pasa en integración continua.
+BASE_LIQUIDACIONES = Path(r"c:\Users\aobando\Fruta Internacional")
+
+
+def carpeta_de_liquidaciones() -> Path | None:
+    if not BASE_LIQUIDACIONES.is_dir():
+        return None
+    return next(
+        (p for p in BASE_LIQUIDACIONES.iterdir() if p.is_dir()),
+        None,
+    )
+
 
 class ExtraccionMasterTests(SimpleTestCase):
     def test_clasificar_producto(self):
@@ -35,13 +49,9 @@ class ExtraccionMasterTests(SimpleTestCase):
         )
 
     def test_extraer_pdf_semana_20_si_existe(self):
-        root = next(
-            p
-            for p in Path(
-                r"c:\Users\aobando\Fruta Internacional"
-            ).iterdir()
-            if p.is_dir()
-        )
+        root = carpeta_de_liquidaciones()
+        if root is None:
+            self.skipTest("La carpeta de liquidaciones no está disponible.")
         carpeta = (
             root
             / "Clientes Liquidaciones PDF"
@@ -86,13 +96,9 @@ class ExtraccionMasterTests(SimpleTestCase):
 
 class ProcessorMasterTests(SimpleTestCase):
     def test_preparar_con_despachos_si_existen(self):
-        root = next(
-            p
-            for p in Path(
-                r"c:\Users\aobando\Fruta Internacional"
-            ).iterdir()
-            if p.is_dir()
-        )
+        root = carpeta_de_liquidaciones()
+        if root is None:
+            self.skipTest("La carpeta de liquidaciones no está disponible.")
         pdf_dir = (
             root
             / "Clientes Liquidaciones PDF"
