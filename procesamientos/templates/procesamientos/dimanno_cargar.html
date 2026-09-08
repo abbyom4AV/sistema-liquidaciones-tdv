@@ -91,12 +91,6 @@
         box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.28);
       }
 
-      .ayuda {
-        margin: 0.4rem 0 0;
-        font-size: 0.88rem;
-        color: var(--muted);
-      }
-
       .bloque-archivos {
         display: grid;
         gap: 1rem;
@@ -215,9 +209,6 @@
               </label>
               <p class="descripcion">Hoja exacta del archivo de liquidación.</p>
               {{ formulario.nombre_hoja }}
-              {% if formulario.nombre_hoja.help_text %}
-                <p class="ayuda">{{ formulario.nombre_hoja.help_text }}</p>
-              {% endif %}
               {% for error in formulario.nombre_hoja.errors %}
                 <div class="campo-error">{{ error }}</div>
               {% endfor %}

@@ -98,12 +98,6 @@
         box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.28);
       }
 
-      .ayuda {
-        margin: 0.4rem 0 0;
-        font-size: 0.88rem;
-        color: var(--muted);
-      }
-
       .bloque-archivos {
         display: grid;
         gap: 1rem;
@@ -371,12 +365,6 @@
             </label>
 
             <div id="bloque-precio-fijo" class="bloque-precio-fijo oculto">
-              <p class="ayuda">
-                Elija un solo modo: factura completa o un contenedor
-                (con mapeos tipo/calibre/precio). Gastos y comisión
-                del precio fijo quedan en 0.
-              </p>
-
               <div class="campo">
                 <span class="titulo-bloque" style="margin:0">
                   {{ formulario.modo_precio_fijo.label }}
@@ -439,11 +427,6 @@
                 </div>
 
                 <p class="titulo-bloque">Mapeos tipo / calibre / precio</p>
-                <p class="ayuda">
-                  Solo las líneas que coincidan con un mapeo van a
-                  precio fijo; el resto del contenedor sigue por
-                  consignación (PDF).
-                </p>
                 <div id="lista-mapeos-fijos" class="mapeos-fijos"></div>
                 <div class="acciones-mapeos">
                   <button type="button" class="btn-mapeo" id="btn-add-mapeo">

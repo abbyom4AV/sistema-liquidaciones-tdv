@@ -105,12 +105,6 @@
         box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.28);
       }
 
-      .ayuda {
-        margin: 0.4rem 0 0;
-        font-size: 0.88rem;
-        color: var(--muted);
-      }
-
       .bloque-archivos {
         display: grid;
         gap: 1rem;
@@ -252,9 +246,6 @@
                 {{ formulario.factura_corta.label }}
               </label>
               {{ formulario.factura_corta }}
-              <p class="ayuda">
-                Si no la indica, se tomará del Excel de liquidación.
-              </p>
               {% for error in formulario.factura_corta.errors %}
                 <div class="campo-error">{{ error }}</div>
               {% endfor %}
