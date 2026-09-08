@@ -17,12 +17,6 @@ from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.test import Client, TestCase, override_settings
-from django.test.utils import (
-    setup_databases,
-    setup_test_environment,
-    teardown_databases,
-    teardown_test_environment,
-)
 
 from procesamientos.models import (
     GastoProcesamientoDimanno,
@@ -53,25 +47,6 @@ from services.dimanno.validator import (
 from services.dimanno.writer import ResultadoEscrituraDimanno
 
 User = get_user_model()
-_DJANGO_DB_CONFIG = None
-
-
-def setUpModule() -> None:
-    global _DJANGO_DB_CONFIG
-    setup_test_environment()
-    _DJANGO_DB_CONFIG = setup_databases(
-        verbosity=0,
-        interactive=False,
-        keepdb=False,
-    )
-
-
-def tearDownModule() -> None:
-    global _DJANGO_DB_CONFIG
-    if _DJANGO_DB_CONFIG is not None:
-        teardown_databases(_DJANGO_DB_CONFIG, verbosity=0)
-        _DJANGO_DB_CONFIG = None
-    teardown_test_environment()
 
 
 def _xlsx_falso(nombre: str) -> SimpleUploadedFile:
