@@ -28,7 +28,10 @@ RE_STYLE = re.compile(r"\{% block estilos %\}(.*?)\{% endblock %\}", re.S)
 
 
 def limpiar(css: str) -> str:
-    return re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    # Las etiquetas <style> no son CSS; si se dejan, se pegan al
+    # primer selector del bloque.
+    return re.sub(r"</?style[^>]*>", "", css)
 
 
 def reglas_de(css: str) -> list[tuple[str, str]]:

@@ -45,12 +45,21 @@ def estilos_locales(texto: str) -> str:
 
 
 def cascada(css_global: str, css_local: str) -> dict[str, str]:
-    """Valor final de cada selector, en orden de documento."""
+    """Valor final de cada selector, en orden de documento.
+
+    El :root se desglosa variable por variable: lo que importa no es
+    dónde se declara la paleta sino con qué valor termina cada token.
+    """
     final: dict[str, str] = {}
-    for selector, declaraciones in reglas_de(css_global):
-        final[selector] = declaraciones
-    for selector, declaraciones in reglas_de(css_local):
-        final[selector] = declaraciones
+    for css in (css_global, css_local):
+        for selector, declaraciones in reglas_de(css):
+            if selector.endswith(":root"):
+                for nombre, valor in re.findall(
+                    r"(--[\w-]+)\s*:\s*([^;]+)", declaraciones
+                ):
+                    final[f":root {nombre}"] = valor.strip()
+                continue
+            final[selector] = declaraciones
     return final
 
 
