@@ -97,12 +97,6 @@
         box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.28);
       }
 
-      .ayuda {
-        margin: 0.4rem 0 0;
-        font-size: 0.88rem;
-        color: var(--muted);
-      }
-
       .bloque-archivos {
         display: grid;
         gap: 1rem;
@@ -181,10 +175,6 @@
       </p>
 
       <h1>Cargar liquidación VISAFRUITS</h1>
-      <p class="intro-corta">
-        Se necesitan tres archivos: el Despachos (.xlsx), la liquidación
-        que manda VISAFRUITS (.pdf) y el acumulativo del cliente (.xlsx).
-      </p>
     </header>
 
     {% if error_proceso %}
@@ -236,9 +226,6 @@
                 {{ formulario.destino.label }}
               </label>
               {{ formulario.destino }}
-              <p class="ayuda">
-                El destino que escriba manda sobre el que trae el PDF.
-              </p>
               {% for error in formulario.destino.errors %}
                 <div class="campo-error">{{ error }}</div>
               {% endfor %}
@@ -251,9 +238,6 @@
                 {{ formulario.factura.label }}
               </label>
               {{ formulario.factura }}
-              <p class="ayuda">
-                Los últimos cuatro dígitos de la factura, por ejemplo 5712.
-              </p>
               {% for error in formulario.factura.errors %}
                 <div class="campo-error">{{ error }}</div>
               {% endfor %}
