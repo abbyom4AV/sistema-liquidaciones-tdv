@@ -1,169 +1,162 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=pasos-generacion">
-  <title>Definir destino Di Manno</title>
-  <style>
-    :root {
-      --fondo: #f5f5f5;
-      --tarjeta: #ffffff;
-      --suave: #f0f0f0;
-      --acento: #111111;
-      --acento-oscuro: #111111;
-      --texto: #111111;
-      --muted: #6b6b6b;
-      --borde: #e6e6e6;
-      --error: #111111;
-      --aviso: #111111;
-      --ok: #557360;
-    }
+{% extends "procesamientos/base.html" %}
 
-    * { box-sizing: border-box; }
+{% block titulo %}Definir destino Di Manno{% endblock %}
+{% block clases_contenido %} modulo-vista{% endblock %}
+{% block estilos %}
+    <style>
+      :root {
+        --fondo: #f5f5f5;
+        --tarjeta: #ffffff;
+        --suave: #f0f0f0;
+        --acento: #111111;
+        --acento-oscuro: #111111;
+        --texto: #111111;
+        --muted: #6b6b6b;
+        --borde: #e6e6e6;
+        --error: #111111;
+        --aviso: #111111;
+        --ok: #557360;
+      }
 
-    /* body layout: tdv-app.css */
+      * { box-sizing: border-box; }
 
-    main {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 0 1.5rem;
-    }
+      /* body layout: tdv-app.css */
 
-    .nav-volver { margin: 0 0 1.25rem; }
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 0 1.5rem;
+      }
 
-    .nav-volver a {
-      color: var(--acento-oscuro);
-      font-weight: 600;
-      text-decoration: none;
-      font-size: 0.95rem;
-    }
+      .nav-volver { margin: 0 0 1.25rem; }
 
-    h1 { margin: 0 0 0.75rem; font-size: 1.9rem; }
+      .nav-volver a {
+        color: var(--acento-oscuro);
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.95rem;
+      }
 
-    .resumen, .tarjeta {
-      background: var(--tarjeta);
-      border: 1px solid var(--borde);
-      border-radius: var(--radius);
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1rem;
-      box-shadow: var(--shadow);
-    }
+      h1 { margin: 0 0 0.75rem; font-size: 1.9rem; }
 
-    .resumen {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 0.75rem 1rem;
-    }
+      .resumen, .tarjeta {
+        background: var(--tarjeta);
+        border: 1px solid var(--borde);
+        border-radius: var(--radius);
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: var(--shadow);
+      }
 
-    .dato strong {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-bottom: 0.2rem;
-    }
+      .resumen {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 0.75rem 1rem;
+      }
 
-    .estado {
-      display: inline-block;
-      padding: 0.2rem 0.55rem;
-      border-radius: var(--radius-sm);
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
+      .dato strong {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-bottom: 0.2rem;
+      }
 
-    .estado-listo { background: #dce8df; color: var(--ok); }
-    .estado-requiere_destino { background: #111111; color: var(--aviso); }
-    .estado-invalido { background: #eeeeee; color: var(--error); }
+      .estado {
+        display: inline-block;
+        padding: 0.2rem 0.55rem;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
 
-    input[type="text"],
-    textarea {
-      width: 100%;
-      padding: 0.7rem 0.85rem;
-      border: 1px solid var(--borde);
-      border-radius: var(--radius-sm);
-      font: inherit;
-      background: var(--suave);
-    }
+      .estado-listo { background: #dce8df; color: var(--ok); }
+      .estado-requiere_destino { background: #111111; color: var(--aviso); }
+      .estado-invalido { background: #eeeeee; color: var(--error); }
 
-    .errores {
-      background: #eeeeee;
-      border: 1px solid #111111;
-      color: var(--error);
-      border-radius: var(--radius-sm);
-      padding: 0.85rem 1rem;
-      margin-bottom: 1rem;
-    }
+      input[type="text"],
+      textarea {
+        width: 100%;
+        padding: 0.7rem 0.85rem;
+        border: 1px solid var(--borde);
+        border-radius: var(--radius-sm);
+        font: inherit;
+        background: var(--suave);
+      }
 
-    .campo-error {
-      color: var(--error);
-      font-size: 0.9rem;
-      margin-top: 0.3rem;
-    }
+      .errores {
+        background: #eeeeee;
+        border: 1px solid #111111;
+        color: var(--error);
+        border-radius: var(--radius-sm);
+        padding: 0.85rem 1rem;
+        margin-bottom: 1rem;
+      }
 
-    .opciones {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
+      .campo-error {
+        color: var(--error);
+        font-size: 0.9rem;
+        margin-top: 0.3rem;
+      }
 
-    .opciones li { margin: 0.55rem 0; }
+      .opciones {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
 
-    .opciones label {
-      font-weight: 500;
-      display: flex;
-      gap: 0.55rem;
-      align-items: flex-start;
-    }
+      .opciones li { margin: 0.55rem 0; }
 
-    .acciones {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-top: 1.25rem;
-    }
+      .opciones label {
+        font-weight: 500;
+        display: flex;
+        gap: 0.55rem;
+        align-items: flex-start;
+      }
 
-    button, a.boton {
-      display: inline-block;
-      text-decoration: none;
-      border: 0;
-      border-radius: var(--radius-sm);
-      background: var(--acento);
-      color: #ffffff;
-      font: inherit;
-      font-weight: 600;
-      padding: 0.7rem 1.1rem;
-      cursor: pointer;
-    }
+      .acciones {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+      }
 
-    a.boton { background: var(--muted); }
-    a.boton:hover, a.boton:focus, a.boton:active { background: #eeeeee; color: #111111; }
-    button:hover, button:focus, button:active { background: #111111; color: #ffffff; }
+      button, a.boton {
+        display: inline-block;
+        text-decoration: none;
+        border: 0;
+        border-radius: var(--radius-sm);
+        background: var(--acento);
+        color: #ffffff;
+        font: inherit;
+        font-weight: 600;
+        padding: 0.7rem 1.1rem;
+        cursor: pointer;
+      }
 
-    label.campo {
-      display: block;
-      font-weight: 600;
-      margin: 0.85rem 0 0.35rem;
-    }
+      a.boton { background: var(--muted); }
+      a.boton:hover, a.boton:focus, a.boton:active { background: #eeeeee; color: #111111; }
+      button:hover, button:focus, button:active { background: #111111; color: #ffffff; }
 
-    .aviso-registro {
-      margin: 0 0 1rem;
-      padding: 0.75rem 1rem;
-      background: #dce8df;
-      border: 1px solid #eeeeee;
-      border-radius: var(--radius-sm);
-      color: var(--acento-oscuro);
-      font-size: 0.95rem;
-    }
-  </style>
-</head>
-<body class="tdv-app">
-  {% include "procesamientos/_sidebar.html" %}
-  <div class="contenido modulo-vista">
-  <main>
+      label.campo {
+        display: block;
+        font-weight: 600;
+        margin: 0.85rem 0 0.35rem;
+      }
+
+      .aviso-registro {
+        margin: 0 0 1rem;
+        padding: 0.75rem 1rem;
+        background: #dce8df;
+        border: 1px solid #eeeeee;
+        border-radius: var(--radius-sm);
+        color: var(--acento-oscuro);
+        font-size: 0.95rem;
+      }
+    </style>
+{% endblock %}
+
+{% block contenido %}
+<main>
     <p class="nav-volver">
       <a href="{% url 'procesamientos:panel' %}">← Volver al panel</a>
     </p>
@@ -267,6 +260,4 @@
       </div>
     </form>
   </main>
-  </div>
-</body>
-</html>
+{% endblock %}

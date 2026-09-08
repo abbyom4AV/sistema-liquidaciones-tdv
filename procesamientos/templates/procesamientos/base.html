@@ -1,0 +1,34 @@
+{% comment %}
+Plantilla madre de todas las pantallas con sidebar.
+
+Bloques disponibles:
+  titulo            texto del <title>
+  meta              metaetiquetas extra (por ejemplo el auto-refresco)
+  head              recursos externos extra (por ejemplo Chart.js)
+  estilos           <style> propio de la pantalla
+  clases_contenido  clases extra del contenedor, como "modulo-vista"
+  contenido         el cuerpo de la pantalla
+  scripts           <script> al final del body
+{% endcomment %}
+{% load static %}<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Sistema TDV{% endblock %}</title>
+  {% block meta %}{% endblock %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=base">
+  {% block head %}{% endblock %}
+  {% block estilos %}{% endblock %}
+</head>
+<body class="tdv-app">
+  {% include "procesamientos/_sidebar.html" %}
+  <div class="contenido{% block clases_contenido %}{% endblock %}">
+{% block contenido %}{% endblock %}
+  </div>
+{% block scripts %}{% endblock %}
+</body>
+</html>

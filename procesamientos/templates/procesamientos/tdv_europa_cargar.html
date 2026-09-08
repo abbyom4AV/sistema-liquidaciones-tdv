@@ -1,441 +1,434 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TDV Europa — Validar liquidación</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=pasos-generacion">
-  <style>
-    :root {
-      --fondo: #f5f5f5;
-      --tarjeta: #ffffff;
-      --suave: #f0f0f0;
-      --acento: #111111;
-      --acento-oscuro: #111111;
-      --acento-proceso: #111111;
-      --panel: #111111;
-      --panel-suave: #111111;
-      --texto: #111111;
-      --muted: #6b6b6b;
-      --borde: #e6e6e6;
-      --error: #111111;
-    }
+{% extends "procesamientos/base.html" %}
 
-    * { box-sizing: border-box; }
+{% block titulo %}TDV Europa — Validar liquidación{% endblock %}
+{% block clases_contenido %} modulo-vista{% endblock %}
+{% block estilos %}
+    <style>
+      :root {
+        --fondo: #f5f5f5;
+        --tarjeta: #ffffff;
+        --suave: #f0f0f0;
+        --acento: #111111;
+        --acento-oscuro: #111111;
+        --acento-proceso: #111111;
+        --panel: #111111;
+        --panel-suave: #111111;
+        --texto: #111111;
+        --muted: #6b6b6b;
+        --borde: #e6e6e6;
+        --error: #111111;
+      }
 
-    /* body layout: tdv-app.css */
+      * { box-sizing: border-box; }
 
-    .envoltorio {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 0 1.5rem;
-    }
+      /* body layout: tdv-app.css */
 
-    .nav-volver {
-      margin: 0 0 1rem;
-    }
+      .envoltorio {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 0 1.5rem;
+      }
 
-    .nav-volver a {
-      color: var(--muted);
-      font-weight: 600;
-      text-decoration: none;
-      font-size: 0.92rem;
-    }
+      .nav-volver {
+        margin: 0 0 1rem;
+      }
 
-    .nav-volver a:hover {
-      color: var(--acento-oscuro);
-      text-decoration: underline;
-    }
+      .nav-volver a {
+        color: var(--muted);
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.92rem;
+      }
 
-    .cabecera {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.35rem;
-      margin-bottom: 1.5rem;
-    }
+      .nav-volver a:hover {
+        color: var(--acento-oscuro);
+        text-decoration: underline;
+      }
 
-    h1 {
-      margin: 0;
-      font-size: clamp(1.7rem, 2.2vw, 2rem);
-      line-height: 1.2;
-    }
-
-    .intro-corta {
-      margin: 0.1rem 0 0;
-      color: var(--muted);
-      font-size: 0.98rem;
-      line-height: 1.45;
-      max-width: 36rem;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
-      gap: 1.35rem;
-      align-items: start;
-    }
-
-    .tarjeta-formulario,
-    .tarjeta-guia {
-      border-radius: var(--radius);
-      box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
-    }
-
-    .tarjeta-formulario {
-      background: var(--tarjeta);
-      border: 1px solid var(--borde);
-      padding: 1.7rem 1.6rem 1.5rem;
-    }
-
-    .tarjeta-formulario h2 {
-      margin: 0 0 0.35rem;
-      font-size: 1.2rem;
-    }
-
-    .tarjeta-formulario .subtitulo {
-      margin: 0 0 1.4rem;
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.4;
-    }
-
-    form {
-      display: grid;
-      gap: 1.15rem;
-    }
-
-    .fila-tres {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1rem;
-    }
-
-    .fila-factura {
-      display: grid;
-      grid-template-columns: minmax(0, 280px);
-      gap: 1rem;
-    }
-
-    .campo label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 0.35rem;
-    }
-
-    .campo .descripcion {
-      margin: 0 0 0.5rem;
-      color: var(--muted);
-      font-size: 0.88rem;
-      line-height: 1.35;
-    }
-
-    input[type="number"],
-    input[type="text"],
-    input[type="file"] {
-      width: 100%;
-      padding: 0.8rem 0.95rem;
-      border: 1px solid var(--borde);
-      border-radius: var(--radius-sm);
-      font: inherit;
-      background: #f5f5f5;
-      color: var(--texto);
-    }
-
-    input[type="file"] {
-      background: #f5f5f5;
-      padding: 0.7rem 0.85rem;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: #111111;
-      box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.28);
-    }
-
-    .ayuda {
-      margin: 0.45rem 0 0;
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.35;
-    }
-
-    .bloque-archivos {
-      display: grid;
-      gap: 1.1rem;
-      margin-top: 0.15rem;
-      padding-top: 1.15rem;
-      border-top: 1px dashed var(--borde);
-    }
-
-    .bloque-archivos > .titulo-bloque {
-      margin: 0;
-      font-size: 0.8rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-weight: 700;
-    }
-
-    .bloque-especial {
-      display: grid;
-      gap: 0.85rem;
-      padding: 1rem;
-      border-radius: var(--radius);
-      background: var(--suave);
-      border: 1px dashed var(--borde);
-    }
-
-    .bloque-especial.oculto { display: none !important; }
-
-    .fila-contenedor-especial {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 0.75rem;
-      align-items: end;
-    }
-
-    .fila-contenedor-especial .campo {
-      min-width: 0;
-    }
-
-    .fila-contenedor-especial .campo label {
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-
-    .lista-contenedores {
-      display: grid;
-      gap: 0.75rem;
-    }
-
-    .acciones-contenedores {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      padding-top: 0.15rem;
-    }
-
-    .btn-contenedor {
-      border: 1px solid var(--borde);
-      background: #f5f5f5;
-      border-radius: 12px;
-      padding: 0.72rem 0.95rem;
-      font: inherit;
-      font-size: 0.92rem;
-      font-weight: 600;
-      color: var(--texto);
-      cursor: pointer;
-      white-space: nowrap;
-      height: fit-content;
-      min-width: 0;
-      width: auto;
-      transition:
-        background 0.15s ease,
-        border-color 0.15s ease,
-        color 0.15s ease;
-    }
-
-    .btn-contenedor:hover:not(:disabled) {
-      background: var(--suave);
-      border-color: #eeeeee;
-    }
-
-    .btn-contenedor.anadir {
-      align-self: flex-start;
-      border-style: dashed;
-      color: var(--acento);
-      padding: 0.62rem 1rem;
-    }
-
-    .btn-contenedor.anadir:hover:not(:disabled) {
-      border-color: var(--acento);
-      background: rgba(55, 90, 77, 0.06);
-    }
-
-    .btn-contenedor.quitar {
-      color: #111111;
-      font-size: 0.88rem;
-      padding: 0.78rem 0.9rem;
-    }
-
-    .btn-contenedor.quitar:hover:not(:disabled) {
-      background: #eeeeee;
-      border-color: #111111;
-    }
-
-    .btn-contenedor:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-    }
-
-    .campo-checkbox {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      font-weight: 600;
-    }
-
-    .campo-checkbox input {
-      width: 1.15rem;
-      height: 1.15rem;
-      flex-shrink: 0;
-    }
-
-    .errores,
-    .error-proceso {
-      background: #eeeeee;
-      border: 1px solid #111111;
-      color: var(--error);
-      border-radius: var(--radius-sm);
-      padding: 0.85rem 1rem;
-      margin: 0 0 1.15rem;
-    }
-
-    .errores ul {
-      margin: 0.4rem 0 0;
-      padding-left: 1.2rem;
-    }
-
-    .campo-error {
-      color: var(--error);
-      font-size: 0.9rem;
-      margin-top: 0.35rem;
-    }
-
-    .acciones-form {
-      display: flex;
-      justify-content: flex-start;
-      padding-top: 0.45rem;
-    }
-
-    .acciones-form button {
-      border: 0;
-      border-radius: var(--radius-sm);
-      background: var(--acento);
-      color: #ffffff;
-      font: inherit;
-      font-weight: 700;
-      padding: 0.9rem 1.55rem;
-      cursor: pointer;
-      min-width: 180px;
-      transition: background 0.15s ease, opacity 0.15s ease;
-    }
-
-    .acciones-form button:hover, button:focus, button:active {
-      background: #111111;
-      color: #ffffff;
-    }
-
-    .acciones-form button.procesando {
-      background: #111111;
-      color: #ffffff;
-      cursor: wait;
-      opacity: 0.95;
-    }
-
-    .acciones-form button:disabled {
-      cursor: wait;
-    }
-
-        .tarjeta-guia {
-      background: var(--tarjeta);
-      color: var(--texto);
-      border: 1px solid var(--borde);
-      box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
-      padding: 1.2rem 1.15rem;
-    }
-
-    .tarjeta-guia::after { display: none; }
-
-    .tarjeta-guia h2 {
-      margin: 0 0 0.45rem;
-      font-size: 1.05rem;
-      font-weight: 650;
-    }
-
-    .tarjeta-guia > p {
-      margin: 0 0 1rem;
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: 0.88rem;
-    }
-
-    .pasos {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: 0.85rem;
-      position: relative;
-      z-index: 1;
-    }
-
-        .pasos li {
-      background: var(--suave);
-      border: 1px solid var(--borde);
-      border-radius: var(--radius-sm);
-      padding: 0.75rem 0.85rem;
-    }
-
-    .pasos strong {
-      display: block;
-      margin-bottom: 0.3rem;
-      font-size: 0.95rem;
-    }
-
-    .pasos span {
-      display: block;
-      font-size: 0.88rem;
-      opacity: 0.85;
-      line-height: 1.45;
-    }
-
-    @media (max-width: 960px) {
       .cabecera {
-        align-items: flex-start;
+        display: flex;
         flex-direction: column;
-        gap: 0.65rem;
-        margin-bottom: 1.25rem;
+        align-items: flex-start;
+        gap: 0.35rem;
+        margin-bottom: 1.5rem;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.7rem, 2.2vw, 2rem);
+        line-height: 1.2;
       }
 
       .intro-corta {
-        max-width: none;
-        padding-top: 0.15rem;
+        margin: 0.1rem 0 0;
+        color: var(--muted);
+        font-size: 0.98rem;
+        line-height: 1.45;
+        max-width: 36rem;
       }
 
       .layout {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
+        gap: 1.35rem;
+        align-items: start;
       }
 
-      .fila-tres,
-      .fila-factura,
+      .tarjeta-formulario,
+      .tarjeta-guia {
+        border-radius: var(--radius);
+        box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+      }
+
+      .tarjeta-formulario {
+        background: var(--tarjeta);
+        border: 1px solid var(--borde);
+        padding: 1.7rem 1.6rem 1.5rem;
+      }
+
+      .tarjeta-formulario h2 {
+        margin: 0 0 0.35rem;
+        font-size: 1.2rem;
+      }
+
+      .tarjeta-formulario .subtitulo {
+        margin: 0 0 1.4rem;
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.4;
+      }
+
+      form {
+        display: grid;
+        gap: 1.15rem;
+      }
+
+      .fila-tres {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .fila-factura {
+        display: grid;
+        grid-template-columns: minmax(0, 280px);
+        gap: 1rem;
+      }
+
+      .campo label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+      }
+
+      .campo .descripcion {
+        margin: 0 0 0.5rem;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.35;
+      }
+
+      input[type="number"],
+      input[type="text"],
+      input[type="file"] {
+        width: 100%;
+        padding: 0.8rem 0.95rem;
+        border: 1px solid var(--borde);
+        border-radius: var(--radius-sm);
+        font: inherit;
+        background: #f5f5f5;
+        color: var(--texto);
+      }
+
+      input[type="file"] {
+        background: #f5f5f5;
+        padding: 0.7rem 0.85rem;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #111111;
+        box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.28);
+      }
+
+      .ayuda {
+        margin: 0.45rem 0 0;
+        font-size: 0.88rem;
+        color: var(--muted);
+        line-height: 1.35;
+      }
+
+      .bloque-archivos {
+        display: grid;
+        gap: 1.1rem;
+        margin-top: 0.15rem;
+        padding-top: 1.15rem;
+        border-top: 1px dashed var(--borde);
+      }
+
+      .bloque-archivos > .titulo-bloque {
+        margin: 0;
+        font-size: 0.8rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .bloque-especial {
+        display: grid;
+        gap: 0.85rem;
+        padding: 1rem;
+        border-radius: var(--radius);
+        background: var(--suave);
+        border: 1px dashed var(--borde);
+      }
+
+      .bloque-especial.oculto { display: none !important; }
+
       .fila-contenedor-especial {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 0.75rem;
+        align-items: end;
+      }
+
+      .fila-contenedor-especial .campo {
+        min-width: 0;
+      }
+
+      .fila-contenedor-especial .campo label {
+        font-size: 0.88rem;
+        color: var(--muted);
+      }
+
+      .lista-contenedores {
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .acciones-contenedores {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        padding-top: 0.15rem;
+      }
+
+      .btn-contenedor {
+        border: 1px solid var(--borde);
+        background: #f5f5f5;
+        border-radius: 12px;
+        padding: 0.72rem 0.95rem;
+        font: inherit;
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: var(--texto);
+        cursor: pointer;
+        white-space: nowrap;
+        height: fit-content;
+        min-width: 0;
+        width: auto;
+        transition:
+          background 0.15s ease,
+          border-color 0.15s ease,
+          color 0.15s ease;
+      }
+
+      .btn-contenedor:hover:not(:disabled) {
+        background: var(--suave);
+        border-color: #eeeeee;
+      }
+
+      .btn-contenedor.anadir {
+        align-self: flex-start;
+        border-style: dashed;
+        color: var(--acento);
+        padding: 0.62rem 1rem;
+      }
+
+      .btn-contenedor.anadir:hover:not(:disabled) {
+        border-color: var(--acento);
+        background: rgba(55, 90, 77, 0.06);
+      }
+
+      .btn-contenedor.quitar {
+        color: #111111;
+        font-size: 0.88rem;
+        padding: 0.78rem 0.9rem;
+      }
+
+      .btn-contenedor.quitar:hover:not(:disabled) {
+        background: #eeeeee;
+        border-color: #111111;
+      }
+
+      .btn-contenedor:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .campo-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-weight: 600;
+      }
+
+      .campo-checkbox input {
+        width: 1.15rem;
+        height: 1.15rem;
+        flex-shrink: 0;
+      }
+
+      .errores,
+      .error-proceso {
+        background: #eeeeee;
+        border: 1px solid #111111;
+        color: var(--error);
+        border-radius: var(--radius-sm);
+        padding: 0.85rem 1rem;
+        margin: 0 0 1.15rem;
+      }
+
+      .errores ul {
+        margin: 0.4rem 0 0;
+        padding-left: 1.2rem;
+      }
+
+      .campo-error {
+        color: var(--error);
+        font-size: 0.9rem;
+        margin-top: 0.35rem;
       }
 
       .acciones-form {
-        justify-content: stretch;
+        display: flex;
+        justify-content: flex-start;
+        padding-top: 0.45rem;
       }
 
       .acciones-form button {
-        width: 100%;
+        border: 0;
+        border-radius: var(--radius-sm);
+        background: var(--acento);
+        color: #ffffff;
+        font: inherit;
+        font-weight: 700;
+        padding: 0.9rem 1.55rem;
+        cursor: pointer;
+        min-width: 180px;
+        transition: background 0.15s ease, opacity 0.15s ease;
       }
 
-      .fila-contenedor-especial .btn-contenedor.quitar {
-        justify-self: start;
+      .acciones-form button:hover, button:focus, button:active {
+        background: #111111;
+        color: #ffffff;
       }
-    }
-  </style>
-</head>
-<body class="tdv-app">
-  {% include "procesamientos/_sidebar.html" %}
-  <div class="contenido modulo-vista">
-  <div class="envoltorio">
+
+      .acciones-form button.procesando {
+        background: #111111;
+        color: #ffffff;
+        cursor: wait;
+        opacity: 0.95;
+      }
+
+      .acciones-form button:disabled {
+        cursor: wait;
+      }
+
+          .tarjeta-guia {
+        background: var(--tarjeta);
+        color: var(--texto);
+        border: 1px solid var(--borde);
+        box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+        padding: 1.2rem 1.15rem;
+      }
+
+      .tarjeta-guia::after { display: none; }
+
+      .tarjeta-guia h2 {
+        margin: 0 0 0.45rem;
+        font-size: 1.05rem;
+        font-weight: 650;
+      }
+
+      .tarjeta-guia > p {
+        margin: 0 0 1rem;
+        color: var(--muted);
+        line-height: 1.45;
+        font-size: 0.88rem;
+      }
+
+      .pasos {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.85rem;
+        position: relative;
+        z-index: 1;
+      }
+
+          .pasos li {
+        background: var(--suave);
+        border: 1px solid var(--borde);
+        border-radius: var(--radius-sm);
+        padding: 0.75rem 0.85rem;
+      }
+
+      .pasos strong {
+        display: block;
+        margin-bottom: 0.3rem;
+        font-size: 0.95rem;
+      }
+
+      .pasos span {
+        display: block;
+        font-size: 0.88rem;
+        opacity: 0.85;
+        line-height: 1.45;
+      }
+
+      @media (max-width: 960px) {
+        .cabecera {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 0.65rem;
+          margin-bottom: 1.25rem;
+        }
+
+        .intro-corta {
+          max-width: none;
+          padding-top: 0.15rem;
+        }
+
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .fila-tres,
+        .fila-factura,
+        .fila-contenedor-especial {
+          grid-template-columns: 1fr;
+        }
+
+        .acciones-form {
+          justify-content: stretch;
+        }
+
+        .acciones-form button {
+          width: 100%;
+        }
+
+        .fila-contenedor-especial .btn-contenedor.quitar {
+          justify-self: start;
+        }
+      }
+    </style>
+{% endblock %}
+
+{% block contenido %}
+<div class="envoltorio">
     <header class="cabecera cabecera-modulo">
       <p class="nav-volver">
         <a href="{% url 'procesamientos:panel' %}">← Panel de control</a>
@@ -732,6 +725,4 @@
       });
     })();
   </script>
-  </div>
-</body>
-</html>
+{% endblock %}

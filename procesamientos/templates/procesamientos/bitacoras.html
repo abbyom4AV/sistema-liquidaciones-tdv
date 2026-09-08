@@ -1,20 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bitácoras — Sistema TDV</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=pasos-generacion">
-</head>
-<body class="tdv-app">
-  {% include "procesamientos/_sidebar.html" %}
+{% extends "procesamientos/base.html" %}
 
-  <div class="contenido">
-    <header class="cabecera">
+{% block titulo %}Bitácoras — Sistema TDV{% endblock %}
+
+{% block contenido %}
+<header class="cabecera">
       <div>
         <p class="cabecera-kicker">Trazabilidad</p>
         <h1>Bitácoras</h1>
@@ -100,6 +89,4 @@
         <p class="vacio">No hay movimientos con los filtros aplicados.</p>
       {% endif %}
     </section>
-  </div>
-</body>
-</html>
+{% endblock %}
