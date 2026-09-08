@@ -182,8 +182,8 @@ main {
 {% block contenido %}
 <main>
     <p class="nav-volver">
-      <a href="{% url 'procesamientos:visafruits_detalle' procesamiento.id %}">
-        ← Volver a la validación
+      <a href="{% url 'procesamientos:visafruits_cargar' %}">
+        ← Volver a adjuntar archivos
       </a>
     </p>
 
@@ -321,18 +321,18 @@ main {
             </a>
             <a
               class="boton boton-secundario"
-              href="{% url 'procesamientos:visafruits_detalle' procesamiento.id %}"
+              href="{% url 'procesamientos:visafruits_cargar' %}"
             >
-              Volver a la validación
+              Volver a adjuntar archivos
             </a>
           </div>
         {% else %}
           <div class="acciones">
             <a
               class="boton boton-secundario"
-              href="{% url 'procesamientos:visafruits_detalle' procesamiento.id %}"
+              href="{% url 'procesamientos:visafruits_cargar' %}"
             >
-              Volver a la validación
+              Volver a adjuntar archivos
             </a>
           </div>
         {% endif %}

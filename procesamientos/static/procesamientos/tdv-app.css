@@ -855,6 +855,18 @@ a.enlace:hover { text-decoration: underline; }
   backdrop-filter: none;
 }
 
+/* Errores y advertencias viven dentro de la tarjeta de resumen: se
+   separan con una linea y usan menos relleno que una tarjeta suelta. */
+.modulo-vista .incidencias {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--borde);
+}
+
+.modulo-vista .incidencias .tarjeta {
+  padding: 0.85rem 0.95rem;
+}
+
 .modulo-vista .tarjeta.tarjeta-aviso {
   background: rgba(239, 68, 68, 0.10) !important;
   border: 1px solid rgba(239, 68, 68, 0.28) !important;
@@ -919,10 +931,10 @@ a.enlace:hover { text-decoration: underline; }
 .modulo-vista .dato span.estado,
 .metric span.estado,
 .dato span.estado {
-  font-size: 0.88rem !important;
+  font-size: 0.72rem !important;
   font-weight: 650 !important;
   line-height: 1.35;
-  padding: 0.32rem 0.8rem;
+  padding: 0.18rem 0.55rem;
   width: fit-content;
   align-self: flex-start;
 }

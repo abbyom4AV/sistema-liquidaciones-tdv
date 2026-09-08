@@ -188,9 +188,6 @@
       </p>
 
       <h1>Validar liquidación</h1>
-      <p class="intro-corta">
-        Cargue los archivos y valide antes de generar el acumulativo.
-      </p>
     </header>
 
     {% if error_proceso %}
@@ -254,9 +251,6 @@
                 {{ formulario.factura_corta.label }}
               </label>
               {{ formulario.factura_corta }}
-              <p class="ayuda">
-                Los 4 dígitos de la factura (deben coincidir con el PDF).
-              </p>
               {% for error in formulario.factura_corta.errors %}
                 <div class="campo-error">{{ error }}</div>
               {% endfor %}

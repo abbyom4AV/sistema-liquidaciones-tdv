@@ -389,34 +389,34 @@
               {% endif %}
             </div>
           </div>
-        </section>
 
-        <div class="incidencias">
-          <section class="tarjeta tarjeta-error">
-            <p class="seccion-titulo">Errores</p>
-            {% if procesamiento.errores %}
-              <ul class="lista errores">
-                {% for incidencia in procesamiento.errores %}
-                  <li>{{ incidencia.mensaje }}</li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="vacio">Sin errores.</p>
-            {% endif %}
-          </section>
-          <section class="tarjeta tarjeta-aviso">
-            <p class="seccion-titulo">Advertencias</p>
-            {% if procesamiento.advertencias %}
-              <ul class="lista advertencias">
-                {% for incidencia in procesamiento.advertencias %}
-                  <li>{{ incidencia.mensaje }}</li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="vacio">Sin advertencias.</p>
-            {% endif %}
-          </section>
-        </div>
+          <div class="incidencias">
+            <section class="tarjeta tarjeta-error">
+              <p class="seccion-titulo">Errores</p>
+              {% if procesamiento.errores %}
+                <ul class="lista errores">
+                  {% for incidencia in procesamiento.errores %}
+                    <li>{{ incidencia.mensaje }}</li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="vacio">Sin errores.</p>
+              {% endif %}
+            </section>
+            <section class="tarjeta tarjeta-aviso">
+              <p class="seccion-titulo">Advertencias</p>
+              {% if procesamiento.advertencias %}
+                <ul class="lista advertencias">
+                  {% for incidencia in procesamiento.advertencias %}
+                    <li>{{ incidencia.mensaje }}</li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="vacio">Sin advertencias.</p>
+              {% endif %}
+            </section>
+          </div>
+        </section>
 
         <section class="tarjeta">
           <div class="cabecera-bloque">

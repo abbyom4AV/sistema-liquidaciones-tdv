@@ -186,8 +186,8 @@
 {% block contenido %}
 <main>
     <p class="nav-volver">
-      <a href="{% url 'procesamientos:bitacoras' %}">
-        ← Volver a bitácoras
+      <a href="{% url 'procesamientos:dimanno_cargar' %}">
+        ← Volver a adjuntar archivos
       </a>
     </p>
 
@@ -312,9 +312,9 @@
             </a>
             <a
               class="boton boton-secundario"
-              href="{% url 'procesamientos:bitacoras' %}"
+              href="{% url 'procesamientos:dimanno_cargar' %}"
             >
-              Volver a bitácoras
+              Volver a adjuntar archivos
             </a>
           </div>
         {% else %}
@@ -330,9 +330,9 @@
           <div class="acciones">
             <a
               class="boton boton-secundario"
-              href="{% url 'procesamientos:bitacoras' %}"
+              href="{% url 'procesamientos:dimanno_cargar' %}"
             >
-              Volver a bitácoras
+              Volver a adjuntar archivos
             </a>
           </div>
         {% endif %}

@@ -225,13 +225,13 @@
           </p>
           <div class="acciones">
             <a class="boton boton-primario" href="{% url 'procesamientos:tdv_europa_generacion_descargar' generacion.id %}">Descargar TDV Europa V3.xlsx</a>
-            <a class="boton boton-secundario" href="{% url 'procesamientos:tdv_europa_cargar' %}">Volver a adjuntar</a>
+            <a class="boton boton-secundario" href="{% url 'procesamientos:tdv_europa_cargar' %}">Volver a adjuntar archivos</a>
           </div>
         {% else %}
           <h2>Seguimiento</h2>
           {% include "procesamientos/_pasos_generacion.html" %}
           <div class="acciones">
-            <a class="boton boton-secundario" href="{% url 'procesamientos:tdv_europa_cargar' %}">Volver a adjuntar</a>
+            <a class="boton boton-secundario" href="{% url 'procesamientos:tdv_europa_cargar' %}">Volver a adjuntar archivos</a>
           </div>
         {% endif %}
       </aside>

@@ -430,34 +430,34 @@ main {
               {{ procesamiento.creado_en|default:"—" }}
             </div>
           </div>
-        </section>
 
-        <div class="incidencias">
-          <section class="tarjeta tarjeta-error">
-            <p class="seccion-titulo">Errores</p>
-            {% if procesamiento.errores %}
-              <ul class="lista errores">
-                {% for incidencia in procesamiento.errores %}
-                  <li>{{ incidencia.mensaje }}</li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="vacio">Sin errores.</p>
-            {% endif %}
-          </section>
-          <section class="tarjeta tarjeta-aviso">
-            <p class="seccion-titulo">Advertencias</p>
-            {% if procesamiento.advertencias %}
-              <ul class="lista advertencias">
-                {% for incidencia in procesamiento.advertencias %}
-                  <li>{{ incidencia.mensaje }}</li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="vacio">Sin advertencias.</p>
-            {% endif %}
-          </section>
-        </div>
+          <div class="incidencias">
+            <section class="tarjeta tarjeta-error">
+              <p class="seccion-titulo">Errores</p>
+              {% if procesamiento.errores %}
+                <ul class="lista errores">
+                  {% for incidencia in procesamiento.errores %}
+                    <li>{{ incidencia.mensaje }}</li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="vacio">Sin errores.</p>
+              {% endif %}
+            </section>
+            <section class="tarjeta tarjeta-aviso">
+              <p class="seccion-titulo">Advertencias</p>
+              {% if procesamiento.advertencias %}
+                <ul class="lista advertencias">
+                  {% for incidencia in procesamiento.advertencias %}
+                    <li>{{ incidencia.mensaje }}</li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="vacio">Sin advertencias.</p>
+              {% endif %}
+            </section>
+          </div>
+        </section>
 
         <section class="tarjeta tabla-scroll">
           <div class="cabecera-bloque">
@@ -640,8 +640,8 @@ main {
     </div>
 
     <div class="acciones-finales">
-      <a class="boton boton-secundario" href="{% url 'procesamientos:panel' %}">
-        ← Volver al panel de control
+      <a class="boton boton-secundario" href="{% url 'procesamientos:visafruits_cargar' %}">
+        ← Volver a adjuntar archivos
       </a>
     </div>
   </main>

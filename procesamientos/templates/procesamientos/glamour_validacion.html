@@ -393,36 +393,36 @@ main { margin: 0 auto; padding: 0 0 1.5rem; }
               {% endif %}
             </div>
           </div>
-        </section>
 
-        {% if procesamiento.errores or procesamiento.advertencias %}
-        <div class="incidencias">
-          <section class="tarjeta tarjeta-error">
-            <p class="seccion-titulo">Errores</p>
-            {% if procesamiento.errores %}
-              <ul class="lista errores">
-                {% for incidencia in procesamiento.errores %}
-                  <li>{{ incidencia.mensaje }}</li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="vacio">Sin errores.</p>
-            {% endif %}
-          </section>
-          <section class="tarjeta tarjeta-aviso">
-            <p class="seccion-titulo">Advertencias</p>
-            {% if procesamiento.advertencias %}
-              <ul class="lista advertencias">
-                {% for incidencia in procesamiento.advertencias %}
-                  <li>{{ incidencia.mensaje }}</li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="vacio">Sin advertencias.</p>
-            {% endif %}
-          </section>
-        </div>
-        {% endif %}
+          {% if procesamiento.errores or procesamiento.advertencias %}
+          <div class="incidencias">
+            <section class="tarjeta tarjeta-error">
+              <p class="seccion-titulo">Errores</p>
+              {% if procesamiento.errores %}
+                <ul class="lista errores">
+                  {% for incidencia in procesamiento.errores %}
+                    <li>{{ incidencia.mensaje }}</li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="vacio">Sin errores.</p>
+              {% endif %}
+            </section>
+            <section class="tarjeta tarjeta-aviso">
+              <p class="seccion-titulo">Advertencias</p>
+              {% if procesamiento.advertencias %}
+                <ul class="lista advertencias">
+                  {% for incidencia in procesamiento.advertencias %}
+                    <li>{{ incidencia.mensaje }}</li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="vacio">Sin advertencias.</p>
+              {% endif %}
+            </section>
+          </div>
+          {% endif %}
+        </section>
 
         <div class="bloque-tablas">
           <section class="tarjeta">
