@@ -43,6 +43,21 @@
   --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.04);
   --font-ui: "IBM Plex Sans", "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Alias heredados de los <style> de las pantallas. */
+  --acento-oscuro: #111111;
+  --acento-proceso: #111111;
+  --acento-suave: #eeeeee;
+  --aviso: #111111;
+  --borde: #e6e6e6;
+  --error: #111111;
+  --fondo: #f5f5f5;
+  --ok: #111111;
+  --panel: #111111;
+  --panel-suave: #111111;
+  --suave: #f0f0f0;
+  --tarjeta: #ffffff;
+  --texto: #111111;
 }
 
 * { box-sizing: border-box; }
@@ -1104,3 +1119,72 @@ a.enlace:hover { text-decoration: underline; }
     grid-template-columns: 1fr;
   }
 }
+
+/* ——— Reglas subidas desde los <style> de las pantallas ——— */
+.advertencias { color: #9f1239; }
+.alerta-destino { background: #eeeeee; border: 1px solid #111111; border-radius: 12px; padding: 0.85rem; margin-bottom: 0.85rem; color: var(--aviso); font-size: 0.9rem; }
+.aviso-registro { margin: 0 0 1rem; padding: 0.75rem 1rem; background: #dce8df; border: 1px solid #eeeeee; border-radius: var(--radius-sm); color: var(--acento-oscuro); font-size: 0.95rem; }
+.bloque-precio-fijo { display: grid; gap: 1rem; padding: 1rem; border-radius: var(--radius); background: var(--suave); border: 1px dashed var(--borde); }
+.campo-checkbox { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; }
+.envoltorio { max-width: 1280px; margin: 0 auto; padding: 0 0 1.5rem; }
+.estado-pendiente_mapeo_gastos { background: #111111; color: var(--aviso); }
+.estado-requiere_destino { background: #111111; color: var(--aviso); }
+.etiqueta-fijo { display: inline-block; margin-left: 0.35rem; font-size: 0.68rem; font-weight: 700; color: var(--acento-oscuro); background: var(--acento-suave); border-radius: var(--radius-sm); padding: 0.1rem 0.4rem; }
+.fila-dos { display: grid; grid-template-columns: 1fr 1.4fr; gap: 1rem; }
+.metricas { display: grid; gap: 0.75rem; margin-bottom: 1.15rem; }
+.nota-guia { margin: 1rem 0 0; padding-top: 0.9rem; border-top: 1px solid var(--borde); font-size: 0.84rem; color: var(--muted); line-height: 1.45; }
+.nota-guia a { color: var(--acento-oscuro); font-weight: 600; text-decoration: none; }
+.nota-guia a:hover { text-decoration: underline; }
+.panel-resultado { background: #fff; border: 1px solid var(--borde); border-radius: var(--radius); padding: 1.25rem; position: sticky; top: 1rem; }
+.panel-resultado h2 { margin: 0 0 0.35rem; font-size: 1.15rem; color: var(--texto); text-transform: none; letter-spacing: 0; }
+.pasos li { background: var(--suave); border: 1px solid var(--borde); border-radius: var(--radius-sm); padding: 0.75rem 0.85rem; }
+.rubro { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(220px, 1fr); gap: 1rem; align-items: end; padding: 0.85rem 0; border-bottom: 1px solid var(--borde); }
+.rubro .monto { color: var(--muted); font-size: 0.88rem; }
+.rubro strong { display: block; font-size: 0.95rem; }
+.rubro:last-child { border-bottom: 0; }
+.rubros-pdf { font-size: 0.8rem; color: var(--muted); }
+.tarjeta-formulario, .tarjeta-guia { border-radius: var(--radius); box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06); }
+.tarjeta-guia { background: var(--tarjeta); color: var(--texto); border: 1px solid var(--borde); box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06); padding: 1.2rem 1.15rem; }
+.tarjeta-guia > p { margin: 0 0 1rem; color: var(--muted); line-height: 1.45; font-size: 0.88rem; }
+.tarjeta-guia h2 { margin: 0 0 0.45rem; font-size: 1.05rem; font-weight: 650; }
+.tarjeta-guia::after { display: none; }
+a.boton-suave { background: #fff; color: var(--texto); border: 1px solid var(--borde); }
+a.boton-suave:hover { background: var(--suave); }
+
+@media (max-width: 760px) {
+  .rubro { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  .panel-resultado { position: static; }
+}
+
+@media (max-width: 960px) {
+  .acciones-form { justify-content: stretch; }
+  .fila-dos { grid-template-columns: 1fr; }
+}
+
+/* ——— Ancho del área de contenido según el tipo de pantalla ——— */
+.contenido-angosto main { max-width: 900px; }
+.contenido-medio main { max-width: 1180px; }
+.contenido-ancho main { max-width: 1200px; }
+
+/* ——— Reglas subidas desde los <style> de las pantallas ——— */
+.acciones-finales { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+.acciones-form { display: flex; justify-content: flex-start; padding-top: 0.35rem; }
+.campo-error { color: var(--error); font-size: 0.9rem; margin-top: 0.35rem; }
+.etiqueta-sinprecio { display: inline-block; margin-left: 0.35rem; font-size: 0.72rem; font-weight: 700; color: var(--error); background: #eeeeee; border-radius: var(--radius-sm); padding: 0.1rem 0.4rem; }
+.intro-corta { margin: 0.1rem 0 0; color: var(--muted); font-size: 0.95rem; max-width: 36rem; line-height: 1.45; }
+.panel-acciones { display: grid; gap: 0.5rem; }
+.pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; position: relative; z-index: 1; }
+.pasos span { display: block; font-size: 0.88rem; opacity: 0.85; line-height: 1.4; }
+.pasos strong { display: block; margin-bottom: 0.2rem; font-size: 0.95rem; }
+
+/* ——— Reglas subidas desde los <style> de las pantallas ——— */
+.etiqueta-modificado { display: inline-block; margin-left: 0.35rem; font-size: 0.72rem; font-weight: 700; color: var(--aviso); background: #111111; border-radius: var(--radius-sm); padding: 0.1rem 0.4rem; }
+.mensajes { list-style: none; margin: 0 0 1rem; padding: 0; }
+.mensajes li { background: #f1f5f9; border: 1px solid var(--borde); color: var(--texto); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 0.5rem; }
+.nav-volver { margin: 0 0 1rem; }
+.tarjeta-formulario { background: var(--tarjeta); border: 1px solid var(--borde); padding: 1.6rem 1.55rem 1.45rem; }
+.tarjeta-formulario h2 { margin: 0 0 0.25rem; font-size: 1.2rem; }
+button.procesando { background: #111111; color: #ffffff; cursor: wait; opacity: 0.95; }

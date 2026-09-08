@@ -1,356 +1,194 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Validar liquidación FRU&VER</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=pasos-generacion">
-  <style>
-    :root {
-      --fondo: #f5f5f5;
-      --tarjeta: #ffffff;
-      --suave: #f0f0f0;
-      --acento: #111111;
-      --acento-oscuro: #111111;
-      --acento-proceso: #111111;
-      --panel: #111111;
-      --panel-suave: #111111;
-      --texto: #111111;
-      --muted: #6b6b6b;
-      --borde: #e6e6e6;
-      --error: #111111;
-    }
+{% extends "procesamientos/base.html" %}
 
-    * { box-sizing: border-box; }
+{% block titulo %}Validar liquidación FRU&VER{% endblock %}
+{% block clases_contenido %} modulo-vista{% endblock %}
+{% block estilos %}
+    <style>
+/* body layout: tdv-app.css */
 
-    /* body layout: tdv-app.css */
+      .envoltorio {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 0 1.5rem;
+      }
 
-    .envoltorio {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 0 1.5rem;
-    }
+      .cabecera {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.35rem;
+        margin-bottom: 1.25rem;
+      }
 
-    .cabecera {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.35rem;
-      margin-bottom: 1.25rem;
-    }
+      .nav-volver a {
+        color: var(--muted);
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.92rem;
+      }
 
-    .nav-volver { margin: 0 0 0.1rem; }
+      .nav-volver a:hover {
+   color: var(--acento-oscuro);
+   text-decoration: none;
+ }
 
-    .nav-volver a {
-      color: var(--muted);
-      font-weight: 600;
-      text-decoration: none;
-      font-size: 0.92rem;
-    }
+      h1 {
+        margin: 0;
+        font-size: clamp(1.7rem, 2.2vw, 2rem);
+      }
 
-    .nav-volver a:hover {
-      color: var(--acento-oscuro);
-      text-decoration: underline;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(1.7rem, 2.2vw, 2rem);
-    }
-
-    .intro-corta {
-      margin: 0.1rem 0 0;
-      color: var(--muted);
-      font-size: 0.95rem;
-      max-width: 36rem;
-      line-height: 1.45;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
-      gap: 1.25rem;
-      align-items: start;
-    }
-
-    .tarjeta-formulario,
-    .tarjeta-guia {
-      border-radius: var(--radius);
-      box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
-    }
-
-    .tarjeta-formulario {
-      background: var(--tarjeta);
-      border: 1px solid var(--borde);
-      padding: 1.6rem 1.55rem 1.45rem;
-    }
-
-    .tarjeta-formulario h2 {
-      margin: 0 0 0.25rem;
-      font-size: 1.2rem;
-    }
-
-    .tarjeta-formulario .subtitulo {
-      margin: 0 0 1.35rem;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    form {
-      display: grid;
-      gap: 1.1rem;
-    }
-
-    .fila-tres {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1.3fr 1fr;
-      gap: 1rem;
-    }
-
-    .campo label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 0.3rem;
-    }
-
-    .campo .descripcion {
-      margin: 0 0 0.45rem;
-      color: var(--muted);
-      font-size: 0.88rem;
-      line-height: 1.35;
-    }
-
-    input[type="number"],
-    input[type="text"],
-    input[type="file"],
-    select {
-      width: 100%;
-      padding: 0.8rem 0.95rem;
-      border: 1px solid var(--borde);
-      border-radius: var(--radius-sm);
-      font: inherit;
-      background: #f5f5f5;
-      color: var(--texto);
-    }
-
-    input[type="file"] {
-      background: #f5f5f5;
-      padding: 0.7rem 0.85rem;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: #111111;
-      box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.28);
-    }
-
-    .ayuda {
-      margin: 0.4rem 0 0;
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-
-    .bloque-archivos {
-      display: grid;
-      gap: 1rem;
-      padding-top: 0.25rem;
-      border-top: 1px dashed var(--borde);
-    }
-
-    .bloque-archivos > .titulo-bloque {
-      margin: 0.35rem 0 0;
-      font-size: 0.8rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-weight: 700;
-    }
-
-    .bloque-precio-fijo {
-      display: grid;
-      gap: 1rem;
-      padding: 1rem;
-      border-radius: var(--radius);
-      background: var(--suave);
-      border: 1px dashed var(--borde);
-    }
-
-    .bloque-precio-fijo.oculto { display: none; }
-
-    .campo-checkbox {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      font-weight: 600;
-    }
-
-    .campo-checkbox input {
-      width: 1.15rem;
-      height: 1.15rem;
-    }
-
-    .fila-precio-fijo {
-      display: grid;
-      grid-template-columns: 1fr 1fr 0.8fr;
-      gap: 1rem;
-    }
-
-    .errores,
-    .error-proceso {
-      background: #eeeeee;
-      border: 1px solid #111111;
-      color: var(--error);
-      border-radius: var(--radius-sm);
-      padding: 0.85rem 1rem;
-      margin: 0 0 1rem;
-    }
-
-    .errores ul {
-      margin: 0.4rem 0 0;
-      padding-left: 1.2rem;
-    }
-
-    .campo-error {
-      color: var(--error);
-      font-size: 0.9rem;
-      margin-top: 0.35rem;
-    }
-
-    .acciones-form {
-      display: flex;
-      justify-content: flex-start;
-      padding-top: 0.35rem;
-    }
-
-    button {
-      border: 0;
-      border-radius: var(--radius-sm);
-      background: var(--acento);
-      color: #ffffff;
-      font: inherit;
-      font-weight: 700;
-      padding: 0.9rem 1.55rem;
-      cursor: pointer;
-      min-width: 180px;
-      transition: background 0.15s ease, opacity 0.15s ease;
-    }
-
-    button:hover, button:focus, button:active {
-      background: #111111;
-      color: #ffffff;
-    }
-
-    button.procesando {
-      background: #111111;
-      color: #ffffff;
-      cursor: wait;
-      opacity: 0.95;
-    }
-
-    button:disabled {
-      cursor: wait;
-    }
-
-        .tarjeta-guia {
-      background: var(--tarjeta);
-      color: var(--texto);
-      border: 1px solid var(--borde);
-      box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
-      padding: 1.2rem 1.15rem;
-    }
-
-    .tarjeta-guia::after { display: none; }
-
-    .tarjeta-guia h2 {
-      margin: 0 0 0.45rem;
-      font-size: 1.05rem;
-      font-weight: 650;
-    }
-
-    .tarjeta-guia > p {
-      margin: 0 0 1rem;
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: 0.88rem;
-    }
-
-    .pasos {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: 0.75rem;
-      position: relative;
-      z-index: 1;
-    }
-
-        .pasos li {
-      background: var(--suave);
-      border: 1px solid var(--borde);
-      border-radius: var(--radius-sm);
-      padding: 0.75rem 0.85rem;
-    }
-
-    .pasos strong {
-      display: block;
-      margin-bottom: 0.2rem;
-      font-size: 0.95rem;
-    }
-
-    .pasos span {
-      display: block;
-      font-size: 0.88rem;
-      opacity: 0.85;
-      line-height: 1.4;
-    }
-
-        .nota-guia {
-      margin: 1rem 0 0;
-      padding-top: 0.9rem;
-      border-top: 1px solid var(--borde);
-      font-size: 0.84rem;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
-    .nota-guia a {
-      color: var(--acento-oscuro);
-      font-weight: 600;
-      text-decoration: none;
-    }
-
-    .nota-guia a:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 960px) {
       .layout {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
+        gap: 1.25rem;
+        align-items: start;
       }
 
-      .fila-tres,
+      .tarjeta-formulario .subtitulo {
+        margin: 0 0 1.35rem;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      form {
+        display: grid;
+        gap: 1.1rem;
+      }
+
+      .fila-tres {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1.3fr 1fr;
+        gap: 1rem;
+      }
+
+      .campo label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+      }
+
+      .campo .descripcion {
+        margin: 0 0 0.45rem;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.35;
+      }
+
+      input[type="number"],
+      input[type="text"],
+      input[type="file"],
+      select {
+        width: 100%;
+        padding: 0.8rem 0.95rem;
+        border: 1px solid var(--borde);
+        border-radius: var(--radius-sm);
+        font: inherit;
+        background: #f5f5f5;
+        color: var(--texto);
+      }
+
+      input[type="file"] {
+        background: #f5f5f5;
+        padding: 0.7rem 0.85rem;
+      }
+
+      input:focus, select:focus {
+        outline: none;
+        border-color: #111111;
+        box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.28);
+      }
+
+      .ayuda {
+        margin: 0.4rem 0 0;
+        font-size: 0.88rem;
+        color: var(--muted);
+      }
+
+      .bloque-archivos {
+        display: grid;
+        gap: 1rem;
+        padding-top: 0.25rem;
+        border-top: 1px dashed var(--borde);
+      }
+
+      .bloque-archivos > .titulo-bloque {
+        margin: 0.35rem 0 0;
+        font-size: 0.8rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .bloque-precio-fijo.oculto { display: none; }
+
+      .campo-checkbox input {
+        width: 1.15rem;
+        height: 1.15rem;
+      }
+
       .fila-precio-fijo {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 1fr 1fr 0.8fr;
+        gap: 1rem;
       }
 
-      .acciones-form {
-        justify-content: stretch;
+      .errores,
+      .error-proceso {
+        background: #eeeeee;
+        border: 1px solid #111111;
+        color: var(--error);
+        border-radius: var(--radius-sm);
+        padding: 0.85rem 1rem;
+        margin: 0 0 1rem;
+      }
+
+      .errores ul {
+        margin: 0.4rem 0 0;
+        padding-left: 1.2rem;
       }
 
       button {
-        width: 100%;
+        border: 0;
+        border-radius: var(--radius-sm);
+        background: var(--acento);
+        color: #ffffff;
+        font: inherit;
+        font-weight: 700;
+        padding: 0.9rem 1.55rem;
+        cursor: pointer;
+        min-width: 180px;
+        transition: background 0.15s ease, opacity 0.15s ease;
       }
-    }
-  </style>
-</head>
-<body class="tdv-app">
-  {% include "procesamientos/_sidebar.html" %}
-  <div class="contenido modulo-vista">
-  <div class="envoltorio">
+
+      button:hover, button:focus, button:active {
+        background: #111111;
+        color: #ffffff;
+      }
+
+      button:disabled {
+        cursor: wait;
+      }
+
+      @media (max-width: 960px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .fila-tres,
+        .fila-precio-fijo {
+          grid-template-columns: 1fr;
+        }
+
+        button {
+          width: 100%;
+        }
+      }
+    </style>
+{% endblock %}
+
+{% block contenido %}
+<div class="envoltorio">
     <header class="cabecera cabecera-modulo">
       <p class="nav-volver">
         <a href="{% url 'procesamientos:panel' %}">← Panel de control</a>
@@ -517,6 +355,4 @@
       }
     })();
   </script>
-  </div>
-</body>
-</html>
+{% endblock %}

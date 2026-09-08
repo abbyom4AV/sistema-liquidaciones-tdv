@@ -1,79 +1,72 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Panel de control — Sistema TDV</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'procesamientos/tdv-app.css' %}?v=pasos-generacion">
-  <style>
-    .resumen {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.95rem;
-      margin-bottom: 1.35rem;
-    }
-    .dato {
-      border-radius: var(--radius);
-      padding: 1.2rem 1.25rem;
-      background: #ffffff;
-      box-shadow: var(--shadow);
-    }
-    .dato strong {
-      display: block;
-      color: var(--muted);
-      font-size: 0.7rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-bottom: 0.35rem;
-      font-weight: 600;
-    }
-    .dato span {
-      font-size: 1.8rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-    }
-    .dato.destacado {
-      background: #111111;
-      color: #ffffff;
-    }
-    .dato.destacado strong { color: rgba(255, 255, 255, 0.65); }
-    .dato.destacado span { color: #ffffff; }
-    .seccion-titulo {
-      margin: 0 0 0.85rem;
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-    .etiqueta {
-      display: inline-block;
-      width: fit-content;
-      padding: 0.2rem 0.55rem;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      font-weight: 650;
-    }
-    .etiqueta-ok {
-      background: #111111;
-      color: #ffffff;
-    }
-    .etiqueta-prox {
-      background: #efefef;
-      color: var(--muted);
-    }
-    @media (max-width: 900px) {
-      .resumen { grid-template-columns: 1fr; }
-    }
-  </style>
-</head>
-<body class="tdv-app">
-  {% include "procesamientos/_sidebar.html" %}
+{% extends "procesamientos/base.html" %}
 
-  <div class="contenido">
-    <header class="cabecera">
+{% block titulo %}Panel de control — Sistema TDV{% endblock %}
+{% block estilos %}
+    <style>
+      .resumen {
+   display: grid;
+   grid-template-columns: repeat(3, minmax(0, 1fr));
+   gap: 0.9rem 1rem;
+   margin-bottom: 1.35rem;
+ }
+      .dato {
+        border-radius: var(--radius);
+        padding: 1.2rem 1.25rem;
+        background: #ffffff;
+        box-shadow: var(--shadow);
+      }
+      .dato strong {
+   display: block;
+   color: var(--muted);
+   font-size: 0.78rem;
+   letter-spacing: 0.06em;
+   text-transform: uppercase;
+   margin-bottom: 0.2rem;
+   font-weight: 600;
+ }
+      .dato span {
+        font-size: 1.8rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+      .dato.destacado {
+        background: #111111;
+        color: #ffffff;
+      }
+      .dato.destacado strong { color: rgba(255, 255, 255, 0.65); }
+      .dato.destacado span { color: #ffffff; }
+      .seccion-titulo {
+   margin: 0 0 0.75rem;
+   font-size: 0.78rem;
+   font-weight: 700;
+   letter-spacing: 0.05em;
+   text-transform: uppercase;
+   color: var(--muted);
+ }
+      .etiqueta {
+        display: inline-block;
+        width: fit-content;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 650;
+      }
+      .etiqueta-ok {
+        background: #111111;
+        color: #ffffff;
+      }
+      .etiqueta-prox {
+        background: #efefef;
+        color: var(--muted);
+      }
+      @media (max-width: 900px) {
+        .resumen { grid-template-columns: 1fr; }
+      }
+    </style>
+{% endblock %}
+
+{% block contenido %}
+<header class="cabecera">
       <div>
         <p class="cabecera-kicker">Operaciones · TDV</p>
         <h1>Panel de control</h1>
@@ -161,6 +154,4 @@
         </p>
       {% endif %}
     </section>
-  </div>
-</body>
-</html>
+{% endblock %}

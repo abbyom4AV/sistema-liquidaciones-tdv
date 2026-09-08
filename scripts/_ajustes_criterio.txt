@@ -1,0 +1,462 @@
+dimanno_cargar.html	.nav-volver	margin	0 0 0.1rem	0 0 1rem
+dimanno_cargar.html	.nav-volver a:hover	text-decoration	underline	none
+dimanno_destino_resolver.html	.nav-volver	margin	0 0 1.25rem	0 0 1rem
+dimanno_destino_resolver.html	.nav-volver a	color	var(--acento-oscuro)	var(--muted)
+dimanno_destino_resolver.html	h1	margin	0 0 0.75rem	0
+dimanno_destino_resolver.html	h1	font-size	1.9rem	clamp(1.7rem, 2.2vw, 2rem)
+dimanno_destino_resolver.html	.resumen	gap	0.75rem 1rem	0.9rem 1rem
+dimanno_destino_resolver.html	.dato strong	font-size	0.85rem	0.78rem
+dimanno_destino_resolver.html	.estado	font-weight	600	700
+dimanno_destino_resolver.html	.estado	font-size	0.9rem	0.85rem
+dimanno_destino_resolver.html	.estado-listo	background	#dce8df	var(--acento-suave)
+dimanno_destino_resolver.html	.estado-listo	color	var(--ok)	var(--acento-oscuro)
+dimanno_destino_resolver.html	.acciones	gap	0.75rem	0.65rem
+dimanno_gastos_editar.html	.nav-volver	margin	0 0 1.25rem	0 0 1rem
+dimanno_gastos_editar.html	.nav-volver a	color	var(--acento-oscuro)	var(--muted)
+dimanno_gastos_editar.html	h1	margin	0 0 0.75rem	0
+dimanno_gastos_editar.html	h1	font-size	1.9rem	clamp(1.7rem, 2.2vw, 2rem)
+dimanno_gastos_editar.html	.resumen	gap	0.75rem 1rem	0.9rem 1rem
+dimanno_gastos_editar.html	.dato strong	font-size	0.85rem	0.78rem
+dimanno_gastos_editar.html	table	font-size	0.95rem	0.93rem
+dimanno_gastos_editar.html	th, td	padding	0.6rem 0.4rem	0.5rem 0.3rem
+dimanno_gastos_editar.html	th	font-size	(omitido)	0.82rem
+dimanno_gastos_editar.html	th	text-transform	(omitido)	uppercase
+dimanno_gastos_editar.html	th	letter-spacing	(omitido)	0.03em
+dimanno_gastos_editar.html	.acciones	gap	0.75rem	0.65rem
+dimanno_generacion_detalle.html	.nav-volver a:hover	color	var(--acento)	var(--acento-oscuro)
+dimanno_generacion_detalle.html	.nav-volver a:hover	text-decoration	(omitido)	none
+dimanno_generacion_detalle.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+dimanno_generacion_detalle.html	.layout	gap	1rem	1.25rem
+dimanno_generacion_detalle.html	.tarjeta	box-shadow	0 8px 20px rgba(15, 23, 42, 0.04)	var(--shadow)
+dimanno_generacion_detalle.html	th, td	padding	0.55rem 0.2rem	0.5rem 0.3rem
+dimanno_generacion_detalle.html	th	text-transform	(omitido)	uppercase
+dimanno_generacion_detalle.html	th	letter-spacing	(omitido)	0.03em
+dimanno_validacion.html	.nav-volver	margin	0 0 0.85rem	0 0 1rem
+dimanno_validacion.html	.nav-volver a:hover	text-decoration	(omitido)	none
+dimanno_validacion.html	.cabecera	gap	1rem	0.35rem
+dimanno_validacion.html	.cabecera	margin-bottom	1.1rem	1.25rem
+dimanno_validacion.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+dimanno_validacion.html	.mensajes li	color	var(--acento-oscuro)	var(--texto)
+dimanno_validacion.html	.mensajes li	border	1px solid #eeeeee	1px solid var(--borde)
+dimanno_validacion.html	.mensajes li	background	var(--acento-suave)	#f1f5f9
+dimanno_validacion.html	.tarjeta	padding	1.1rem 1.2rem	1.2rem 1.25rem
+dimanno_validacion.html	.dato strong	font-size	0.75rem	0.78rem
+dimanno_validacion.html	.dato strong	margin-bottom	0.15rem	0.2rem
+dimanno_validacion.html	th	font-size	0.78rem	0.82rem
+eurobanan_cargar.html	.nav-volver	margin	0 0 0.1rem	0 0 1rem
+eurobanan_cargar.html	.nav-volver a:hover	text-decoration	underline	none
+eurobanan_generacion_detalle.html	.nav-volver a:hover	color	var(--acento)	var(--acento-oscuro)
+eurobanan_generacion_detalle.html	.nav-volver a:hover	text-decoration	(omitido)	none
+eurobanan_generacion_detalle.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+eurobanan_generacion_detalle.html	.layout	gap	1rem	1.25rem
+eurobanan_generacion_detalle.html	.tarjeta	box-shadow	0 8px 20px rgba(15, 23, 42, 0.04)	var(--shadow)
+eurobanan_generacion_detalle.html	th, td	padding	0.55rem 0.2rem	0.5rem 0.3rem
+eurobanan_generacion_detalle.html	th	text-transform	(omitido)	uppercase
+eurobanan_generacion_detalle.html	th	letter-spacing	(omitido)	0.03em
+eurobanan_mapear_gastos.html	h1	margin	0 0 0.35rem	0
+eurobanan_mapear_gastos.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+eurobanan_mapear_gastos.html	.acciones	gap	(omitido)	0.65rem
+eurobanan_mapear_gastos.html	button	padding	0.85rem 1.45rem	0.9rem 1.55rem
+eurobanan_validacion.html	.nav-volver	margin	0 0 0.85rem	0 0 1rem
+eurobanan_validacion.html	.nav-volver a:hover	text-decoration	(omitido)	none
+eurobanan_validacion.html	.cabecera	gap	1rem	0.35rem
+eurobanan_validacion.html	.cabecera	margin-bottom	1.1rem	1.25rem
+eurobanan_validacion.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+eurobanan_validacion.html	.mensajes li	color	var(--acento-oscuro)	var(--texto)
+eurobanan_validacion.html	.mensajes li	border	1px solid #eeeeee	1px solid var(--borde)
+eurobanan_validacion.html	.mensajes li	background	var(--acento-suave)	#f1f5f9
+eurobanan_validacion.html	.tarjeta	padding	1.1rem 1.2rem	1.2rem 1.25rem
+eurobanan_validacion.html	.dato strong	font-size	0.75rem	0.78rem
+eurobanan_validacion.html	.dato strong	margin-bottom	0.15rem	0.2rem
+eurobanan_validacion.html	th	font-size	0.78rem	0.82rem
+fruver_cargar.html	.nav-volver	margin	0 0 0.1rem	0 0 1rem
+fruver_cargar.html	.nav-volver a:hover	text-decoration	underline	none
+fruver_generacion_detalle.html	.nav-volver a:hover	color	var(--acento)	var(--acento-oscuro)
+fruver_generacion_detalle.html	.nav-volver a:hover	text-decoration	(omitido)	none
+fruver_generacion_detalle.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+fruver_generacion_detalle.html	.layout	gap	1rem	1.25rem
+fruver_generacion_detalle.html	.tarjeta	box-shadow	0 8px 20px rgba(15, 23, 42, 0.04)	var(--shadow)
+fruver_generacion_detalle.html	th, td	padding	0.55rem 0.2rem	0.5rem 0.3rem
+fruver_generacion_detalle.html	th	text-transform	(omitido)	uppercase
+fruver_generacion_detalle.html	th	letter-spacing	(omitido)	0.03em
+fruver_validacion.html	.nav-volver	margin	0 0 0.85rem	0 0 1rem
+fruver_validacion.html	.nav-volver a:hover	text-decoration	(omitido)	none
+fruver_validacion.html	.cabecera	gap	1rem	0.35rem
+fruver_validacion.html	.cabecera	margin-bottom	1.1rem	1.25rem
+fruver_validacion.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+fruver_validacion.html	.mensajes li	color	var(--acento-oscuro)	var(--texto)
+fruver_validacion.html	.mensajes li	border	1px solid #eeeeee	1px solid var(--borde)
+fruver_validacion.html	.mensajes li	background	var(--acento-suave)	#f1f5f9
+fruver_validacion.html	.tarjeta	padding	1.1rem 1.2rem	1.2rem 1.25rem
+fruver_validacion.html	.dato strong	font-size	0.75rem	0.78rem
+fruver_validacion.html	.dato strong	margin-bottom	0.15rem	0.2rem
+fruver_validacion.html	.cabecera-bloque	gap	0.2rem	0.75rem
+fruver_validacion.html	.cabecera-bloque	margin-bottom	0.85rem	0.65rem
+fruver_validacion.html	table	font-size	0.88rem	0.93rem
+fruver_validacion.html	th	font-size	0.75rem	0.82rem
+glamour_cargar.html	.nav-volver	margin	0 0 0.1rem	0 0 1rem
+glamour_cargar.html	.nav-volver a:hover	text-decoration	underline	none
+glamour_cargar.html	button:hover, button:focus, button:active	background	#2a2a2a	#111111
+glamour_cargar.html	button.procesando	color	#111111	#ffffff
+glamour_cargar.html	button.procesando	background	#eeeeee	#111111
+glamour_generacion_detalle.html	.nav-volver	margin	0 0 0.85rem	0 0 1rem
+glamour_generacion_detalle.html	.cabecera	gap	1rem	0.35rem
+glamour_generacion_detalle.html	.cabecera	margin-bottom	1rem	1.25rem
+glamour_generacion_detalle.html	h1	font-size	1.4rem	clamp(1.7rem, 2.2vw, 2rem)
+glamour_generacion_detalle.html	.meta-cabecera	font-size	0.88rem	0.95rem
+glamour_generacion_detalle.html	.layout	gap	0.9rem	1.25rem
+glamour_generacion_detalle.html	.tarjeta	padding	1.05rem 1.1rem	1.2rem 1.25rem
+glamour_generacion_detalle.html	.tarjeta	background	rgba(255, 255, 255, 0.94)	var(--tarjeta)
+glamour_generacion_detalle.html	.tarjeta h2	letter-spacing	0.06em	0.04em
+glamour_generacion_detalle.html	.tarjeta h2	font-size	0.72rem	1rem
+glamour_generacion_detalle.html	.estado	border-radius	999px	var(--radius-sm)
+glamour_generacion_detalle.html	.estado	padding	0.2rem 0.65rem	0.2rem 0.55rem
+glamour_generacion_detalle.html	.estado	font-size	0.78rem	0.85rem
+glamour_generacion_detalle.html	.estado-error	color	#991b1b !important	var(--error)
+glamour_generacion_detalle.html	.estado-error	background	#fef2f2 !important	#fef2f2
+glamour_generacion_detalle.html	.estado-pendiente, .estado-procesando	color	#111111 !important	var(--aviso)
+glamour_generacion_detalle.html	.estado-pendiente, .estado-procesando	background	#efefef !important	#eeeeee
+glamour_generacion_detalle.html	.metrica	border-radius	0	12px
+glamour_generacion_detalle.html	.metrica	padding	0.55rem 0	0.75rem 0.85rem
+glamour_generacion_detalle.html	.metrica	background	transparent	#f8fafc
+glamour_generacion_detalle.html	.metrica strong	color	(omitido)	var(--muted)
+glamour_generacion_detalle.html	.metrica strong	font-size	0.68rem	0.78rem
+glamour_generacion_detalle.html	.metrica strong	margin-bottom	0.2rem	0.15rem
+glamour_generacion_detalle.html	.acciones	gap	0.55rem	0.65rem
+glamour_generacion_detalle.html	a.boton:hover, a.boton:focus, a.boton:active, button.boton:hover, button.boton:focus, button.boton:active	background	#2a2a2a	#eeeeee
+glamour_generacion_detalle.html	a.boton:hover, a.boton:focus, a.boton:active, button.boton:hover, button.boton:focus, button.boton:active	color	#ffffff	#111111
+glamour_generacion_detalle.html	a.boton-secundario	background	transparent	#dfe4db
+glamour_generacion_detalle.html	a.boton-secundario	color	#111111	var(--texto)
+glamour_mapear_gastos.html	h1	margin	0 0 0.35rem	0
+glamour_mapear_gastos.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+glamour_mapear_gastos.html	.acciones	gap	(omitido)	0.65rem
+glamour_mapear_gastos.html	button	padding	0.85rem 1.45rem	0.9rem 1.55rem
+glamour_validacion.html	.nav-volver	margin	0 0 0.85rem	0 0 1rem
+glamour_validacion.html	.cabecera	gap	1rem	0.35rem
+glamour_validacion.html	.cabecera	margin-bottom	1rem	1.25rem
+glamour_validacion.html	h1	font-size	1.4rem	clamp(1.7rem, 2.2vw, 2rem)
+glamour_validacion.html	.meta-cabecera	font-size	0.88rem	0.95rem
+glamour_validacion.html	.mensajes	margin	0 0 0.85rem	0 0 1rem
+glamour_validacion.html	.mensajes li	color	#111111	var(--texto)
+glamour_validacion.html	.mensajes li	border-radius	var(--radius-sm)	12px
+glamour_validacion.html	.mensajes li	padding	0.7rem 0.9rem	0.75rem 1rem
+glamour_validacion.html	.mensajes li	border	1px solid #111111	1px solid var(--borde)
+glamour_validacion.html	.mensajes li	background	#111111	#f1f5f9
+glamour_validacion.html	.mensajes li	margin-bottom	0.45rem	0.5rem
+glamour_validacion.html	.grid-principal	gap	0.9rem	1rem
+glamour_validacion.html	.grid-principal	margin-bottom	(omitido)	1rem
+glamour_validacion.html	.tarjeta	padding	1.05rem 1.1rem	1.2rem 1.25rem
+glamour_validacion.html	.tarjeta	background	rgba(255, 255, 255, 0.94)	var(--tarjeta)
+glamour_validacion.html	.seccion-titulo	margin	0 0 0.7rem	0 0 0.75rem
+glamour_validacion.html	.seccion-titulo	letter-spacing	0.06em	0.05em
+glamour_validacion.html	.seccion-titulo	font-size	0.72rem	0.78rem
+glamour_validacion.html	.metrics	margin-bottom	0.95rem	0.9rem
+glamour_validacion.html	.metric	border-radius	var(--radius-sm)	12px
+glamour_validacion.html	.metric	padding	0.8rem 0.9rem	0.7rem 0.8rem
+glamour_validacion.html	.metric	background	#f7f7f7	var(--suave)
+glamour_validacion.html	.metric strong	font-size	0.68rem	0.75rem
+glamour_validacion.html	.metric strong	margin-bottom	0.25rem	0.2rem
+glamour_validacion.html	.metric span	font-size	0.98rem	1.02rem
+glamour_validacion.html	.estado	border-radius	999px	var(--radius-sm)
+glamour_validacion.html	.estado	padding	0.16rem 0.55rem	0.2rem 0.55rem
+glamour_validacion.html	.estado	font-size	0.78rem	0.85rem
+glamour_validacion.html	.estado-invalido	color	#111111 !important	var(--error)
+glamour_validacion.html	.detalle-grid	padding-top	0.8rem	0.85rem
+glamour_validacion.html	.detalle-grid	gap	0.55rem 0.85rem	0.65rem 1rem
+glamour_validacion.html	.dato strong	font-size	0.68rem	0.78rem
+glamour_validacion.html	.dato strong	margin-bottom	0.15rem	0.2rem
+glamour_validacion.html	.lista	font-size	0.88rem	0.92rem
+glamour_validacion.html	.errores	color	#991b1b	var(--error)
+glamour_validacion.html	.bloque-tablas	gap	0.85rem	1rem
+glamour_validacion.html	.cabecera-bloque	gap	(omitido)	0.75rem
+glamour_validacion.html	.cabecera-bloque	margin-bottom	0.55rem	0.65rem
+glamour_validacion.html	.cabecera-bloque h2	font-size	1rem	1.05rem
+glamour_validacion.html	table	font-size	0.86rem	0.93rem
+glamour_validacion.html	th	font-size	0.68rem	0.82rem
+glamour_validacion.html	th	letter-spacing	0.04em	0.03em
+glamour_validacion.html	.panel-lateral	padding	1.1rem	1.1rem 1.2rem
+glamour_validacion.html	.panel-lateral	background	rgba(255, 255, 255, 0.96)	var(--tarjeta)
+glamour_validacion.html	.panel-lateral h2	margin	0	0 0 0.3rem
+glamour_validacion.html	.panel-lateral h2	font-size	1.05rem	1.1rem
+glamour_validacion.html	.panel-lateral .intro	margin	0	0 0 0.9rem
+glamour_validacion.html	.panel-lateral .intro	font-size	0.86rem	0.9rem
+glamour_validacion.html	.chips	margin-bottom	(omitido)	0.85rem
+glamour_validacion.html	.chip	border-radius	var(--radius-sm)	10px
+glamour_validacion.html	.chip	padding	0.55rem 0.65rem	0.6rem 0.75rem
+glamour_validacion.html	.chip	background	#f5f5f5	var(--suave)
+glamour_validacion.html	.chip	font-size	0.86rem	0.9rem
+glamour_validacion.html	.chip strong	letter-spacing	0.04em	0.03em
+glamour_validacion.html	.chip strong	color	(omitido)	var(--muted)
+glamour_validacion.html	.chip strong	font-size	0.66rem	0.72rem
+glamour_validacion.html	.chip strong	margin-bottom	0.2rem	0.15rem
+glamour_validacion.html	.cta-generacion	color	#111111	var(--muted)
+glamour_validacion.html	.cta-generacion	border-radius	var(--radius-sm)	12px
+glamour_validacion.html	.cta-generacion	padding	0.75rem 0.85rem	0.85rem
+glamour_validacion.html	.cta-generacion	background	#eeeeee	var(--suave)
+glamour_validacion.html	.cta-generacion	font-size	0.88rem	0.92rem
+glamour_validacion.html	.cta-generacion	margin-bottom	(omitido)	0.75rem
+glamour_validacion.html	.cta-generacion strong	margin-bottom	0.15rem	0.2rem
+glamour_validacion.html	.cta-generacion strong	color	(omitido)	var(--texto)
+glamour_validacion.html	a.boton, button.boton	padding	0.7rem 1rem	0.7rem 1.05rem
+glamour_validacion.html	a.boton, button.boton	background	#111111	var(--acento)
+glamour_validacion.html	a.boton, button.boton	border-radius	var(--radius-sm)	12px
+glamour_validacion.html	a.boton:hover, a.boton:focus, a.boton:active, button.boton:hover, button.boton:focus, button.boton:active	background	#2a2a2a	#eeeeee
+glamour_validacion.html	a.boton:hover, a.boton:focus, a.boton:active, button.boton:hover, button.boton:focus, button.boton:active	color	#ffffff	#111111
+glamour_validacion.html	a.boton-secundario, button.boton-secundario	background	transparent	#dfe4db
+glamour_validacion.html	a.boton-secundario, button.boton-secundario	color	#111111	var(--texto)
+ingresos.html	.layout	gap	0.75rem	1.25rem
+ingresos.html	.tarjeta	box-shadow	(omitido)	var(--shadow)
+ingresos.html	.tarjeta	border-radius	(omitido)	var(--radius)
+ingresos.html	.tarjeta	padding	0.9rem 0.95rem 1rem	1.2rem 1.25rem
+ingresos.html	.tarjeta	border	(omitido)	1px solid var(--borde)
+ingresos.html	.tarjeta	background	(omitido)	var(--tarjeta)
+ingresos.html	.tarjeta h2	margin	0 0 0.7rem	0 0 0.85rem
+ingresos.html	.tarjeta h2	letter-spacing	(omitido)	0.04em
+ingresos.html	.tarjeta h2	font-weight	650	700
+ingresos.html	.tarjeta h2	text-transform	(omitido)	uppercase
+ingresos.html	.tarjeta h2	color	(omitido)	var(--muted)
+ingresos.html	.tarjeta h2	font-size	0.92rem	1rem
+kraaijeveld_cargar.html	.nav-volver	margin	0 0 0.1rem	0 0 1rem
+kraaijeveld_cargar.html	.nav-volver a:hover	text-decoration	underline	none
+kraaijeveld_generacion_detalle.html	.nav-volver a:hover	color	var(--acento)	var(--acento-oscuro)
+kraaijeveld_generacion_detalle.html	.nav-volver a:hover	text-decoration	(omitido)	none
+kraaijeveld_generacion_detalle.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+kraaijeveld_generacion_detalle.html	.layout	gap	1rem	1.25rem
+kraaijeveld_generacion_detalle.html	.tarjeta	box-shadow	0 8px 20px rgba(15, 23, 42, 0.04)	var(--shadow)
+kraaijeveld_generacion_detalle.html	th, td	padding	0.55rem 0.2rem	0.5rem 0.3rem
+kraaijeveld_generacion_detalle.html	th	text-transform	(omitido)	uppercase
+kraaijeveld_generacion_detalle.html	th	letter-spacing	(omitido)	0.03em
+kraaijeveld_validacion.html	.nav-volver	margin	0 0 0.85rem	0 0 1rem
+kraaijeveld_validacion.html	.nav-volver a:hover	text-decoration	(omitido)	none
+kraaijeveld_validacion.html	.cabecera	gap	1rem	0.35rem
+kraaijeveld_validacion.html	.cabecera	margin-bottom	1.1rem	1.25rem
+kraaijeveld_validacion.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+kraaijeveld_validacion.html	.mensajes li	color	var(--acento-oscuro)	var(--texto)
+kraaijeveld_validacion.html	.mensajes li	border	1px solid #eeeeee	1px solid var(--borde)
+kraaijeveld_validacion.html	.mensajes li	background	var(--acento-suave)	#f1f5f9
+kraaijeveld_validacion.html	.tarjeta	padding	1.1rem 1.2rem	1.2rem 1.25rem
+kraaijeveld_validacion.html	.dato strong	font-size	0.75rem	0.78rem
+kraaijeveld_validacion.html	.dato strong	margin-bottom	0.15rem	0.2rem
+kraaijeveld_validacion.html	table	font-size	0.88rem	0.93rem
+kraaijeveld_validacion.html	th	font-size	0.75rem	0.82rem
+master_cargar.html	.nav-volver	margin	0 0 0.1rem	0 0 1rem
+master_cargar.html	.nav-volver a:hover	text-decoration	underline	none
+master_gastos_editar.html	.nav-volver	margin	0 0 1.25rem	0 0 1rem
+master_gastos_editar.html	.nav-volver a	color	var(--acento-oscuro)	var(--muted)
+master_gastos_editar.html	h1	margin	0 0 0.75rem	0
+master_gastos_editar.html	h1	font-size	1.9rem	clamp(1.7rem, 2.2vw, 2rem)
+master_gastos_editar.html	.resumen	gap	0.75rem 1rem	0.9rem 1rem
+master_gastos_editar.html	.dato strong	font-size	0.85rem	0.78rem
+master_gastos_editar.html	table	font-size	0.95rem	0.93rem
+master_gastos_editar.html	th, td	padding	0.6rem 0.4rem	0.5rem 0.3rem
+master_gastos_editar.html	th	font-size	(omitido)	0.82rem
+master_gastos_editar.html	th	text-transform	(omitido)	uppercase
+master_gastos_editar.html	th	letter-spacing	(omitido)	0.03em
+master_gastos_editar.html	.acciones	gap	0.75rem	0.65rem
+master_generacion_detalle.html	.nav-volver a:hover	color	var(--acento)	var(--acento-oscuro)
+master_generacion_detalle.html	.nav-volver a:hover	text-decoration	(omitido)	none
+master_generacion_detalle.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+master_generacion_detalle.html	.layout	gap	1rem	1.25rem
+master_generacion_detalle.html	.tarjeta	box-shadow	0 8px 20px rgba(15, 23, 42, 0.04)	var(--shadow)
+master_generacion_detalle.html	th, td	padding	0.55rem 0.2rem	0.5rem 0.3rem
+master_generacion_detalle.html	th	text-transform	(omitido)	uppercase
+master_generacion_detalle.html	th	letter-spacing	(omitido)	0.03em
+master_validacion.html	.nav-volver	margin	0 0 0.85rem	0 0 1rem
+master_validacion.html	.nav-volver a:hover	text-decoration	(omitido)	none
+master_validacion.html	.cabecera	gap	1rem	0.35rem
+master_validacion.html	.cabecera	margin-bottom	1.1rem	1.25rem
+master_validacion.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+master_validacion.html	.mensajes li	color	var(--acento-oscuro)	var(--texto)
+master_validacion.html	.mensajes li	border	1px solid #eeeeee	1px solid var(--borde)
+master_validacion.html	.mensajes li	background	var(--acento-suave)	#f1f5f9
+master_validacion.html	.tarjeta	padding	1.1rem 1.2rem	1.2rem 1.25rem
+master_validacion.html	.dato strong	font-size	0.75rem	0.78rem
+master_validacion.html	.dato strong	margin-bottom	0.15rem	0.2rem
+master_validacion.html	th	font-size	0.78rem	0.82rem
+nufri_cargar.html	.nav-volver	margin	0 0 0.1rem	0 0 1rem
+nufri_cargar.html	.nav-volver a:hover	text-decoration	underline	none
+nufri_generacion_detalle.html	.nav-volver a:hover	color	var(--acento)	var(--acento-oscuro)
+nufri_generacion_detalle.html	.nav-volver a:hover	text-decoration	(omitido)	none
+nufri_generacion_detalle.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+nufri_generacion_detalle.html	.layout	gap	1rem	1.25rem
+nufri_generacion_detalle.html	.tarjeta	box-shadow	0 8px 20px rgba(15, 23, 42, 0.04)	var(--shadow)
+nufri_generacion_detalle.html	th, td	padding	0.55rem 0.2rem	0.5rem 0.3rem
+nufri_generacion_detalle.html	th	text-transform	(omitido)	uppercase
+nufri_generacion_detalle.html	th	letter-spacing	(omitido)	0.03em
+nufri_mapear_gastos.html	h1	margin	0 0 0.35rem	0
+nufri_mapear_gastos.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+nufri_mapear_gastos.html	.acciones	gap	(omitido)	0.65rem
+nufri_mapear_gastos.html	button	padding	0.85rem 1.45rem	0.9rem 1.55rem
+nufri_validacion.html	.nav-volver	margin	0 0 0.85rem	0 0 1rem
+nufri_validacion.html	.nav-volver a:hover	text-decoration	(omitido)	none
+nufri_validacion.html	.cabecera	gap	1rem	0.35rem
+nufri_validacion.html	.cabecera	margin-bottom	1.1rem	1.25rem
+nufri_validacion.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+nufri_validacion.html	.mensajes li	color	var(--acento-oscuro)	var(--texto)
+nufri_validacion.html	.mensajes li	border	1px solid #eeeeee	1px solid var(--borde)
+nufri_validacion.html	.mensajes li	background	var(--acento-suave)	#f1f5f9
+nufri_validacion.html	.tarjeta	padding	1.1rem 1.2rem	1.2rem 1.25rem
+nufri_validacion.html	.dato strong	font-size	0.75rem	0.78rem
+nufri_validacion.html	.dato strong	margin-bottom	0.15rem	0.2rem
+nufri_validacion.html	th	font-size	0.78rem	0.82rem
+orsero_cargar.html	.nav-volver	margin	0 0 0.1rem	0 0 1rem
+orsero_cargar.html	.nav-volver a:hover	text-decoration	underline	none
+orsero_gastos_editar.html	.nav-volver	margin	0 0 1.25rem	0 0 1rem
+orsero_gastos_editar.html	.nav-volver a	color	var(--acento-oscuro)	var(--muted)
+orsero_gastos_editar.html	h1	margin	0 0 0.75rem	0
+orsero_gastos_editar.html	h1	font-size	1.9rem	clamp(1.7rem, 2.2vw, 2rem)
+orsero_gastos_editar.html	.resumen	gap	0.75rem 1rem	0.9rem 1rem
+orsero_gastos_editar.html	.dato strong	font-size	0.85rem	0.78rem
+orsero_gastos_editar.html	table	font-size	0.95rem	0.93rem
+orsero_gastos_editar.html	th, td	padding	0.6rem 0.4rem	0.5rem 0.3rem
+orsero_gastos_editar.html	th	font-size	(omitido)	0.82rem
+orsero_gastos_editar.html	th	text-transform	(omitido)	uppercase
+orsero_gastos_editar.html	th	letter-spacing	(omitido)	0.03em
+orsero_gastos_editar.html	.acciones	gap	0.75rem	0.65rem
+orsero_generacion_detalle.html	.nav-volver a:hover	color	var(--acento)	var(--acento-oscuro)
+orsero_generacion_detalle.html	.nav-volver a:hover	text-decoration	(omitido)	none
+orsero_generacion_detalle.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+orsero_generacion_detalle.html	.layout	gap	1rem	1.25rem
+orsero_generacion_detalle.html	.tarjeta	box-shadow	0 8px 20px rgba(15, 23, 42, 0.04)	var(--shadow)
+orsero_generacion_detalle.html	.estado	font-weight	650	700
+orsero_generacion_detalle.html	.estado	border-radius	var(--radius-pill)	var(--radius-sm)
+orsero_generacion_detalle.html	.estado	padding	0.32rem 0.8rem	0.2rem 0.55rem
+orsero_generacion_detalle.html	.estado	font-size	0.88rem	0.85rem
+orsero_generacion_detalle.html	.estado-pendiente, .estado-procesando	color	#111111	var(--aviso)
+orsero_generacion_detalle.html	.estado-pendiente, .estado-procesando	background	#efefef	#eeeeee
+orsero_generacion_detalle.html	.estado-completado	color	#ffffff	var(--ok)
+orsero_generacion_detalle.html	.estado-completado	background	#111111	#ecfdf5
+orsero_generacion_detalle.html	.estado-error	color	#991b1b	var(--error)
+orsero_generacion_detalle.html	th, td	padding	0.55rem 0.2rem	0.5rem 0.3rem
+orsero_generacion_detalle.html	th	text-transform	(omitido)	uppercase
+orsero_generacion_detalle.html	th	letter-spacing	(omitido)	0.03em
+orsero_validacion.html	.nav-volver	margin	0 0 0.85rem	0 0 1rem
+orsero_validacion.html	.nav-volver a:hover	text-decoration	(omitido)	none
+orsero_validacion.html	.cabecera	gap	1rem	0.35rem
+orsero_validacion.html	.cabecera	margin-bottom	1.1rem	1.25rem
+orsero_validacion.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+orsero_validacion.html	.mensajes li	color	var(--acento-oscuro)	var(--texto)
+orsero_validacion.html	.mensajes li	border	1px solid #eeeeee	1px solid var(--borde)
+orsero_validacion.html	.mensajes li	background	var(--acento-suave)	#f1f5f9
+orsero_validacion.html	.tarjeta	padding	1.1rem 1.2rem	1.2rem 1.25rem
+orsero_validacion.html	.metric strong	margin-bottom	0	0.2rem
+orsero_validacion.html	.detalle-grid	gap	0.75rem 1rem	0.65rem 1rem
+orsero_validacion.html	.dato strong	font-size	0.75rem	0.78rem
+orsero_validacion.html	.dato strong	margin-bottom	0.15rem	0.2rem
+orsero_validacion.html	th	font-size	0.78rem	0.82rem
+panel.html	.resumen	gap	0.95rem	0.9rem 1rem
+panel.html	.dato strong	font-size	0.7rem	0.78rem
+panel.html	.dato strong	margin-bottom	0.35rem	0.2rem
+panel.html	.seccion-titulo	margin	0 0 0.85rem	0 0 0.75rem
+panel.html	.seccion-titulo	letter-spacing	-0.02em	0.05em
+panel.html	.seccion-titulo	text-transform	(omitido)	uppercase
+panel.html	.seccion-titulo	color	(omitido)	var(--muted)
+panel.html	.seccion-titulo	font-size	1.05rem	0.78rem
+sifa_cargar.html	.nav-volver	margin	0 0 0.1rem	0 0 1rem
+sifa_cargar.html	.nav-volver a:hover	text-decoration	underline	none
+sifa_generacion_detalle.html	.nav-volver a:hover	color	var(--acento)	var(--acento-oscuro)
+sifa_generacion_detalle.html	.nav-volver a:hover	text-decoration	(omitido)	none
+sifa_generacion_detalle.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+sifa_generacion_detalle.html	.layout	gap	1rem	1.25rem
+sifa_generacion_detalle.html	.tarjeta	box-shadow	0 8px 20px rgba(15, 23, 42, 0.04)	var(--shadow)
+sifa_validacion.html	.nav-volver	margin	0 0 0.85rem	0 0 1rem
+sifa_validacion.html	.nav-volver a:hover	text-decoration	(omitido)	none
+sifa_validacion.html	.cabecera	gap	1rem	0.35rem
+sifa_validacion.html	.cabecera	margin-bottom	1.1rem	1.25rem
+sifa_validacion.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+sifa_validacion.html	.mensajes li	color	var(--acento-oscuro)	var(--texto)
+sifa_validacion.html	.mensajes li	border	1px solid #eeeeee	1px solid var(--borde)
+sifa_validacion.html	.mensajes li	background	var(--acento-suave)	#f1f5f9
+sifa_validacion.html	.tarjeta	padding	1.1rem 1.2rem	1.2rem 1.25rem
+sifa_validacion.html	.dato strong	font-size	0.75rem	0.78rem
+sifa_validacion.html	.dato strong	margin-bottom	0.15rem	0.2rem
+sifa_validacion.html	table	font-size	0.88rem	0.93rem
+sifa_validacion.html	th	font-size	0.75rem	0.82rem
+tdv_europa_cargar.html	.nav-volver a:hover	text-decoration	underline	none
+tdv_europa_cargar.html	.cabecera	margin-bottom	1.5rem	1.25rem
+tdv_europa_cargar.html	.layout	gap	1.35rem	1.25rem
+tdv_europa_cargar.html	.tarjeta-formulario	padding	1.7rem 1.6rem 1.5rem	1.6rem 1.55rem 1.45rem
+tdv_europa_cargar.html	.tarjeta-formulario h2	margin	0 0 0.35rem	0 0 0.25rem
+tdv_europa_cargar.html	.tarjeta-formulario .subtitulo	margin	0 0 1.4rem	0 0 1.35rem
+tdv_europa_cargar.html	.campo .descripcion	margin	0 0 0.5rem	0 0 0.45rem
+tdv_europa_cargar.html	.ayuda	margin	0.45rem 0 0	0.4rem 0 0
+tdv_europa_cargar.html	.bloque-archivos	padding-top	1.15rem	0.25rem
+tdv_europa_cargar.html	.bloque-archivos	gap	1.1rem	1rem
+tdv_europa_cargar.html	.bloque-archivos > .titulo-bloque	margin	0	0.35rem 0 0
+tdv_europa_cargar.html	.errores, .error-proceso	margin	0 0 1.15rem	0 0 1rem
+tdv_europa_generacion_detalle.html	h1	margin	0 0 .35rem	0
+tdv_europa_generacion_detalle.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+tdv_europa_generacion_detalle.html	.layout	gap	1.15rem	1.25rem
+tdv_europa_generacion_detalle.html	.tarjeta	box-shadow	(omitido)	var(--shadow)
+tdv_europa_generacion_detalle.html	.tarjeta	padding	1.25rem 1.35rem	1.2rem 1.25rem
+tdv_europa_generacion_detalle.html	.resumen	gap	1rem 1.25rem	0.9rem 1rem
+tdv_europa_generacion_detalle.html	.acciones	gap	.75rem	0.65rem
+tdv_europa_validacion.html	.cabecera	gap	(omitido)	0.35rem
+tdv_europa_validacion.html	h1	margin	0 0 .35rem	0
+tdv_europa_validacion.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+tdv_europa_validacion.html	h2	margin	0 0 1rem	0 0 .85rem
+tdv_europa_validacion.html	h2	font-size	1.15rem	1.1rem
+tdv_europa_validacion.html	.meta-cabecera	font-size	(omitido)	0.95rem
+tdv_europa_validacion.html	.grid-principal	gap	1.15rem	1rem
+tdv_europa_validacion.html	.grid-principal	margin-bottom	1.15rem	1rem
+tdv_europa_validacion.html	.tarjeta	box-shadow	(omitido)	var(--shadow)
+tdv_europa_validacion.html	.tarjeta	padding	1.25rem 1.35rem	1.2rem 1.25rem
+tdv_europa_validacion.html	.seccion-titulo	margin	0 0 .85rem	0 0 0.75rem
+tdv_europa_validacion.html	.seccion-titulo	letter-spacing	0.06em	0.05em
+tdv_europa_validacion.html	.seccion-titulo	font-size	.78rem	0.78rem
+tdv_europa_validacion.html	.metrics	gap	.75rem	0.65rem
+tdv_europa_validacion.html	.metrics	margin-bottom	1rem	0.9rem
+tdv_europa_validacion.html	.metric	padding	.75rem .9rem	0.7rem 0.8rem
+tdv_europa_validacion.html	.metric strong	font-weight	(omitido)	600
+tdv_europa_validacion.html	.metric strong	font-size	.75rem	0.75rem
+tdv_europa_validacion.html	.metric strong	margin-bottom	.25rem	0.2rem
+tdv_europa_validacion.html	.incidencias	gap	(omitido)	0.75rem
+tdv_europa_validacion.html	.lista	margin	0 0 1rem	0
+tdv_europa_validacion.html	.lista	padding-left	1.2rem	1.1rem
+tdv_europa_validacion.html	.lista	font-size	(omitido)	0.92rem
+tdv_europa_validacion.html	table	border-collapse	separate	collapse
+tdv_europa_validacion.html	table	font-size	.9rem	0.93rem
+tdv_europa_validacion.html	th, td	padding	.7rem .65rem	0.5rem 0.3rem
+tdv_europa_validacion.html	th	font-size	.78rem	0.82rem
+tdv_europa_validacion.html	th	letter-spacing	0.04em	0.03em
+tdv_europa_validacion.html	tfoot td	padding-top	.85rem	0.7rem
+tdv_europa_validacion.html	.bloque-tablas	gap	1.15rem	1rem
+tdv_europa_validacion.html	a.boton, button.boton	padding	.7rem 1.05rem	0.7rem 1.05rem
+tdv_europa_validacion.html	.cta-generacion	padding	.9rem 1rem	0.85rem
+tdv_europa_validacion.html	.cta-generacion	font-size	(omitido)	0.92rem
+tdv_europa_validacion.html	.cta-generacion	margin-bottom	.85rem	0.75rem
+tdv_europa_validacion.html	.cta-generacion strong	margin-bottom	.25rem	0.2rem
+visafruits_cargar.html	.nav-volver	margin	0 0 0.1rem	0 0 1rem
+visafruits_cargar.html	.nav-volver a:hover	text-decoration	underline	none
+visafruits_gastos_editar.html	.nav-volver	margin	0 0 1.25rem	0 0 1rem
+visafruits_gastos_editar.html	.nav-volver a	color	var(--acento-oscuro)	var(--muted)
+visafruits_gastos_editar.html	h1	margin	0 0 0.75rem	0
+visafruits_gastos_editar.html	h1	font-size	1.9rem	clamp(1.7rem, 2.2vw, 2rem)
+visafruits_gastos_editar.html	.resumen	gap	0.75rem 1rem	0.9rem 1rem
+visafruits_gastos_editar.html	.dato strong	font-size	0.85rem	0.78rem
+visafruits_gastos_editar.html	table	font-size	0.95rem	0.93rem
+visafruits_gastos_editar.html	th, td	padding	0.6rem 0.4rem	0.5rem 0.3rem
+visafruits_gastos_editar.html	th	font-size	(omitido)	0.82rem
+visafruits_gastos_editar.html	th	text-transform	(omitido)	uppercase
+visafruits_gastos_editar.html	th	letter-spacing	(omitido)	0.03em
+visafruits_gastos_editar.html	.acciones	gap	0.75rem	0.65rem
+visafruits_generacion_detalle.html	.nav-volver a:hover	color	var(--acento)	var(--acento-oscuro)
+visafruits_generacion_detalle.html	.nav-volver a:hover	text-decoration	(omitido)	none
+visafruits_generacion_detalle.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+visafruits_generacion_detalle.html	.layout	gap	1rem	1.25rem
+visafruits_generacion_detalle.html	.tarjeta	box-shadow	0 8px 20px rgba(15, 23, 42, 0.04)	var(--shadow)
+visafruits_validacion.html	.nav-volver	margin	0 0 0.85rem	0 0 1rem
+visafruits_validacion.html	.nav-volver a:hover	text-decoration	(omitido)	none
+visafruits_validacion.html	.cabecera	gap	1rem	0.35rem
+visafruits_validacion.html	.cabecera	margin-bottom	1.1rem	1.25rem
+visafruits_validacion.html	h1	font-size	1.85rem	clamp(1.7rem, 2.2vw, 2rem)
+visafruits_validacion.html	.mensajes li	color	var(--acento-oscuro)	var(--texto)
+visafruits_validacion.html	.mensajes li	border	1px solid #eeeeee	1px solid var(--borde)
+visafruits_validacion.html	.mensajes li	background	var(--acento-suave)	#f1f5f9
+visafruits_validacion.html	.tarjeta	padding	1.1rem 1.2rem	1.2rem 1.25rem
+visafruits_validacion.html	.metric strong	margin-bottom	0	0.2rem
+visafruits_validacion.html	.detalle-grid	gap	0.75rem 1rem	0.65rem 1rem
+visafruits_validacion.html	.dato strong	font-size	0.75rem	0.78rem
+visafruits_validacion.html	.dato strong	margin-bottom	0.15rem	0.2rem
+visafruits_validacion.html	th	font-size	0.78rem	0.82rem
+visafruits_validacion.html	.etiqueta-modificado	color	#ffffff	var(--aviso)
