@@ -1,0 +1,51 @@
+name: Pruebas
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Si se empuja dos veces seguidas, cancela la corrida anterior.
+concurrency:
+  group: pruebas-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pruebas:
+    # Tiene que ser Windows: los escritores de Dimanno y Orsero
+    # importan xlwings y pywintypes al cargar el módulo, y esas
+    # librerías solo existen en Windows.
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    env:
+      # Clave de usar y tirar: solo permite que Django arranque en la
+      # corrida. La de producción vive en el .env, fuera del repo.
+      DJANGO_SECRET_KEY: clave-de-uso-exclusivo-en-integracion-continua
+      DJANGO_DEBUG: "False"
+      DJANGO_ALLOWED_HOSTS: 127.0.0.1,localhost
+
+    steps:
+      - name: Traer el código
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Instalar dependencias
+        run: pip install --requirement requirements.txt
+
+      - name: Revisar la configuración del proyecto
+        run: python manage.py check
+
+      - name: Verificar que no falten migraciones
+        # Avisa si alguien cambió los modelos y olvidó generar la
+        # migración correspondiente.
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Correr la suite
+        run: python manage.py test tests --verbosity 2
