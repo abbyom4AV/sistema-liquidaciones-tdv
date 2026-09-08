@@ -2,13 +2,12 @@
 {% load dimanno_extras %}
 
 {% block titulo %}Modificar gastos Master Fruits{% endblock %}
-{% block clases_contenido %} modulo-vista{% endblock %}
+{% block clases_contenido %} modulo-vista contenido-angosto{% endblock %}
 {% block estilos %}
     <style>
 /* body layout: tdv-app.css */
 
       main {
-        max-width: 900px;
         margin: 0 auto;
         padding: 0 0 1.5rem;
       }
@@ -79,12 +78,6 @@
         border-radius: var(--radius-sm);
         padding: 0.85rem 1rem;
         margin-bottom: 1rem;
-      }
-
-      .campo-error {
-        color: var(--error);
-        font-size: 0.9rem;
-        margin-top: 0.3rem;
       }
 
       .acciones {

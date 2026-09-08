@@ -1,13 +1,12 @@
 {% extends "procesamientos/base.html" %}
 
 {% block titulo %}Mapear gastos Glamour{% endblock %}
-{% block clases_contenido %} modulo-vista{% endblock %}
+{% block clases_contenido %} modulo-vista contenido-angosto{% endblock %}
 {% block estilos %}
     <style>
 /* body layout: tdv-app.css */
 
       main {
-        max-width: 900px;
         margin: 0 auto;
         padding: 0 0 1.5rem;
       }
@@ -68,12 +67,6 @@
         border-radius: 12px;
         font: inherit;
         background: #fff;
-      }
-
-      .campo-error {
-        color: var(--error);
-        font-size: 0.88rem;
-        margin-top: 0.35rem;
       }
 
       .acciones {

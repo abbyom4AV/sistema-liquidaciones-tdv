@@ -1,14 +1,13 @@
 {% extends "procesamientos/base.html" %}
 
 {% block titulo %}Generación del archivo Kraaijeveld{% endblock %}
-{% block clases_contenido %} modulo-vista{% endblock %}
+{% block clases_contenido %} modulo-vista contenido-medio{% endblock %}
 {% block meta %}{% if recargar_automaticamente %} <meta http-equiv="refresh" content="10"> {% endif %}{% endblock %}
 {% block estilos %}
     <style>
 /* body layout: tdv-app.css */
 
       main {
-        max-width: 1180px;
         margin: 0 auto;
         padding: 0 0 1.5rem;
       }

@@ -2,11 +2,10 @@
 {% load dimanno_extras %}
 
 {% block titulo %}Resultado de validación VISAFRUITS{% endblock %}
-{% block clases_contenido %} modulo-vista{% endblock %}
+{% block clases_contenido %} modulo-vista contenido-ancho{% endblock %}
 {% block estilos %}
     <style>
 main {
-        max-width: 1200px;
         margin: 0 auto;
         padding: 0 0 1.5rem;
       }
@@ -268,17 +267,6 @@ main {
         padding: 0.1rem 0.4rem;
       }
 
-      .etiqueta-sinprecio {
-        display: inline-block;
-        margin-left: 0.35rem;
-        font-size: 0.72rem;
-        font-weight: 700;
-        color: var(--error);
-        background: #eeeeee;
-        border-radius: var(--radius-sm);
-        padding: 0.1rem 0.4rem;
-      }
-
       .etiqueta-vertical {
         display: inline-block;
         margin-left: 0.35rem;
@@ -288,12 +276,6 @@ main {
         background: #f0e2b6;
         border-radius: var(--radius-sm);
         padding: 0.1rem 0.4rem;
-      }
-
-      .acciones-finales {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.65rem;
       }
 
       a.boton, button.boton {
@@ -343,11 +325,6 @@ main {
         display: block;
         color: var(--texto);
         margin-bottom: 0.2rem;
-      }
-
-      .panel-acciones {
-        display: grid;
-        gap: 0.5rem;
       }
 
       .panel-acciones a.boton,

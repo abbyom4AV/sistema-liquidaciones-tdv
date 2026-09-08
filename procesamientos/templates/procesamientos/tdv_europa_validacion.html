@@ -1,7 +1,7 @@
 {% extends "procesamientos/base.html" %}
 
 {% block titulo %}TDV Europa — Resultado de validación{% endblock %}
-{% block clases_contenido %} modulo-vista{% endblock %}
+{% block clases_contenido %} modulo-vista contenido-ancho{% endblock %}
 {% block estilos %}
     <style>
       :root {
@@ -10,7 +10,6 @@
 
 /* body layout: tdv-app.css */
       main {
-        max-width: 1240px;
         margin: 0 auto;
         padding: 0 0 1.5rem;
       }
@@ -239,7 +238,6 @@
         cursor: pointer;
       }
       a.boton-secundario { background: #dfe4db; color: var(--texto); }
-      .panel-acciones { display: grid; gap: .65rem; }
       .cta-generacion {
         background: var(--suave);
         border-radius: 12px;

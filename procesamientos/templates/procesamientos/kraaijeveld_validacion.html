@@ -2,13 +2,12 @@
 {% load dimanno_extras %}
 
 {% block titulo %}Resultado de validación Kraaijeveld{% endblock %}
-{% block clases_contenido %} modulo-vista{% endblock %}
+{% block clases_contenido %} modulo-vista contenido-ancho{% endblock %}
 {% block estilos %}
     <style>
 /* body layout: tdv-app.css */
 
       main {
-        max-width: 1240px;
         margin: 0 auto;
         padding: 0 0 1.5rem;
       }
@@ -252,23 +251,6 @@
 
       td.num, th.num { text-align: right; white-space: nowrap; }
 
-      .etiqueta-sinprecio {
-        display: inline-block;
-        margin-left: 0.35rem;
-        font-size: 0.68rem;
-        font-weight: 700;
-        color: var(--error);
-        background: #eeeeee;
-        border-radius: var(--radius-sm);
-        padding: 0.1rem 0.4rem;
-      }
-
-      .acciones-finales {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.65rem;
-      }
-
       a.boton, button.boton {
         display: inline-block;
         text-decoration: none;
@@ -310,11 +292,6 @@
         display: block;
         color: var(--texto);
         margin-bottom: 0.2rem;
-      }
-
-      .panel-acciones {
-        display: grid;
-        gap: 0.5rem;
       }
 
       .panel-acciones a.boton,
