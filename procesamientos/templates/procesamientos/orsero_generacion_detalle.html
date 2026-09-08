@@ -12,39 +12,25 @@
         padding: 0 0 1.5rem;
       }
 
-      .nav-volver { margin: 0 0 1rem; }
-
       .nav-volver a {
         color: var(--muted);
         font-weight: 600;
         text-decoration: none;
       }
 
-      .nav-volver a:hover { color: var(--acento); }
+      .nav-volver a:hover {
+   color: var(--acento-oscuro);
+   text-decoration: none;
+ }
 
       h1 {
-        margin: 0;
-        font-size: 1.85rem;
-      }
+   margin: 0;
+   font-size: clamp(1.7rem, 2.2vw, 2rem);
+ }
 
       .meta-cabecera {
         color: var(--muted);
         font-size: 0.95rem;
-      }
-
-      .mensajes {
-        list-style: none;
-        margin: 0 0 1rem;
-        padding: 0;
-      }
-
-      .mensajes li {
-        background: #f1f5f9;
-        border: 1px solid var(--borde);
-        color: var(--texto);
-        border-radius: 12px;
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.5rem;
       }
 
       .aviso, .error-box {
@@ -66,20 +52,20 @@
       }
 
       .layout {
-        display: grid;
-        grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr);
-        gap: 1rem;
-        align-items: start;
-      }
+   display: grid;
+   grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr);
+   gap: 1.25rem;
+   align-items: start;
+ }
 
       .tarjeta {
-        background: var(--tarjeta);
-        border: 1px solid var(--borde);
-        border-radius: var(--radius);
-        padding: 1.2rem 1.25rem;
-        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
-        margin-bottom: 1rem;
-      }
+   background: var(--tarjeta);
+   border: 1px solid var(--borde);
+   border-radius: var(--radius);
+   padding: 1.2rem 1.25rem;
+   box-shadow: var(--shadow);
+   margin-bottom: 1rem;
+ }
 
       .tarjeta h2 {
         margin: 0 0 0.85rem;
@@ -105,30 +91,30 @@
       }
 
       .estado {
-        display: inline-block;
-        padding: 0.32rem 0.8rem;
-        border-radius: var(--radius-pill);
-        font-weight: 650;
-        font-size: 0.88rem;
-      }
+   display: inline-block;
+   padding: 0.2rem 0.55rem;
+   border-radius: var(--radius-sm);
+   font-weight: 700;
+   font-size: 0.85rem;
+ }
 
       .estado-pendiente,
       .estado-procesando {
-        background: #efefef;
-        color: #111111;
-        border: 1px solid #d8d8d8;
-      }
+   background: #eeeeee;
+   color: var(--aviso);
+   border: 1px solid #d8d8d8;
+ }
 
       .estado-completado {
-        background: #111111;
-        color: #ffffff;
-      }
+   background: #ecfdf5;
+   color: var(--ok);
+ }
 
       .estado-error {
-        background: #fef2f2;
-        color: #991b1b;
-        border: 1px solid #fecaca;
-      }
+   background: #fef2f2;
+   color: var(--error);
+   border: 1px solid #fecaca;
+ }
 
       table {
         width: 100%;
@@ -137,12 +123,17 @@
       }
 
       th, td {
-        text-align: left;
-        padding: 0.55rem 0.2rem;
-        border-bottom: 1px solid var(--borde);
-      }
+   text-align: left;
+   padding: 0.5rem 0.3rem;
+   border-bottom: 1px solid var(--borde);
+ }
 
-      th { color: var(--muted); font-size: 0.82rem; }
+      th {
+   color: var(--muted);
+   font-size: 0.82rem;
+   text-transform: uppercase;
+   letter-spacing: 0.03em;
+ }
 
       .panel-resultado .intro {
         margin: 0 0 1rem;

@@ -4,11 +4,11 @@
 {% block estilos %}
     <style>
       .resumen {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0.95rem;
-        margin-bottom: 1.35rem;
-      }
+   display: grid;
+   grid-template-columns: repeat(3, minmax(0, 1fr));
+   gap: 0.9rem 1rem;
+   margin-bottom: 1.35rem;
+ }
       .dato {
         border-radius: var(--radius);
         padding: 1.2rem 1.25rem;
@@ -16,14 +16,14 @@
         box-shadow: var(--shadow);
       }
       .dato strong {
-        display: block;
-        color: var(--muted);
-        font-size: 0.7rem;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        margin-bottom: 0.35rem;
-        font-weight: 600;
-      }
+   display: block;
+   color: var(--muted);
+   font-size: 0.78rem;
+   letter-spacing: 0.06em;
+   text-transform: uppercase;
+   margin-bottom: 0.2rem;
+   font-weight: 600;
+ }
       .dato span {
         font-size: 1.8rem;
         font-weight: 700;
@@ -36,11 +36,13 @@
       .dato.destacado strong { color: rgba(255, 255, 255, 0.65); }
       .dato.destacado span { color: #ffffff; }
       .seccion-titulo {
-        margin: 0 0 0.85rem;
-        font-size: 1.05rem;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-      }
+   margin: 0 0 0.75rem;
+   font-size: 0.78rem;
+   font-weight: 700;
+   letter-spacing: 0.05em;
+   text-transform: uppercase;
+   color: var(--muted);
+ }
       .etiqueta {
         display: inline-block;
         width: fit-content;

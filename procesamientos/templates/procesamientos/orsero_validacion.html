@@ -12,8 +12,6 @@
         padding: 0 0 1.5rem;
       }
 
-      .nav-volver { margin: 0 0 0.85rem; }
-
       .nav-volver a {
         color: var(--muted);
         font-weight: 600;
@@ -21,40 +19,28 @@
         font-size: 0.92rem;
       }
 
-      .nav-volver a:hover { color: var(--acento-oscuro); }
+      .nav-volver a:hover {
+   color: var(--acento-oscuro);
+   text-decoration: none;
+ }
 
       .cabecera {
-        display: flex;
-        justify-content: space-between;
-        gap: 1rem;
-        flex-wrap: wrap;
-        align-items: flex-end;
-        margin-bottom: 1.1rem;
-      }
+   display: flex;
+   justify-content: space-between;
+   gap: 0.35rem;
+   flex-wrap: wrap;
+   align-items: flex-end;
+   margin-bottom: 1.25rem;
+ }
 
       h1 {
-        margin: 0;
-        font-size: 1.85rem;
-      }
+   margin: 0;
+   font-size: clamp(1.7rem, 2.2vw, 2rem);
+ }
 
       .meta-cabecera {
         color: var(--muted);
         font-size: 0.95rem;
-      }
-
-      .mensajes {
-        list-style: none;
-        margin: 0 0 1rem;
-        padding: 0;
-      }
-
-      .mensajes li {
-        background: var(--acento-suave);
-        border: 1px solid #eeeeee;
-        color: var(--acento-oscuro);
-        border-radius: 12px;
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.5rem;
       }
 
       /* Dos columnas que fluyen solas: cada tarjeta ocupa lo que
@@ -76,12 +62,12 @@
       }
 
       .tarjeta {
-        background: var(--tarjeta);
-        border: 1px solid var(--borde);
-        border-radius: var(--radius);
-        padding: 1.1rem 1.2rem;
-        box-shadow: var(--shadow);
-      }
+   background: var(--tarjeta);
+   border: 1px solid var(--borde);
+   border-radius: var(--radius);
+   padding: 1.2rem 1.25rem;
+   box-shadow: var(--shadow);
+ }
 
       .seccion-titulo {
         margin: 0 0 0.75rem;
@@ -111,12 +97,12 @@
       }
 
       .metric strong {
-        display: block;
-        font-size: 0.75rem;
-        color: var(--muted);
-        margin-bottom: 0;
-        font-weight: 600;
-      }
+   display: block;
+   font-size: 0.75rem;
+   color: var(--muted);
+   margin-bottom: 0.2rem;
+   font-weight: 600;
+ }
 
       .metric span {
         font-size: 1.02rem;
@@ -146,19 +132,19 @@
       }
 
       .detalle-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 0.75rem 1rem;
-        padding-top: 0.85rem;
-        border-top: 1px solid var(--borde);
-      }
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+   gap: 0.65rem 1rem;
+   padding-top: 0.85rem;
+   border-top: 1px solid var(--borde);
+ }
 
       .dato strong {
-        display: block;
-        font-size: 0.75rem;
-        color: var(--muted);
-        margin-bottom: 0.15rem;
-      }
+   display: block;
+   font-size: 0.78rem;
+   color: var(--muted);
+   margin-bottom: 0.2rem;
+ }
 
       .panel-lateral {
         background: var(--tarjeta);
@@ -239,12 +225,12 @@
       }
 
       th {
-        color: var(--muted);
-        font-size: 0.78rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-      }
+   color: var(--muted);
+   font-size: 0.82rem;
+   font-weight: 600;
+   text-transform: uppercase;
+   letter-spacing: 0.03em;
+ }
 
       td.num, th.num { text-align: right; }
 
@@ -252,17 +238,6 @@
         font-weight: 700;
         border-bottom: 0;
         padding-top: 0.7rem;
-      }
-
-      .etiqueta-modificado {
-        display: inline-block;
-        margin-left: 0.35rem;
-        font-size: 0.72rem;
-        font-weight: 700;
-        color: var(--aviso);
-        background: #111111;
-        border-radius: var(--radius-sm);
-        padding: 0.1rem 0.4rem;
       }
 
       a.boton, button.boton {

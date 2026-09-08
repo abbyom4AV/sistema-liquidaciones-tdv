@@ -12,16 +12,17 @@
         padding: 0 0 1.5rem;
       }
 
-      .nav-volver { margin: 0 0 1.25rem; }
-
       .nav-volver a {
-        color: var(--acento-oscuro);
-        font-weight: 600;
-        text-decoration: none;
-        font-size: 0.95rem;
-      }
+   color: var(--muted);
+   font-weight: 600;
+   text-decoration: none;
+   font-size: 0.95rem;
+ }
 
-      h1 { margin: 0 0 0.75rem; font-size: 1.9rem; }
+      h1 {
+   margin: 0;
+   font-size: clamp(1.7rem, 2.2vw, 2rem);
+ }
 
       .resumen, .tarjeta {
         background: var(--tarjeta);
@@ -33,32 +34,37 @@
       }
 
       .resumen {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 0.75rem 1rem;
-      }
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+   gap: 0.9rem 1rem;
+ }
 
       .dato strong {
-        display: block;
-        font-size: 0.85rem;
-        color: var(--muted);
-        margin-bottom: 0.2rem;
-      }
+   display: block;
+   font-size: 0.78rem;
+   color: var(--muted);
+   margin-bottom: 0.2rem;
+ }
 
       table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.95rem;
-      }
+   width: 100%;
+   border-collapse: collapse;
+   font-size: 0.93rem;
+ }
 
       th, td {
-        border-bottom: 1px solid var(--borde);
-        text-align: left;
-        padding: 0.6rem 0.4rem;
-        vertical-align: middle;
-      }
+   border-bottom: 1px solid var(--borde);
+   text-align: left;
+   padding: 0.5rem 0.3rem;
+   vertical-align: middle;
+ }
 
-      th { color: var(--muted); }
+      th {
+   color: var(--muted);
+   font-size: 0.82rem;
+   text-transform: uppercase;
+   letter-spacing: 0.03em;
+ }
 
       input[type="text"],
       input[type="number"],
@@ -81,11 +87,11 @@
       }
 
       .acciones {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        margin-top: 1.25rem;
-      }
+   display: flex;
+   flex-wrap: wrap;
+   gap: 0.65rem;
+   margin-top: 1.25rem;
+ }
 
       button, a.boton {
         display: inline-block;

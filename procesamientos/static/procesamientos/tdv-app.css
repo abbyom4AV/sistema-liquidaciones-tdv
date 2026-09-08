@@ -1179,3 +1179,12 @@ a.boton-suave:hover { background: var(--suave); }
 .pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; position: relative; z-index: 1; }
 .pasos span { display: block; font-size: 0.88rem; opacity: 0.85; line-height: 1.4; }
 .pasos strong { display: block; margin-bottom: 0.2rem; font-size: 0.95rem; }
+
+/* ——— Reglas subidas desde los <style> de las pantallas ——— */
+.etiqueta-modificado { display: inline-block; margin-left: 0.35rem; font-size: 0.72rem; font-weight: 700; color: var(--aviso); background: #111111; border-radius: var(--radius-sm); padding: 0.1rem 0.4rem; }
+.mensajes { list-style: none; margin: 0 0 1rem; padding: 0; }
+.mensajes li { background: #f1f5f9; border: 1px solid var(--borde); color: var(--texto); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 0.5rem; }
+.nav-volver { margin: 0 0 1rem; }
+.tarjeta-formulario { background: var(--tarjeta); border: 1px solid var(--borde); padding: 1.6rem 1.55rem 1.45rem; }
+.tarjeta-formulario h2 { margin: 0 0 0.25rem; font-size: 1.2rem; }
+button.procesando { background: #111111; color: #ffffff; cursor: wait; opacity: 0.95; }

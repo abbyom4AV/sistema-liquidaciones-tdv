@@ -14,7 +14,6 @@
         margin: 0 auto;
         padding: 0 0 1.5rem;
       }
-      .nav-volver { margin: 0 0 1rem; }
       .nav-volver a {
         color: var(--muted);
         font-weight: 600;
@@ -22,10 +21,10 @@
       }
       header { margin-bottom: 1.25rem; }
       h1 {
-        margin: 0 0 .35rem;
-        font-size: 1.85rem;
-        letter-spacing: -0.02em;
-      }
+   margin: 0;
+   font-size: clamp(1.7rem, 2.2vw, 2rem);
+   letter-spacing: -0.02em;
+ }
       h2 {
         margin: 0 0 .85rem;
         font-size: 1.1rem;
@@ -35,25 +34,26 @@
         color: var(--muted);
       }
       .layout {
-        display: grid;
-        grid-template-columns: 1.45fr .95fr;
-        gap: 1.15rem;
-        align-items: start;
-      }
+   display: grid;
+   grid-template-columns: 1.45fr .95fr;
+   gap: 1.25rem;
+   align-items: start;
+ }
       .tarjeta {
-        background: var(--tarjeta);
-        border: 1px solid var(--borde);
-        border-radius: var(--radius);
-        padding: 1.25rem 1.35rem;
-        margin-bottom: 1.15rem;
-        height: fit-content;
-      }
+   background: var(--tarjeta);
+   border: 1px solid var(--borde);
+   border-radius: var(--radius);
+   padding: 1.2rem 1.25rem;
+   margin-bottom: 1.15rem;
+   height: fit-content;
+   box-shadow: var(--shadow);
+ }
       .col-izq > .tarjeta:last-child { margin-bottom: 0; }
       .resumen {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1rem 1.25rem;
-      }
+   display: grid;
+   grid-template-columns: repeat(2, minmax(0, 1fr));
+   gap: 0.9rem 1rem;
+ }
       .resumen > div {
         display: flex;
         flex-direction: column;
@@ -117,10 +117,10 @@
         line-height: 1.5;
       }
       .acciones {
-        display: flex;
-        flex-wrap: wrap;
-        gap: .75rem;
-      }
+   display: flex;
+   flex-wrap: wrap;
+   gap: 0.65rem;
+ }
       a.boton {
         display: inline-flex;
         align-items: center;
