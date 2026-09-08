@@ -19,8 +19,6 @@
         --error: #111111;
       }
 
-      * { box-sizing: border-box; }
-
       /* body layout: tdv-app.css */
 
       .envoltorio {
@@ -71,12 +69,6 @@
         align-items: start;
       }
 
-      .tarjeta-formulario,
-      .tarjeta-guia {
-        border-radius: var(--radius);
-        box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
-      }
-
       .tarjeta-formulario {
         background: var(--tarjeta);
         border: 1px solid var(--borde);
@@ -97,12 +89,6 @@
       form {
         display: grid;
         gap: 1.1rem;
-      }
-
-      .fila-dos {
-        display: grid;
-        grid-template-columns: 1fr 1.4fr;
-        gap: 1rem;
       }
 
       .campo label {
@@ -283,29 +269,6 @@
         cursor: wait;
       }
 
-          .tarjeta-guia {
-        background: var(--tarjeta);
-        color: var(--texto);
-        border: 1px solid var(--borde);
-        box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
-        padding: 1.2rem 1.15rem;
-      }
-
-      .tarjeta-guia::after { display: none; }
-
-      .tarjeta-guia h2 {
-        margin: 0 0 0.45rem;
-        font-size: 1.05rem;
-        font-weight: 650;
-      }
-
-      .tarjeta-guia > p {
-        margin: 0 0 1rem;
-        color: var(--muted);
-        line-height: 1.45;
-        font-size: 0.88rem;
-      }
-
       .pasos {
         list-style: none;
         margin: 0;
@@ -314,13 +277,6 @@
         gap: 0.75rem;
         position: relative;
         z-index: 1;
-      }
-
-          .pasos li {
-        background: var(--suave);
-        border: 1px solid var(--borde);
-        border-radius: var(--radius-sm);
-        padding: 0.75rem 0.85rem;
       }
 
       .pasos strong {
@@ -336,36 +292,9 @@
         line-height: 1.4;
       }
 
-          .nota-guia {
-        margin: 1rem 0 0;
-        padding-top: 0.9rem;
-        border-top: 1px solid var(--borde);
-        font-size: 0.84rem;
-        color: var(--muted);
-        line-height: 1.45;
-      }
-
-      .nota-guia a {
-        color: var(--acento-oscuro);
-        font-weight: 600;
-        text-decoration: none;
-      }
-
-      .nota-guia a:hover {
-        text-decoration: underline;
-      }
-
       @media (max-width: 960px) {
         .layout {
           grid-template-columns: 1fr;
-        }
-
-        .fila-dos {
-          grid-template-columns: 1fr;
-        }
-
-        .acciones-form {
-          justify-content: stretch;
         }
 
         button {

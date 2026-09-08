@@ -19,8 +19,6 @@
         --error: #111111;
       }
 
-      * { box-sizing: border-box; }
-
       /* body layout: tdv-app.css */
 
       main {
@@ -138,19 +136,9 @@
         font-size: 0.85rem;
       }
 
-      .estado-pendiente_mapeo_gastos {
-        background: #111111;
-        color: var(--aviso);
-      }
-
       .estado-listo {
         background: var(--acento-suave);
         color: var(--acento-oscuro);
-      }
-
-      .estado-requiere_destino {
-        background: #111111;
-        color: var(--aviso);
       }
 
       .estado-invalido {
@@ -215,16 +203,6 @@
         letter-spacing: 0.03em;
       }
 
-      .alerta-destino {
-        background: #eeeeee;
-        border: 1px solid #111111;
-        border-radius: 12px;
-        padding: 0.85rem;
-        margin-bottom: 0.85rem;
-        color: var(--aviso);
-        font-size: 0.9rem;
-      }
-
       .incidencias {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -238,7 +216,6 @@
       }
 
       .errores { color: var(--error); }
-      .advertencias { color: #9f1239; }
       .vacio { margin: 0; color: var(--muted); font-size: 0.92rem; }
 
       .bloque-tablas {
@@ -260,12 +237,6 @@
       .cabecera-bloque h2 {
         margin: 0;
         font-size: 1.05rem;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.9rem;
       }
 
       th, td {
@@ -334,16 +305,6 @@
 
       a.boton-secundario:hover, button.boton-secundario:hover {
         background: #d0d6cb;
-      }
-
-      a.boton-suave {
-        background: #fff;
-        color: var(--texto);
-        border: 1px solid var(--borde);
-      }
-
-      a.boton-suave:hover {
-        background: var(--suave);
       }
 
       .cta-generacion {

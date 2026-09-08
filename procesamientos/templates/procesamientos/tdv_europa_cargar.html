@@ -19,8 +19,6 @@
         --error: #111111;
       }
 
-      * { box-sizing: border-box; }
-
       /* body layout: tdv-app.css */
 
       .envoltorio {
@@ -72,12 +70,6 @@
         grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
         gap: 1.35rem;
         align-items: start;
-      }
-
-      .tarjeta-formulario,
-      .tarjeta-guia {
-        border-radius: var(--radius);
-        box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
       }
 
       .tarjeta-formulario {
@@ -267,13 +259,6 @@
         cursor: not-allowed;
       }
 
-      .campo-checkbox {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        font-weight: 600;
-      }
-
       .campo-checkbox input {
         width: 1.15rem;
         height: 1.15rem;
@@ -336,29 +321,6 @@
         cursor: wait;
       }
 
-          .tarjeta-guia {
-        background: var(--tarjeta);
-        color: var(--texto);
-        border: 1px solid var(--borde);
-        box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
-        padding: 1.2rem 1.15rem;
-      }
-
-      .tarjeta-guia::after { display: none; }
-
-      .tarjeta-guia h2 {
-        margin: 0 0 0.45rem;
-        font-size: 1.05rem;
-        font-weight: 650;
-      }
-
-      .tarjeta-guia > p {
-        margin: 0 0 1rem;
-        color: var(--muted);
-        line-height: 1.45;
-        font-size: 0.88rem;
-      }
-
       .pasos {
         list-style: none;
         margin: 0;
@@ -367,13 +329,6 @@
         gap: 0.85rem;
         position: relative;
         z-index: 1;
-      }
-
-          .pasos li {
-        background: var(--suave);
-        border: 1px solid var(--borde);
-        border-radius: var(--radius-sm);
-        padding: 0.75rem 0.85rem;
       }
 
       .pasos strong {
@@ -410,10 +365,6 @@
         .fila-factura,
         .fila-contenedor-especial {
           grid-template-columns: 1fr;
-        }
-
-        .acciones-form {
-          justify-content: stretch;
         }
 
         .acciones-form button {

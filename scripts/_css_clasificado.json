@@ -1,0 +1,5010 @@
+{
+ "redundante": [
+  {
+   "sel": "*",
+   "decl": "box-sizing: border-box",
+   "en": [
+    "dimanno_cargar.html",
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "dimanno_generacion_detalle.html",
+    "dimanno_validacion.html",
+    "eurobanan_cargar.html",
+    "eurobanan_generacion_detalle.html",
+    "eurobanan_mapear_gastos.html",
+    "eurobanan_validacion.html",
+    "fruver_cargar.html",
+    "fruver_generacion_detalle.html",
+    "fruver_validacion.html",
+    "glamour_cargar.html",
+    "glamour_mapear_gastos.html",
+    "kraaijeveld_cargar.html",
+    "kraaijeveld_generacion_detalle.html",
+    "kraaijeveld_validacion.html",
+    "master_cargar.html",
+    "master_gastos_editar.html",
+    "master_generacion_detalle.html",
+    "master_validacion.html",
+    "nufri_cargar.html",
+    "nufri_generacion_detalle.html",
+    "nufri_mapear_gastos.html",
+    "nufri_validacion.html",
+    "orsero_cargar.html",
+    "orsero_gastos_editar.html",
+    "orsero_generacion_detalle.html",
+    "orsero_validacion.html",
+    "sifa_cargar.html",
+    "sifa_generacion_detalle.html",
+    "sifa_validacion.html",
+    "tdv_europa_cargar.html",
+    "tdv_europa_generacion_detalle.html",
+    "tdv_europa_validacion.html",
+    "visafruits_cargar.html",
+    "visafruits_gastos_editar.html",
+    "visafruits_generacion_detalle.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cabecera",
+   "decl": "display: flex;justify-content: space-between;gap: 1rem;flex-wrap: wrap;align-items: flex-end;margin-bottom: 1.25rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "table",
+   "decl": "width: 100%;border-collapse: collapse;font-size: 0.9rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": "tr:last-child td",
+   "decl": "border-bottom: 0",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html"
+   ]
+  }
+ ],
+ "subible": [
+  {
+   "sel": ".advertencias",
+   "decl": "color: #9f1239",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "glamour_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".alerta-destino",
+   "decl": "background: #eeeeee;border: 1px solid #111111;border-radius: 12px;padding: 0.85rem;margin-bottom: 0.85rem;color: var(--aviso);font-size: 0.9rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html"
+   ]
+  },
+  {
+   "sel": ".aviso-registro",
+   "decl": "margin: 0 0 1rem;padding: 0.75rem 1rem;background: #dce8df;border: 1px solid #eeeeee;border-radius: var(--radius-sm);color: var(--acento-oscuro);font-size: 0.95rem",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": ".bloque-precio-fijo",
+   "decl": "display: grid;gap: 1rem;padding: 1rem;border-radius: var(--radius);background: var(--suave);border: 1px dashed var(--borde)",
+   "en": [
+    "fruver_cargar.html",
+    "kraaijeveld_cargar.html"
+   ]
+  },
+  {
+   "sel": ".campo-checkbox",
+   "decl": "display: flex;align-items: center;gap: 0.6rem;font-weight: 600",
+   "en": [
+    "fruver_cargar.html",
+    "kraaijeveld_cargar.html",
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".envoltorio",
+   "decl": "max-width: 1280px;margin: 0 auto;padding: 0 0 1.5rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".estado-pendiente_mapeo_gastos",
+   "decl": "background: #111111;color: var(--aviso)",
+   "en": [
+    "eurobanan_validacion.html",
+    "nufri_validacion.html"
+   ]
+  },
+  {
+   "sel": ".estado-requiere_destino",
+   "decl": "background: #111111;color: var(--aviso)",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html"
+   ]
+  },
+  {
+   "sel": ".etiqueta-fijo",
+   "decl": "display: inline-block;margin-left: 0.35rem;font-size: 0.68rem;font-weight: 700;color: var(--acento-oscuro);background: var(--acento-suave);border-radius: var(--radius-sm);padding: 0.1rem 0.4rem",
+   "en": [
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html"
+   ]
+  },
+  {
+   "sel": ".fila-dos",
+   "decl": "display: grid;grid-template-columns: 1fr 1.4fr;gap: 1rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "glamour_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html"
+   ]
+  },
+  {
+   "sel": ".metricas",
+   "decl": "display: grid;gap: 0.75rem;margin-bottom: 1.15rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".nota-guia",
+   "decl": "margin: 1rem 0 0;padding-top: 0.9rem;border-top: 1px solid var(--borde);font-size: 0.84rem;color: var(--muted);line-height: 1.45",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".nota-guia a",
+   "decl": "color: var(--acento-oscuro);font-weight: 600;text-decoration: none",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".nota-guia a:hover",
+   "decl": "text-decoration: underline",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".panel-resultado",
+   "decl": "background: #fff;border: 1px solid var(--borde);border-radius: var(--radius);padding: 1.25rem;position: sticky;top: 1rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".panel-resultado h2",
+   "decl": "margin: 0 0 0.35rem;font-size: 1.15rem;color: var(--texto);text-transform: none;letter-spacing: 0",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".pasos li",
+   "decl": "background: var(--suave);border: 1px solid var(--borde);border-radius: var(--radius-sm);padding: 0.75rem 0.85rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".rubro",
+   "decl": "display: grid;grid-template-columns: minmax(0, 1.1fr) minmax(220px, 1fr);gap: 1rem;align-items: end;padding: 0.85rem 0;border-bottom: 1px solid var(--borde)",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ]
+  },
+  {
+   "sel": ".rubro .monto",
+   "decl": "color: var(--muted);font-size: 0.88rem",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ]
+  },
+  {
+   "sel": ".rubro strong",
+   "decl": "display: block;font-size: 0.95rem",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ]
+  },
+  {
+   "sel": ".rubro:last-child",
+   "decl": "border-bottom: 0",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ]
+  },
+  {
+   "sel": ".rubros-pdf",
+   "decl": "font-size: 0.8rem;color: var(--muted)",
+   "en": [
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-formulario, .tarjeta-guia",
+   "decl": "border-radius: var(--radius);box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06)",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-guia",
+   "decl": "background: var(--tarjeta);color: var(--texto);border: 1px solid var(--borde);box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);padding: 1.2rem 1.15rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-guia > p",
+   "decl": "margin: 0 0 1rem;color: var(--muted);line-height: 1.45;font-size: 0.88rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-guia h2",
+   "decl": "margin: 0 0 0.45rem;font-size: 1.05rem;font-weight: 650",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-guia::after",
+   "decl": "display: none",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 760px) @@ .rubro",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 900px) @@ .panel-resultado",
+   "decl": "position: static",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 960px) @@ .acciones-form",
+   "decl": "justify-content: stretch",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 960px) @@ .fila-dos",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "dimanno_cargar.html",
+    "master_cargar.html",
+    "orsero_cargar.html"
+   ]
+  },
+  {
+   "sel": "a.boton-suave",
+   "decl": "background: #fff;color: var(--texto);border: 1px solid var(--borde)",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": "a.boton-suave:hover",
+   "decl": "background: var(--suave)",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  }
+ ],
+ "conflictiva": [
+  {
+   "sel": ".acciones",
+   "decl": "display: flex;flex-wrap: wrap;gap: .75rem",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".acciones",
+   "decl": "display: flex;flex-wrap: wrap;gap: 0.75rem;margin-top: 1.25rem",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": ".acciones",
+   "decl": "display: flex;justify-content: flex-start;margin-top: 1.25rem",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ]
+  },
+  {
+   "sel": ".acciones",
+   "decl": "display: grid;gap: 0.55rem;margin-top: 0.25rem",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".acciones",
+   "decl": "display: grid;gap: 0.65rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".acciones-finales",
+   "decl": "display: flex;flex-wrap: wrap;gap: 0.55rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".acciones-finales",
+   "decl": "display: flex;flex-wrap: wrap;gap: 0.65rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".acciones-form",
+   "decl": "display: flex;justify-content: flex-start;padding-top: 0.35rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".acciones-form",
+   "decl": "display: flex;justify-content: flex-start;padding-top: 0.45rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".aviso",
+   "decl": "background: #eeeeee;border: 1px solid #111111;color: var(--aviso)",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".aviso",
+   "decl": "background: #eeeeee;border: 1px solid #111111;color: var(--aviso);border-radius: 12px;padding: .9rem 1rem;margin-bottom: 1.15rem",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".aviso",
+   "decl": "background: #eeeeee;border: 1px solid #111111;color: var(--aviso);border-radius: 12px;padding: 0.9rem 1rem;margin-bottom: 1rem",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ]
+  },
+  {
+   "sel": ".aviso, .error-box",
+   "decl": "border-radius: 12px;padding: 0.9rem 1rem;margin-bottom: 1rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html",
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".ayuda",
+   "decl": "margin: 0.45rem 0 0;font-size: 0.88rem;color: var(--muted);line-height: 1.35",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".ayuda",
+   "decl": "margin: 0.4rem 0 0;font-size: 0.88rem;color: var(--muted)",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".bloque-archivos",
+   "decl": "display: grid;gap: 1.1rem;margin-top: 0.15rem;padding-top: 1.15rem;border-top: 1px dashed var(--borde)",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".bloque-archivos",
+   "decl": "display: grid;gap: 1rem;padding-top: 0.25rem;border-top: 1px dashed var(--borde)",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".bloque-archivos > .titulo-bloque",
+   "decl": "margin: 0.35rem 0 0;font-size: 0.8rem;letter-spacing: 0.06em;text-transform: uppercase;color: var(--muted);font-weight: 700",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".bloque-archivos > .titulo-bloque",
+   "decl": "margin: 0;font-size: 0.8rem;letter-spacing: 0.06em;text-transform: uppercase;color: var(--muted);font-weight: 700",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".bloque-tablas",
+   "decl": "display: grid;gap: 0.85rem;min-width: 0",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".bloque-tablas",
+   "decl": "display: grid;grid-template-columns: 1.1fr 0.9fr;gap: 1rem;margin-bottom: 1.1rem;align-items: start",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html"
+   ]
+  },
+  {
+   "sel": ".bloque-tablas",
+   "decl": "display: grid;grid-template-columns: 1.35fr 0.65fr;gap: 1rem;margin-bottom: 1.1rem;align-items: start",
+   "en": [
+    "sifa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".bloque-tablas",
+   "decl": "display: grid;grid-template-columns: 1fr;gap: 1rem;align-items: start",
+   "en": [
+    "kraaijeveld_validacion.html"
+   ]
+  },
+  {
+   "sel": ".bloque-tablas",
+   "decl": "display: grid;grid-template-columns: 1fr;gap: 1rem;margin-bottom: 0;align-items: start",
+   "en": [
+    "fruver_validacion.html"
+   ]
+  },
+  {
+   "sel": ".bloque-tablas",
+   "decl": "display: grid;grid-template-columns: minmax(0, 1.7fr) minmax(240px, .7fr);gap: 1.15rem;align-items: start;margin-bottom: 1.15rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cabecera",
+   "decl": "display: flex;flex-direction: column;align-items: flex-start;gap: 0.35rem;margin-bottom: 1.25rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".cabecera",
+   "decl": "display: flex;flex-direction: column;align-items: flex-start;gap: 0.35rem;margin-bottom: 1.5rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".cabecera",
+   "decl": "display: flex;justify-content: space-between;gap: 1rem;flex-wrap: wrap;align-items: flex-end;margin-bottom: 1.1rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cabecera",
+   "decl": "display: flex;justify-content: space-between;gap: 1rem;flex-wrap: wrap;align-items: flex-end;margin-bottom: 1rem",
+   "en": [
+    "glamour_generacion_detalle.html",
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cabecera",
+   "decl": "margin-bottom: 1.25rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cabecera-bloque",
+   "decl": "display: flex;flex-direction: column;align-items: flex-start;gap: 0.2rem;margin-bottom: 0.85rem",
+   "en": [
+    "fruver_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cabecera-bloque",
+   "decl": "display: flex;justify-content: space-between;align-items: center;gap: 0.75rem;margin-bottom: 0.65rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cabecera-bloque",
+   "decl": "margin-bottom: 0.55rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cabecera-bloque h2",
+   "decl": "margin: 0;font-size: 1.05rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cabecera-bloque h2",
+   "decl": "margin: 0;font-size: 1rem;font-weight: 650",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".campo .descripcion",
+   "decl": "margin: 0 0 0.45rem;color: var(--muted);font-size: 0.88rem;line-height: 1.35",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".campo .descripcion",
+   "decl": "margin: 0 0 0.5rem;color: var(--muted);font-size: 0.88rem;line-height: 1.35",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".campo label",
+   "decl": "display: block;font-weight: 600;margin-bottom: 0.35rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".campo label",
+   "decl": "display: block;font-weight: 600;margin-bottom: 0.3rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".campo-checkbox input",
+   "decl": "width: 1.15rem;height: 1.15rem",
+   "en": [
+    "fruver_cargar.html"
+   ]
+  },
+  {
+   "sel": ".campo-checkbox input",
+   "decl": "width: 1.15rem;height: 1.15rem;flex-shrink: 0",
+   "en": [
+    "kraaijeveld_cargar.html",
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".campo-error",
+   "decl": "color: var(--error);font-size: 0.88rem;margin-top: 0.35rem",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ]
+  },
+  {
+   "sel": ".campo-error",
+   "decl": "color: var(--error);font-size: 0.9rem;margin-top: 0.35rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".campo-error",
+   "decl": "color: var(--error);font-size: 0.9rem;margin-top: 0.3rem",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": ".chip",
+   "decl": "background: #f5f5f5;border: 1px solid var(--borde);border-radius: var(--radius-sm);padding: 0.55rem 0.65rem;font-size: 0.86rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".chip",
+   "decl": "background: var(--suave);border-radius: 10px;padding: 0.6rem 0.75rem;font-size: 0.9rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".chip strong",
+   "decl": "display: block;font-size: 0.66rem;letter-spacing: 0.04em;text-transform: uppercase;margin-bottom: 0.2rem;font-weight: 600",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".chip strong",
+   "decl": "display: block;font-size: 0.72rem;color: var(--muted);margin-bottom: 0.15rem;text-transform: uppercase;letter-spacing: 0.03em",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".chips",
+   "decl": "display: grid;gap: 0.5rem;margin-bottom: 0.85rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".chips",
+   "decl": "display: grid;grid-template-columns: 1fr 1fr;gap: 0.5rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".col-principal",
+   "decl": "display: grid;gap: 0.85rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".col-principal",
+   "decl": "display: grid;gap: 1rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "sifa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".col-principal, .col-lateral",
+   "decl": "display: grid;gap: 1rem;align-content: start",
+   "en": [
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "glamour_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cta-generacion",
+   "decl": "background: #eeeeee;border-left: 4px solid #111111;border-radius: var(--radius-sm);padding: 0.75rem 0.85rem;font-size: 0.88rem;color: #111111",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cta-generacion",
+   "decl": "background: var(--suave);border-radius: 12px;padding: .9rem 1rem;margin-bottom: .85rem;color: var(--muted);line-height: 1.5",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cta-generacion",
+   "decl": "background: var(--suave);border-radius: 12px;padding: 0.85rem;margin-bottom: 0.75rem;font-size: 0.92rem;color: var(--muted)",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cta-generacion strong",
+   "decl": "display: block;color: var(--texto);margin-bottom: .25rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cta-generacion strong",
+   "decl": "display: block;color: var(--texto);margin-bottom: 0.2rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".cta-generacion strong",
+   "decl": "display: block;margin-bottom: 0.15rem;font-weight: 700",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".dato strong",
+   "decl": "display: block;color: var(--muted);font-size: 0.7rem;letter-spacing: 0.06em;text-transform: uppercase;margin-bottom: 0.35rem;font-weight: 600",
+   "en": [
+    "panel.html"
+   ]
+  },
+  {
+   "sel": ".dato strong",
+   "decl": "display: block;font-size: 0.68rem;text-transform: uppercase;letter-spacing: 0.04em;color: var(--muted);margin-bottom: 0.15rem;font-weight: 600",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".dato strong",
+   "decl": "display: block;font-size: 0.75rem;color: var(--muted);margin-bottom: 0.15rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".dato strong",
+   "decl": "display: block;font-size: 0.78rem;color: var(--muted);margin-bottom: 0.2rem;font-weight: 600",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".dato strong",
+   "decl": "display: block;font-size: 0.85rem;color: var(--muted);margin-bottom: 0.2rem",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": ".detalle-grid",
+   "decl": "display: grid;grid-template-columns: 1fr 1fr;gap: 0.55rem 0.85rem;padding-top: 0.8rem;border-top: 1px solid var(--borde)",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".detalle-grid",
+   "decl": "display: grid;grid-template-columns: 1fr 1fr;gap: 0.65rem 1rem;padding-top: 0.85rem;border-top: 1px solid var(--borde)",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "sifa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".detalle-grid",
+   "decl": "display: grid;grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));gap: 0.75rem 1rem;padding-top: 0.85rem;border-top: 1px solid var(--borde)",
+   "en": [
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".error-box",
+   "decl": "background: #fef2f2;border: 1px solid #fecaca;color: var(--error)",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".error-box",
+   "decl": "background: #fef2f2;border: 1px solid #fecaca;color: var(--error);border-radius: 12px;padding: .9rem 1rem;margin-bottom: 1.15rem",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".error-proceso",
+   "decl": "background: #eeeeee;border: 1px solid #111111;color: var(--error);border-radius: 12px;padding: 0.9rem 1rem;margin-bottom: 1rem",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html"
+   ]
+  },
+  {
+   "sel": ".errores",
+   "decl": "background: #eeeeee;border: 1px solid #111111;color: var(--error);border-radius: var(--radius-sm);padding: 0.85rem 1rem;margin-bottom: 1rem",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": ".errores",
+   "decl": "color: #991b1b",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".errores",
+   "decl": "color: var(--error)",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "tdv_europa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".errores ul",
+   "decl": "margin: 0.4rem 0 0;padding-left: 1.2rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".errores, .error-proceso",
+   "decl": "background: #eeeeee;border: 1px solid #111111;color: var(--error);border-radius: var(--radius-sm);padding: 0.85rem 1rem;margin: 0 0 1.15rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".errores, .error-proceso",
+   "decl": "background: #eeeeee;border: 1px solid #111111;color: var(--error);border-radius: var(--radius-sm);padding: 0.85rem 1rem;margin: 0 0 1rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".estado",
+   "decl": "display: inline-block;padding: 0.16rem 0.55rem;border-radius: 999px;font-weight: 700;font-size: 0.78rem;background: #111111;color: #ffffff !important;line-height: 1.25",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".estado",
+   "decl": "display: inline-block;padding: 0.2rem 0.55rem;border-radius: var(--radius-sm);font-weight: 600;font-size: 0.9rem",
+   "en": [
+    "dimanno_destino_resolver.html"
+   ]
+  },
+  {
+   "sel": ".estado",
+   "decl": "display: inline-block;padding: 0.2rem 0.55rem;border-radius: var(--radius-sm);font-weight: 700;font-size: 0.85rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "dimanno_validacion.html",
+    "eurobanan_generacion_detalle.html",
+    "eurobanan_validacion.html",
+    "fruver_generacion_detalle.html",
+    "fruver_validacion.html",
+    "kraaijeveld_generacion_detalle.html",
+    "kraaijeveld_validacion.html",
+    "master_generacion_detalle.html",
+    "master_validacion.html",
+    "nufri_generacion_detalle.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_generacion_detalle.html",
+    "sifa_validacion.html",
+    "visafruits_generacion_detalle.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".estado",
+   "decl": "display: inline-block;padding: 0.2rem 0.65rem;border-radius: 999px;font-weight: 700;font-size: 0.78rem;background: #efefef;color: #111111 !important",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".estado",
+   "decl": "display: inline-block;padding: 0.32rem 0.8rem;border-radius: var(--radius-pill);font-weight: 650;font-size: 0.88rem",
+   "en": [
+    "orsero_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".estado-completado",
+   "decl": "background: #111111;color: #ffffff",
+   "en": [
+    "orsero_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".estado-completado",
+   "decl": "background: #ecfdf5;color: var(--ok)",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".estado-completado",
+   "decl": "display: inline-flex;width: fit-content;background: #ecfdf5;color: var(--ok);padding: .25rem .6rem;border-radius: var(--radius-sm);font-weight: 700",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".estado-error",
+   "decl": "background: #fef2f2 !important;border: 1px solid #fecaca;color: #991b1b !important",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".estado-error",
+   "decl": "background: #fef2f2;color: #991b1b;border: 1px solid #fecaca",
+   "en": [
+    "orsero_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".estado-error",
+   "decl": "background: #fef2f2;color: var(--error)",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".estado-error",
+   "decl": "display: inline-flex;width: fit-content;background: #fef2f2;color: var(--error);padding: .25rem .6rem;border-radius: var(--radius-sm);font-weight: 700",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".estado-invalido",
+   "decl": "background: #eeeeee;border: 1px solid #111111;color: #111111 !important",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".estado-invalido",
+   "decl": "background: #eeeeee;color: var(--error)",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".estado-invalido",
+   "decl": "background: #eeeeee;color: var(--error);padding: .2rem .55rem;border-radius: var(--radius-sm);font-weight: 700",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".estado-listo",
+   "decl": "background: #dce8df;color: var(--ok)",
+   "en": [
+    "dimanno_destino_resolver.html"
+   ]
+  },
+  {
+   "sel": ".estado-listo",
+   "decl": "background: var(--acento-suave);color: var(--acento-oscuro)",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".estado-listo",
+   "decl": "background: var(--acento-suave);color: var(--acento-oscuro);padding: .2rem .55rem;border-radius: var(--radius-sm);font-weight: 700",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".estado-pendiente, .estado-procesando",
+   "decl": "background: #eeeeee;color: var(--aviso)",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".estado-pendiente, .estado-procesando",
+   "decl": "background: #efefef !important;color: #111111 !important;border: 1px solid #d8d8d8",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".estado-pendiente, .estado-procesando",
+   "decl": "background: #efefef;color: #111111;border: 1px solid #d8d8d8",
+   "en": [
+    "orsero_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".estado-pendiente, .estado-procesando",
+   "decl": "display: inline-flex;width: fit-content;background: #eeeeee;color: var(--aviso);padding: .25rem .6rem;border-radius: var(--radius-sm);font-weight: 700",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".etiqueta-modificado",
+   "decl": "display: inline-block;margin-left: 0.35rem;font-size: 0.72rem;font-weight: 700;color: #ffffff;background: #111111;border-radius: var(--radius-sm);padding: 0.1rem 0.4rem",
+   "en": [
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".etiqueta-modificado",
+   "decl": "display: inline-block;margin-left: 0.35rem;font-size: 0.72rem;font-weight: 700;color: var(--aviso);background: #111111;border-radius: var(--radius-sm);padding: 0.1rem 0.4rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html"
+   ]
+  },
+  {
+   "sel": ".etiqueta-sinprecio",
+   "decl": "display: inline-block;margin-left: 0.35rem;font-size: 0.68rem;font-weight: 700;color: var(--error);background: #eeeeee;border-radius: var(--radius-sm);padding: 0.1rem 0.4rem",
+   "en": [
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html"
+   ]
+  },
+  {
+   "sel": ".etiqueta-sinprecio",
+   "decl": "display: inline-block;margin-left: 0.35rem;font-size: 0.72rem;font-weight: 700;color: var(--error);background: #eeeeee;border-radius: var(--radius-sm);padding: 0.1rem 0.4rem",
+   "en": [
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".fila-factura",
+   "decl": "display: grid;grid-template-columns: minmax(0, 220px) 1fr;gap: 1rem;align-items: start",
+   "en": [
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".fila-factura",
+   "decl": "display: grid;grid-template-columns: minmax(0, 280px);gap: 1rem",
+   "en": [
+    "eurobanan_cargar.html",
+    "glamour_cargar.html",
+    "nufri_cargar.html",
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".fila-precio-fijo",
+   "decl": "display: grid;grid-template-columns: 1fr 1fr 0.8fr;gap: 1rem",
+   "en": [
+    "fruver_cargar.html"
+   ]
+  },
+  {
+   "sel": ".fila-precio-fijo",
+   "decl": "display: grid;grid-template-columns: 1fr 1fr;gap: 1rem",
+   "en": [
+    "kraaijeveld_cargar.html"
+   ]
+  },
+  {
+   "sel": ".fila-tres",
+   "decl": "display: grid;grid-template-columns: 1fr 1fr 1.3fr 1fr;gap: 1rem",
+   "en": [
+    "fruver_cargar.html"
+   ]
+  },
+  {
+   "sel": ".fila-tres",
+   "decl": "display: grid;grid-template-columns: 1fr 1fr 1.4fr;gap: 1rem",
+   "en": [
+    "kraaijeveld_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".fila-tres",
+   "decl": "display: grid;grid-template-columns: repeat(3, minmax(0, 1fr));gap: 1rem",
+   "en": [
+    "eurobanan_cargar.html",
+    "glamour_cargar.html",
+    "nufri_cargar.html",
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".grid-principal",
+   "decl": "display: grid;grid-template-columns: 1.55fr .85fr;gap: 1.15rem;margin-bottom: 1.15rem;align-items: start",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".grid-principal",
+   "decl": "display: grid;grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);gap: 1rem;align-items: start;margin-bottom: 1rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "sifa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".grid-principal",
+   "decl": "display: grid;grid-template-columns: minmax(0, 1.65fr) minmax(270px, 0.85fr);gap: 0.9rem;align-items: start",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".incidencias",
+   "decl": "display: grid;grid-template-columns: 1fr 1fr;gap: 0.75rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "glamour_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "sifa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".incidencias",
+   "decl": "display: grid;grid-template-columns: 1fr 1fr;gap: 0.75rem;align-items: start",
+   "en": [
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".incidencias",
+   "decl": "margin-bottom: 1.15rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".intro",
+   "decl": "margin: 0 0 1.25rem;color: var(--muted);line-height: 1.45",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "bitacoras.html",
+    "dimanno_generacion_detalle.html",
+    "dimanno_validacion.html",
+    "eurobanan_generacion_detalle.html",
+    "eurobanan_validacion.html",
+    "fruver_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".intro-corta",
+   "decl": "margin: 0.1rem 0 0;color: var(--muted);font-size: 0.95rem;max-width: 36rem;line-height: 1.45",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".intro-corta",
+   "decl": "margin: 0.1rem 0 0;color: var(--muted);font-size: 0.98rem;line-height: 1.45;max-width: 36rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".layout",
+   "decl": "display: grid;grid-template-columns: 1.45fr .95fr;gap: 1.15rem;align-items: start",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".layout",
+   "decl": "display: grid;grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);gap: 1.25rem;align-items: start",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".layout",
+   "decl": "display: grid;grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);gap: 1.35rem;align-items: start",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".layout",
+   "decl": "display: grid;grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr);gap: 1rem;align-items: start",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".layout",
+   "decl": "display: grid;grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.9fr);gap: 0.9rem;align-items: start",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".lista",
+   "decl": "margin: 0 0 1rem;padding-left: 1.2rem;display: grid;gap: .45rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".lista",
+   "decl": "margin: 0;padding-left: 1.1rem;font-size: 0.88rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".lista",
+   "decl": "margin: 0;padding-left: 1.1rem;font-size: 0.92rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".mensajes",
+   "decl": "list-style: none;margin: 0 0 0.85rem;padding: 0",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".mensajes",
+   "decl": "list-style: none;margin: 0 0 1rem;padding: 0",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "dimanno_validacion.html",
+    "eurobanan_generacion_detalle.html",
+    "eurobanan_validacion.html",
+    "fruver_generacion_detalle.html",
+    "fruver_validacion.html",
+    "kraaijeveld_generacion_detalle.html",
+    "kraaijeveld_validacion.html",
+    "master_generacion_detalle.html",
+    "master_validacion.html",
+    "nufri_generacion_detalle.html",
+    "nufri_validacion.html",
+    "orsero_generacion_detalle.html",
+    "orsero_validacion.html",
+    "sifa_generacion_detalle.html",
+    "sifa_validacion.html",
+    "visafruits_generacion_detalle.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".mensajes li",
+   "decl": "background: #111111;border: 1px solid #111111;color: #111111;border-radius: var(--radius-sm);padding: 0.7rem 0.9rem;margin-bottom: 0.45rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".mensajes li",
+   "decl": "background: #f1f5f9;border: 1px solid var(--borde);color: var(--texto);border-radius: 12px;padding: 0.75rem 1rem;margin-bottom: 0.5rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".mensajes li",
+   "decl": "background: var(--acento-suave);border: 1px solid #eeeeee;color: var(--acento-oscuro);border-radius: 12px;padding: 0.75rem 1rem;margin-bottom: 0.5rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".meta-cabecera",
+   "decl": "color: var(--muted);font-size: 0.88rem",
+   "en": [
+    "glamour_generacion_detalle.html",
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".meta-cabecera",
+   "decl": "color: var(--muted);font-size: 0.95rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "dimanno_validacion.html",
+    "eurobanan_generacion_detalle.html",
+    "eurobanan_validacion.html",
+    "fruver_generacion_detalle.html",
+    "fruver_validacion.html",
+    "kraaijeveld_generacion_detalle.html",
+    "kraaijeveld_validacion.html",
+    "master_generacion_detalle.html",
+    "master_validacion.html",
+    "nufri_generacion_detalle.html",
+    "nufri_validacion.html",
+    "orsero_generacion_detalle.html",
+    "orsero_validacion.html",
+    "sifa_generacion_detalle.html",
+    "sifa_validacion.html",
+    "visafruits_generacion_detalle.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".meta-cabecera",
+   "decl": "color: var(--muted);letter-spacing: 0.01em",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metric",
+   "decl": "background: #f7f7f7;border: 0;border-radius: var(--radius-sm);padding: 0.8rem 0.9rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metric",
+   "decl": "background: var(--suave);border-radius: 12px;padding: .75rem .9rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metric",
+   "decl": "background: var(--suave);border-radius: 12px;padding: 0.7rem 0.8rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "sifa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metric",
+   "decl": "background: var(--suave);border-radius: 12px;padding: 0.7rem 0.8rem;display: flex;flex-direction: column;justify-content: space-between;gap: 0.35rem;min-height: 74px",
+   "en": [
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metric span",
+   "decl": "font-size: 0.98rem;font-weight: 700;color: var(--texto)",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metric span",
+   "decl": "font-size: 1.02rem;font-weight: 700",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metric span.estado",
+   "decl": "align-self: flex-start",
+   "en": [
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "dimanno_destino_resolver.html",
+    "dimanno_generacion_detalle.html",
+    "dimanno_validacion.html",
+    "eurobanan_generacion_detalle.html",
+    "eurobanan_validacion.html",
+    "fruver_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".metric strong",
+   "decl": "display: block;font-size: 0.68rem;text-transform: uppercase;letter-spacing: 0.04em;color: var(--muted);margin-bottom: 0.25rem;font-weight: 600",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metric strong",
+   "decl": "display: block;font-size: 0.75rem;color: var(--muted);margin-bottom: 0.2rem;font-weight: 600",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "sifa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metric strong",
+   "decl": "display: block;font-size: 0.75rem;color: var(--muted);margin-bottom: 0;font-weight: 600",
+   "en": [
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metric strong",
+   "decl": "display: block;margin-bottom: .25rem;font-size: .75rem;color: var(--muted);letter-spacing: 0.02em",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metrica",
+   "decl": "background: #f8fafc;border-radius: 12px;padding: 0.75rem 0.85rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".metrica",
+   "decl": "padding: 0.55rem 0;border-bottom: 1px solid #eeeeee;background: transparent;border-radius: 0",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".metrica strong",
+   "decl": "display: block;font-size: 0.68rem;text-transform: uppercase;letter-spacing: 0.04em;margin-bottom: 0.2rem;font-weight: 600",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".metrica strong",
+   "decl": "display: block;font-size: 0.78rem;color: var(--muted);margin-bottom: 0.15rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".metrics",
+   "decl": "display: grid;grid-template-columns: repeat(4, minmax(0, 1fr));gap: 0.65rem;margin-bottom: 0.9rem",
+   "en": [
+    "orsero_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metrics",
+   "decl": "display: grid;grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));gap: .75rem;margin-bottom: 1rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metrics",
+   "decl": "display: grid;grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));gap: 0.65rem;margin-bottom: 0.95rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metrics",
+   "decl": "display: grid;grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));gap: 0.65rem;margin-bottom: 0.9rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "sifa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".metrics",
+   "decl": "display: grid;grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));gap: 0.65rem;margin-bottom: 0.9rem",
+   "en": [
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".modulo-vista .grid-principal, .grid-principal",
+   "decl": "display: grid;grid-template-columns: minmax(0, 1.3fr) minmax(320px, 1fr);gap: 1rem;align-items: start;margin-bottom: 1rem",
+   "en": [
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "dimanno_cargar.html",
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "dimanno_generacion_detalle.html",
+    "dimanno_validacion.html",
+    "eurobanan_cargar.html"
+   ]
+  },
+  {
+   "sel": ".nav-volver",
+   "decl": "margin: 0 0 0.1rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".nav-volver",
+   "decl": "margin: 0 0 0.85rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "glamour_generacion_detalle.html",
+    "glamour_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".nav-volver",
+   "decl": "margin: 0 0 1.25rem",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": ".nav-volver",
+   "decl": "margin: 0 0 1rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "eurobanan_mapear_gastos.html",
+    "fruver_generacion_detalle.html",
+    "glamour_mapear_gastos.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "nufri_mapear_gastos.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "tdv_europa_cargar.html",
+    "tdv_europa_generacion_detalle.html",
+    "tdv_europa_validacion.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".nav-volver a",
+   "decl": "color: var(--acento-oscuro);font-weight: 600;text-decoration: none;font-size: 0.95rem",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": ".nav-volver a",
+   "decl": "color: var(--muted);font-weight: 600;text-decoration: none",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "eurobanan_mapear_gastos.html",
+    "fruver_generacion_detalle.html",
+    "glamour_mapear_gastos.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "nufri_mapear_gastos.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "tdv_europa_generacion_detalle.html",
+    "tdv_europa_validacion.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".nav-volver a",
+   "decl": "color: var(--muted);font-weight: 600;text-decoration: none;font-size: 0.88rem",
+   "en": [
+    "glamour_generacion_detalle.html",
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".nav-volver a",
+   "decl": "color: var(--muted);font-weight: 600;text-decoration: none;font-size: 0.92rem",
+   "en": [
+    "dimanno_cargar.html",
+    "dimanno_validacion.html",
+    "eurobanan_cargar.html",
+    "eurobanan_validacion.html",
+    "fruver_cargar.html",
+    "fruver_validacion.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "kraaijeveld_validacion.html",
+    "master_cargar.html",
+    "master_validacion.html",
+    "nufri_cargar.html",
+    "nufri_validacion.html",
+    "orsero_cargar.html",
+    "orsero_validacion.html",
+    "sifa_cargar.html",
+    "sifa_validacion.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".nav-volver a:hover",
+   "decl": "color: var(--acento)",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".nav-volver a:hover",
+   "decl": "color: var(--acento-oscuro)",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".nav-volver a:hover",
+   "decl": "color: var(--acento-oscuro);text-decoration: underline",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".panel-acciones",
+   "decl": "display: grid;gap: .65rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".panel-acciones",
+   "decl": "display: grid;gap: 0.5rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "glamour_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".panel-acciones a.boton, .panel-acciones button.boton",
+   "decl": "width: 100%;text-align: center",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".panel-lateral",
+   "decl": "background: rgba(255, 255, 255, 0.96);border: 1px solid var(--borde);border-radius: var(--radius);padding: 1.1rem;box-shadow: var(--shadow);display: grid;gap: 0.75rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".panel-lateral",
+   "decl": "background: var(--tarjeta);border: 1px solid var(--borde);border-radius: var(--radius);padding: 1.1rem 1.2rem;box-shadow: var(--shadow)",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".panel-lateral",
+   "decl": "background: var(--tarjeta);border: 1px solid var(--borde);border-radius: var(--radius);padding: 1.1rem 1.2rem;box-shadow: var(--shadow);position: sticky;top: 1rem",
+   "en": [
+    "fruver_validacion.html"
+   ]
+  },
+  {
+   "sel": ".panel-lateral .intro",
+   "decl": "margin: 0 0 0.9rem;color: var(--muted);font-size: 0.9rem;line-height: 1.4",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".panel-lateral .intro",
+   "decl": "margin: 0;color: var(--muted);font-size: 0.86rem;line-height: 1.4",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".panel-lateral h2",
+   "decl": "margin: 0 0 0.3rem;font-size: 1.1rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".panel-lateral h2",
+   "decl": "margin: 0;font-size: 1.05rem;font-weight: 650;letter-spacing: -0.01em",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".panel-resultado .intro",
+   "decl": "margin: 0 0 1rem;color: var(--muted);font-size: 0.92rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "bitacoras.html",
+    "dimanno_validacion.html",
+    "eurobanan_mapear_gastos.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".pasos",
+   "decl": "list-style: none;margin: 0;padding: 0;display: grid;gap: 0.75rem;position: relative;z-index: 1",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".pasos",
+   "decl": "list-style: none;margin: 0;padding: 0;display: grid;gap: 0.85rem;position: relative;z-index: 1",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".pasos span",
+   "decl": "display: block;font-size: 0.88rem;opacity: 0.85;line-height: 1.4",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".pasos span",
+   "decl": "display: block;font-size: 0.88rem;opacity: 0.85;line-height: 1.45",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".pasos strong",
+   "decl": "display: block;margin-bottom: 0.2rem;font-size: 0.95rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".pasos strong",
+   "decl": "display: block;margin-bottom: 0.3rem;font-size: 0.95rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".resumen",
+   "decl": "display: grid;grid-template-columns: repeat(2, minmax(0, 1fr));gap: 1rem 1.25rem",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".resumen",
+   "decl": "display: grid;grid-template-columns: repeat(3, minmax(0, 1fr));gap: 0.9rem 1rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".resumen",
+   "decl": "display: grid;grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));gap: 0.75rem 1rem",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": ".resumen, .tarjeta",
+   "decl": "background: var(--tarjeta);border: 1px solid var(--borde);border-radius: var(--radius);padding: 1.25rem 1.5rem;margin-bottom: 1rem;box-shadow: var(--shadow)",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "bitacoras.html",
+    "dimanno_generacion_detalle.html",
+    "dimanno_validacion.html",
+    "eurobanan_generacion_detalle.html",
+    "eurobanan_mapear_gastos.html",
+    "eurobanan_validacion.html"
+   ]
+  },
+  {
+   "sel": ".seccion-titulo",
+   "decl": "margin: 0 0 .85rem;font-size: .78rem;text-transform: uppercase;letter-spacing: 0.06em;color: var(--muted);font-weight: 700",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".seccion-titulo",
+   "decl": "margin: 0 0 0.75rem;font-size: 0.78rem;letter-spacing: 0.05em;text-transform: uppercase;color: var(--muted);font-weight: 700",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".seccion-titulo",
+   "decl": "margin: 0 0 0.7rem;font-size: 0.72rem;letter-spacing: 0.06em;text-transform: uppercase;color: var(--muted);font-weight: 700",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".seccion-titulo",
+   "decl": "margin: 0 0 0.85rem;font-size: 1.05rem;font-weight: 700;letter-spacing: -0.02em",
+   "en": [
+    "panel.html"
+   ]
+  },
+  {
+   "sel": ".tabla-scroll",
+   "decl": "overflow-x: auto",
+   "en": [
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".tabla-scroll",
+   "decl": "overflow-x: auto;-webkit-overflow-scrolling: touch",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta",
+   "decl": "background: rgba(255, 255, 255, 0.94);border: 1px solid var(--borde);border-radius: var(--radius);padding: 1.05rem 1.1rem;box-shadow: var(--shadow)",
+   "en": [
+    "glamour_generacion_detalle.html",
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta",
+   "decl": "background: var(--tarjeta);border: 1px solid var(--borde);border-radius: var(--radius);padding: 1.1rem 1.2rem;box-shadow: var(--shadow)",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta",
+   "decl": "background: var(--tarjeta);border: 1px solid var(--borde);border-radius: var(--radius);padding: 1.25rem 1.35rem;margin-bottom: 1.15rem;height: fit-content",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta",
+   "decl": "background: var(--tarjeta);border: 1px solid var(--borde);border-radius: var(--radius);padding: 1.25rem 1.35rem;margin-bottom: 1.15rem;height: fit-content;align-self: start",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta",
+   "decl": "background: var(--tarjeta);border: 1px solid var(--borde);border-radius: var(--radius);padding: 1.2rem 1.25rem;box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);margin-bottom: 1rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta",
+   "decl": "background: var(--tarjeta);border: 1px solid var(--borde);border-radius: var(--radius);padding: 1.2rem 1.25rem;box-shadow: var(--shadow)",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta",
+   "decl": "padding: 0.9rem 0.95rem 1rem",
+   "en": [
+    "ingresos.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta h2",
+   "decl": "margin: 0 0 0.7rem;font-size: 0.92rem;font-weight: 650",
+   "en": [
+    "ingresos.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta h2",
+   "decl": "margin: 0 0 0.85rem;font-size: 0.72rem;letter-spacing: 0.06em;text-transform: uppercase;color: var(--muted);font-weight: 700",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta h2",
+   "decl": "margin: 0 0 0.85rem;font-size: 1rem;color: var(--muted);font-weight: 700;text-transform: uppercase;letter-spacing: 0.04em",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-formulario",
+   "decl": "background: var(--tarjeta);border: 1px solid var(--borde);padding: 1.6rem 1.55rem 1.45rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-formulario",
+   "decl": "background: var(--tarjeta);border: 1px solid var(--borde);padding: 1.7rem 1.6rem 1.5rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-formulario .subtitulo",
+   "decl": "margin: 0 0 1.35rem;color: var(--muted);font-size: 0.95rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-formulario .subtitulo",
+   "decl": "margin: 0 0 1.4rem;color: var(--muted);font-size: 0.95rem;line-height: 1.4",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-formulario h2",
+   "decl": "margin: 0 0 0.25rem;font-size: 1.2rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-formulario h2",
+   "decl": "margin: 0 0 0.35rem;font-size: 1.2rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".vacio",
+   "decl": "margin: 0;color: var(--muted);font-size: 0.88rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".vacio",
+   "decl": "margin: 0;color: var(--muted);font-size: 0.92rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": "<style> :root",
+   "decl": "--fondo: #f5f5f5;--tarjeta: #fff;--texto: #111111;--muted: #6b6b6b;--borde: #e6e6e6;--suave: #f0f0f0;--acento: #111111;--acento-oscuro: #111111;--acento-suave: #eeeeee;--aviso: #111111;--error: #111111",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": "<style> :root",
+   "decl": "--fondo: #f5f5f5;--tarjeta: #fff;--texto: #111111;--muted: #6b6b6b;--borde: #e6e6e6;--suave: #f0f0f0;--ok: #111111;--aviso: #111111;--error: #111111;--acento: #111111",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "<style> :root",
+   "decl": "--fondo: #f5f5f5;--tarjeta: #ffffff;--suave: #f0f0f0;--acento: #111111;--acento-oscuro: #111111;--acento-proceso: #111111;--panel: #111111;--panel-suave: #111111;--texto: #111111;--muted: #6b6b6b;--borde: #e6e6e6;--error: #111111",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": "<style> :root",
+   "decl": "--fondo: #f5f5f5;--tarjeta: #ffffff;--suave: #f0f0f0;--acento: #111111;--acento-oscuro: #111111;--texto: #111111;--muted: #6b6b6b;--borde: #e6e6e6;--error: #111111",
+   "en": [
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": "<style> :root",
+   "decl": "--fondo: #f5f5f5;--tarjeta: #ffffff;--suave: #f0f0f0;--acento: #111111;--acento-oscuro: #111111;--texto: #111111;--muted: #6b6b6b;--borde: #e6e6e6;--error: #111111;--aviso: #111111;--ok: #557360",
+   "en": [
+    "dimanno_destino_resolver.html"
+   ]
+  },
+  {
+   "sel": "<style> :root",
+   "decl": "--fondo: #f5f5f5;--tarjeta: #ffffff;--texto: #111111;--muted: #6b6b6b;--borde: #e6e6e6;--acento: #111111;--acento-oscuro: #111111;--error: #111111;--aviso: #111111",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ]
+  },
+  {
+   "sel": "<style> :root",
+   "decl": "--fondo: #f5f5f5;--tarjeta: #ffffff;--texto: #111111;--muted: #6b6b6b;--borde: #e6e6e6;--acento: #111111;--suave: #f0f0f0",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "<style> :root",
+   "decl": "--fondo: #f5f5f5;--tarjeta: #ffffff;--texto: #111111;--muted: #6b6b6b;--borde: #e6e6e6;--ok: #111111;--aviso: #111111;--error: #111111;--acento: #111111;--acento-oscuro: #111111",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "<style> :root",
+   "decl": "--fondo: #f5f5f5;--tarjeta: #ffffff;--texto: #111111;--muted: #6b6b6b;--borde: #e6e6e6;--suave: #f0f0f0;--acento: #111111;--acento-oscuro: #111111;--acento-suave: #eeeeee;--aviso: #111111;--error: #111111",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "glamour_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 900px) @@ .layout",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "glamour_generacion_detalle.html",
+    "ingresos.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 900px) @@ .resumen",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "panel.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 900px) @@ .resumen",
+   "decl": "grid-template-columns: 1fr 1fr",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 960px) @@ .fila-dos, .fila-tres, .fila-factura",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "eurobanan_cargar.html",
+    "glamour_cargar.html",
+    "nufri_cargar.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "dimanno_cargar.html",
+    "fruver_cargar.html",
+    "kraaijeveld_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 960px) @@ .fila-tres, .fila-factura",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "nufri_cargar.html",
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 960px) @@ .layout",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "glamour_generacion_detalle.html",
+    "ingresos.html",
+    "kraaijeveld_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 960px) @@ button",
+   "decl": "width: 100%",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ],
+   "motivo": "selector sin clases: alcanzaría a pantallas que hoy no lo tienen"
+  },
+  {
+   "sel": "@media (max-width: 980px) @@ .grid-principal, .bloque-tablas, .incidencias, .metrics, .detalle-grid",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "sifa_validacion.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "glamour_validacion.html",
+    "orsero_validacion.html",
+    "tdv_europa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 980px) @@ .modulo-vista .grid-principal, .grid-principal, .incidencias, .metrics, .detalle-grid",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "dimanno_cargar.html",
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "dimanno_generacion_detalle.html",
+    "dimanno_validacion.html",
+    "eurobanan_cargar.html"
+   ]
+  },
+  {
+   "sel": "a.boton",
+   "decl": "background: var(--muted)",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": "a.boton",
+   "decl": "display: block;text-align: center;text-decoration: none;border-radius: 12px;font-weight: 700;padding: 0.8rem 1rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "a.boton",
+   "decl": "display: inline-flex;align-items: center;justify-content: center;text-align: center;text-decoration: none;border-radius: 12px;font-weight: 700;padding: .8rem 1.1rem;line-height: 1.25;letter-spacing: 0.01em",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "a.boton, button.boton",
+   "decl": "display: flex;align-items: center;justify-content: center;text-decoration: none;border: 0;border-radius: var(--radius-pill);background: #111111;color: #ffffff;font: inherit;font-weight: 700;padding: 0.8rem 1.15rem;cursor: pointer;letter-spacing: 0.01em",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "a.boton, button.boton",
+   "decl": "display: inline-block;text-decoration: none;border: 0;border-radius: 12px;background: var(--acento);color: #ffffff;font: inherit;font-weight: 700;padding: .7rem 1.05rem;cursor: pointer",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": "a.boton, button.boton",
+   "decl": "display: inline-block;text-decoration: none;border: 0;border-radius: 12px;background: var(--acento);color: #ffffff;font: inherit;font-weight: 700;padding: 0.7rem 1.05rem;cursor: pointer",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": "a.boton, button.boton",
+   "decl": "display: inline-flex;align-items: center;justify-content: center;text-decoration: none;border: 0;border-radius: var(--radius-sm);background: #111111;color: #ffffff;font: inherit;font-weight: 700;padding: 0.7rem 1rem;cursor: pointer;width: 100%",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": "a.boton-primario",
+   "decl": "background: var(--acento);color: #ffffff",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "a.boton-primario",
+   "decl": "background: var(--acento);color: #ffffff;flex: 1 1 180px",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "a.boton-secundario",
+   "decl": "background: #dfe4db;color: var(--texto)",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "tdv_europa_validacion.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "a.boton-secundario",
+   "decl": "background: #dfe4db;color: var(--texto);flex: 1 1 140px",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "a.boton-secundario",
+   "decl": "background: transparent;border: 1.5px solid #111111;color: #111111",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "a.boton-secundario, button.boton-secundario",
+   "decl": "background: #dfe4db;color: var(--texto)",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": "a.boton-secundario, button.boton-secundario",
+   "decl": "background: transparent;color: #111111;border: 1.5px solid #111111",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": "a.boton-secundario:hover, button.boton-secundario:hover",
+   "decl": "background: #d0d6cb",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "glamour_generacion_detalle.html",
+    "glamour_validacion.html",
+    "kraaijeveld_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "a.boton:hover, a.boton:focus, a.boton:active",
+   "decl": "background: #eeeeee;color: #111111",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "dimanno_generacion_detalle.html",
+    "dimanno_validacion.html",
+    "eurobanan_generacion_detalle.html",
+    "eurobanan_validacion.html",
+    "fruver_generacion_detalle.html",
+    "fruver_validacion.html"
+   ]
+  },
+  {
+   "sel": "a.boton:hover, a.boton:focus, a.boton:active, button.boton:hover, button.boton:focus, button.boton:active",
+   "decl": "background: #2a2a2a;color: #ffffff",
+   "en": [
+    "glamour_generacion_detalle.html",
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": "a.boton:hover, a.boton:focus, a.boton:active, button.boton:hover, button.boton:focus, button.boton:active",
+   "decl": "background: #eeeeee;color: #111111",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": "button",
+   "decl": "border: 0;border-radius: var(--radius-sm);background: var(--acento);color: #ffffff;font: inherit;font-weight: 700;padding: 0.85rem 1.45rem;cursor: pointer",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ]
+  },
+  {
+   "sel": "button",
+   "decl": "border: 0;border-radius: var(--radius-sm);background: var(--acento);color: #ffffff;font: inherit;font-weight: 700;padding: 0.9rem 1.55rem;cursor: pointer;min-width: 180px;transition: background 0.15s ease, opacity 0.15s ease",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": "button, a.boton",
+   "decl": "display: inline-block;text-decoration: none;border: 0;border-radius: var(--radius-sm);background: var(--acento);color: #ffffff;font: inherit;font-weight: 600;padding: 0.7rem 1.1rem;cursor: pointer",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ],
+   "motivo": "la clase se usa en pantallas que no traen la regla",
+   "extra": [
+    "dimanno_generacion_detalle.html",
+    "dimanno_validacion.html",
+    "eurobanan_generacion_detalle.html",
+    "eurobanan_validacion.html",
+    "fruver_generacion_detalle.html",
+    "fruver_validacion.html"
+   ]
+  },
+  {
+   "sel": "button.procesando",
+   "decl": "background: #111111;color: #ffffff;cursor: wait;opacity: 0.95",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": "button.procesando",
+   "decl": "background: #eeeeee;color: #111111;cursor: wait;opacity: 0.95",
+   "en": [
+    "glamour_cargar.html"
+   ]
+  },
+  {
+   "sel": "button:disabled",
+   "decl": "cursor: wait",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ],
+   "motivo": "selector sin clases: alcanzaría a pantallas que hoy no lo tienen"
+  },
+  {
+   "sel": "button:hover, button:focus, button:active",
+   "decl": "background: #111111;color: #ffffff",
+   "en": [
+    "dimanno_cargar.html",
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "eurobanan_cargar.html",
+    "eurobanan_mapear_gastos.html",
+    "fruver_cargar.html",
+    "glamour_mapear_gastos.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "master_gastos_editar.html",
+    "nufri_cargar.html",
+    "nufri_mapear_gastos.html",
+    "orsero_cargar.html",
+    "orsero_gastos_editar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": "button:hover, button:focus, button:active",
+   "decl": "background: #2a2a2a;color: #ffffff",
+   "en": [
+    "glamour_cargar.html"
+   ]
+  },
+  {
+   "sel": "form",
+   "decl": "display: grid;gap: 1.15rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": "form",
+   "decl": "display: grid;gap: 1.1rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": "h1",
+   "decl": "margin: 0 0 .35rem;font-size: 1.85rem;letter-spacing: -0.02em",
+   "en": [
+    "tdv_europa_generacion_detalle.html",
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": "h1",
+   "decl": "margin: 0 0 0.35rem;font-size: 1.85rem",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ]
+  },
+  {
+   "sel": "h1",
+   "decl": "margin: 0 0 0.75rem;font-size: 1.9rem",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": "h1",
+   "decl": "margin: 0;font-size: 1.4rem;font-weight: 650;letter-spacing: -0.02em",
+   "en": [
+    "glamour_generacion_detalle.html",
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": "h1",
+   "decl": "margin: 0;font-size: 1.85rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "dimanno_validacion.html",
+    "eurobanan_generacion_detalle.html",
+    "eurobanan_validacion.html",
+    "fruver_generacion_detalle.html",
+    "fruver_validacion.html",
+    "kraaijeveld_generacion_detalle.html",
+    "kraaijeveld_validacion.html",
+    "master_generacion_detalle.html",
+    "master_validacion.html",
+    "nufri_generacion_detalle.html",
+    "nufri_validacion.html",
+    "orsero_generacion_detalle.html",
+    "orsero_validacion.html",
+    "sifa_generacion_detalle.html",
+    "sifa_validacion.html",
+    "visafruits_generacion_detalle.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": "h1",
+   "decl": "margin: 0;font-size: clamp(1.7rem, 2.2vw, 2rem)",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ]
+  },
+  {
+   "sel": "h1",
+   "decl": "margin: 0;font-size: clamp(1.7rem, 2.2vw, 2rem);line-height: 1.2",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": "h2",
+   "decl": "margin: 0 0 .85rem;font-size: 1.1rem",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "h2",
+   "decl": "margin: 0 0 1rem;font-size: 1.15rem;letter-spacing: -0.01em",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": "input:focus",
+   "decl": "outline: none;border-color: #111111;box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.28)",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "glamour_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "tdv_europa_cargar.html"
+   ],
+   "motivo": "selector sin clases: alcanzaría a pantallas que hoy no lo tienen"
+  },
+  {
+   "sel": "input:focus, select:focus",
+   "decl": "outline: none;border-color: #111111;box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.28)",
+   "en": [
+    "fruver_cargar.html",
+    "kraaijeveld_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ],
+   "motivo": "selector sin clases: alcanzaría a pantallas que hoy no lo tienen"
+  },
+  {
+   "sel": "input[type=\"file\"]",
+   "decl": "background: #f5f5f5;padding: 0.7rem 0.85rem",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "fruver_cargar.html",
+    "glamour_cargar.html",
+    "kraaijeveld_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "sifa_cargar.html",
+    "tdv_europa_cargar.html",
+    "visafruits_cargar.html"
+   ],
+   "motivo": "selector sin clases: alcanzaría a pantallas que hoy no lo tienen"
+  },
+  {
+   "sel": "input[type=\"number\"], input[type=\"text\"], input[type=\"file\"]",
+   "decl": "width: 100%;padding: 0.8rem 0.95rem;border: 1px solid var(--borde);border-radius: var(--radius-sm);font: inherit;background: #f5f5f5;color: var(--texto)",
+   "en": [
+    "dimanno_cargar.html",
+    "eurobanan_cargar.html",
+    "glamour_cargar.html",
+    "master_cargar.html",
+    "nufri_cargar.html",
+    "orsero_cargar.html",
+    "tdv_europa_cargar.html"
+   ],
+   "motivo": "selector sin clases: alcanzaría a pantallas que hoy no lo tienen"
+  },
+  {
+   "sel": "input[type=\"number\"], input[type=\"text\"], input[type=\"file\"], select",
+   "decl": "width: 100%;padding: 0.8rem 0.95rem;border: 1px solid var(--borde);border-radius: var(--radius-sm);font: inherit;background: #f5f5f5;color: var(--texto)",
+   "en": [
+    "fruver_cargar.html",
+    "kraaijeveld_cargar.html",
+    "sifa_cargar.html",
+    "visafruits_cargar.html"
+   ],
+   "motivo": "selector sin clases: alcanzaría a pantallas que hoy no lo tienen"
+  },
+  {
+   "sel": "input[type=\"text\"], input[type=\"number\"], textarea",
+   "decl": "width: 100%;padding: 0.7rem 0.85rem;border: 1px solid var(--borde);border-radius: var(--radius-sm);font: inherit;background: var(--suave)",
+   "en": [
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ],
+   "motivo": "selector sin clases: alcanzaría a pantallas que hoy no lo tienen"
+  },
+  {
+   "sel": "label",
+   "decl": "display: block;font-weight: 600;margin-bottom: 0.35rem;font-size: 0.88rem",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ]
+  },
+  {
+   "sel": "label",
+   "decl": "display: block;font-weight: 600;margin: 0.85rem 0 0.35rem",
+   "en": [
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": "main",
+   "decl": "max-width: 1100px;margin: 0 auto;padding: 0 0 1.5rem",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "main",
+   "decl": "max-width: 1180px;margin: 0 auto;padding: 0 0 1.5rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html",
+    "sifa_generacion_detalle.html",
+    "tdv_europa_generacion_detalle.html",
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "main",
+   "decl": "max-width: 1200px;margin: 0 auto;padding: 0 0 1.5rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": "main",
+   "decl": "max-width: 1240px;margin: 0 auto;padding: 0 0 1.5rem",
+   "en": [
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "sifa_validacion.html",
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": "main",
+   "decl": "max-width: 1320px;margin: 0 auto;padding: 0 0 1.5rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": "main",
+   "decl": "max-width: 900px;margin: 0 auto;padding: 0 0 1.5rem",
+   "en": [
+    "dimanno_destino_resolver.html",
+    "dimanno_gastos_editar.html",
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "master_gastos_editar.html",
+    "nufri_mapear_gastos.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": "select",
+   "decl": "width: 100%;padding: 0.75rem 0.85rem;border: 1px solid var(--borde);border-radius: 12px;font: inherit;background: #fff",
+   "en": [
+    "eurobanan_mapear_gastos.html",
+    "glamour_mapear_gastos.html",
+    "nufri_mapear_gastos.html"
+   ],
+   "motivo": "selector sin clases: alcanzaría a pantallas que hoy no lo tienen"
+  },
+  {
+   "sel": "table",
+   "decl": "width: 100%;border-collapse: collapse;font-size: 0.86rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": "table",
+   "decl": "width: 100%;border-collapse: collapse;font-size: 0.88rem",
+   "en": [
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "sifa_validacion.html"
+   ]
+  },
+  {
+   "sel": "table",
+   "decl": "width: 100%;border-collapse: collapse;font-size: 0.93rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "table",
+   "decl": "width: 100%;border-collapse: collapse;font-size: 0.95rem",
+   "en": [
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": "table",
+   "decl": "width: 100%;border-collapse: separate;border-spacing: 0;font-size: .9rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": "td.num, th.num",
+   "decl": "text-align: right",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "glamour_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": "td.num, th.num",
+   "decl": "text-align: right;white-space: nowrap",
+   "en": [
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "sifa_validacion.html"
+   ]
+  },
+  {
+   "sel": "tfoot td",
+   "decl": "font-weight: 700;border-bottom: 0;padding-top: 0.7rem",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": "tfoot td",
+   "decl": "font-weight: 700;border-top: 2px solid var(--borde);border-bottom: 0;background: #fff;color: var(--texto);padding-top: .85rem;padding-bottom: .85rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": "th",
+   "decl": "color: var(--muted)",
+   "en": [
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": "th",
+   "decl": "color: var(--muted);font-size: .78rem;text-transform: uppercase;letter-spacing: 0.04em;font-weight: 700;white-space: nowrap",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": "th",
+   "decl": "color: var(--muted);font-size: 0.68rem;font-weight: 600;text-transform: uppercase;letter-spacing: 0.04em",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": "th",
+   "decl": "color: var(--muted);font-size: 0.75rem;font-weight: 600;text-transform: uppercase;letter-spacing: 0.03em;white-space: nowrap",
+   "en": [
+    "fruver_validacion.html",
+    "kraaijeveld_validacion.html",
+    "sifa_validacion.html"
+   ]
+  },
+  {
+   "sel": "th",
+   "decl": "color: var(--muted);font-size: 0.78rem;font-weight: 600;text-transform: uppercase;letter-spacing: 0.03em",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": "th",
+   "decl": "color: var(--muted);font-size: 0.82rem",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "th, td",
+   "decl": "border-bottom: 1px solid var(--borde);text-align: left;padding: 0.6rem 0.4rem;vertical-align: middle",
+   "en": [
+    "dimanno_gastos_editar.html",
+    "master_gastos_editar.html",
+    "orsero_gastos_editar.html",
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": "th, td",
+   "decl": "text-align: left;padding: .7rem .65rem;border-bottom: 1px solid var(--borde);vertical-align: top;line-height: 1.4;letter-spacing: 0.01em",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": "th, td",
+   "decl": "text-align: left;padding: 0.55rem 0.2rem;border-bottom: 1px solid var(--borde)",
+   "en": [
+    "dimanno_generacion_detalle.html",
+    "eurobanan_generacion_detalle.html",
+    "fruver_generacion_detalle.html",
+    "kraaijeveld_generacion_detalle.html",
+    "master_generacion_detalle.html",
+    "nufri_generacion_detalle.html",
+    "orsero_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "th, td",
+   "decl": "text-align: left;padding: 0.5rem 0.3rem;border-bottom: 1px solid var(--borde);vertical-align: top",
+   "en": [
+    "dimanno_validacion.html",
+    "eurobanan_validacion.html",
+    "fruver_validacion.html",
+    "glamour_validacion.html",
+    "kraaijeveld_validacion.html",
+    "master_validacion.html",
+    "nufri_validacion.html",
+    "orsero_validacion.html",
+    "sifa_validacion.html",
+    "visafruits_validacion.html"
+   ]
+  }
+ ],
+ "propia": [
+  {
+   "sel": ".acciones-contenedores",
+   "decl": "display: flex;gap: 0.75rem;flex-wrap: wrap;padding-top: 0.15rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".acciones-finales .boton, .acciones-finales .boton-secundario",
+   "decl": "width: auto",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".acciones-form button",
+   "decl": "border: 0;border-radius: var(--radius-sm);background: var(--acento);color: #ffffff;font: inherit;font-weight: 700;padding: 0.9rem 1.55rem;cursor: pointer;min-width: 180px;transition: background 0.15s ease, opacity 0.15s ease",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".acciones-form button.procesando",
+   "decl": "background: #111111;color: #ffffff;cursor: wait;opacity: 0.95",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".acciones-form button:disabled",
+   "decl": "cursor: wait",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".acciones-form button:hover, button:focus, button:active",
+   "decl": "background: #111111;color: #ffffff",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".acciones-mapeos",
+   "decl": "display: flex;gap: 0.75rem;flex-wrap: wrap",
+   "en": [
+    "kraaijeveld_cargar.html"
+   ]
+  },
+  {
+   "sel": ".agregar-destino",
+   "decl": "justify-self: start",
+   "en": [
+    "orsero_cargar.html"
+   ]
+  },
+  {
+   "sel": ".archivo-meta",
+   "decl": "margin: 0 0 1.1rem;color: var(--muted);font-size: .92rem;line-height: 1.5",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".aviso-formulas",
+   "decl": "background: #fdf6e3;border: 1px solid #c9a227;color: #111111",
+   "en": [
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".aviso-formulas p",
+   "decl": "margin: 0.35rem 0 0;font-size: 0.93rem;line-height: 1.45",
+   "en": [
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".aviso-formulas strong",
+   "decl": "display: block;margin-bottom: 0.3rem",
+   "en": [
+    "visafruits_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".badge-ko",
+   "decl": "background: #eeeeee;color: var(--error)",
+   "en": [
+    "fruver_validacion.html"
+   ]
+  },
+  {
+   "sel": ".badge-ok",
+   "decl": "background: var(--acento-suave);color: var(--acento-oscuro)",
+   "en": [
+    "fruver_validacion.html"
+   ]
+  },
+  {
+   "sel": ".badge-ok, .badge-ko",
+   "decl": "display: inline-flex;align-items: center;justify-content: center;width: 1.35rem;height: 1.35rem;border-radius: var(--radius-sm);font-size: 0.82rem;font-weight: 700;line-height: 1",
+   "en": [
+    "fruver_validacion.html"
+   ]
+  },
+  {
+   "sel": ".banner",
+   "decl": "display: flex;align-items: flex-start;gap: 0.75rem;border-radius: var(--radius);padding: 0.9rem 1rem;margin-bottom: 1rem;border: 1px solid var(--borde)",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".banner p",
+   "decl": "margin: 0;font-size: 0.9rem;line-height: 1.4",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".banner strong",
+   "decl": "display: block;margin-bottom: 0.15rem",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".banner-error",
+   "decl": "background: #eeeeee;border-color: #111111;color: #111111",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".banner-proceso",
+   "decl": "background: #eeeeee;border-left: 4px solid #111111;color: #111111",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".bloque-archivos > .titulo-bloque, .bloque-destinos > .titulo-bloque",
+   "decl": "margin: 0.35rem 0 0;font-size: 0.8rem;letter-spacing: 0.06em;text-transform: uppercase;color: var(--muted);font-weight: 700",
+   "en": [
+    "orsero_cargar.html"
+   ]
+  },
+  {
+   "sel": ".bloque-archivos, .bloque-destinos",
+   "decl": "display: grid;gap: 1rem;padding-top: 0.25rem;border-top: 1px dashed var(--borde)",
+   "en": [
+    "orsero_cargar.html"
+   ]
+  },
+  {
+   "sel": ".bloque-destinos",
+   "decl": "gap: 0.6rem",
+   "en": [
+    "orsero_cargar.html"
+   ]
+  },
+  {
+   "sel": ".bloque-destinos > .descripcion",
+   "decl": "margin: 0;color: var(--muted);font-size: 0.88rem;line-height: 1.4",
+   "en": [
+    "orsero_cargar.html"
+   ]
+  },
+  {
+   "sel": ".bloque-especial",
+   "decl": "display: grid;gap: 0.85rem;padding: 1rem;border-radius: var(--radius);background: var(--suave);border: 1px dashed var(--borde)",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".bloque-especial.oculto",
+   "decl": "display: none !important",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".bloque-precio-fijo.oculto",
+   "decl": "display: none",
+   "en": [
+    "fruver_cargar.html"
+   ]
+  },
+  {
+   "sel": ".bloque-precio-fijo.oculto, .modo-panel.oculto, .oculto",
+   "decl": "display: none !important",
+   "en": [
+    "kraaijeveld_cargar.html"
+   ]
+  },
+  {
+   "sel": ".bloque-tablas > .tarjeta",
+   "decl": "margin-bottom: 0",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".btn-contenedor",
+   "decl": "border: 1px solid var(--borde);background: #f5f5f5;border-radius: 12px;padding: 0.72rem 0.95rem;font: inherit;font-size: 0.92rem;font-weight: 600;color: var(--texto);cursor: pointer;white-space: nowrap;height: fit-content;min-width: 0;width: auto;transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".btn-contenedor.anadir",
+   "decl": "align-self: flex-start;border-style: dashed;color: var(--acento);padding: 0.62rem 1rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".btn-contenedor.anadir:hover:not(:disabled)",
+   "decl": "border-color: var(--acento);background: rgba(55, 90, 77, 0.06)",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".btn-contenedor.quitar",
+   "decl": "color: #111111;font-size: 0.88rem;padding: 0.78rem 0.9rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".btn-contenedor.quitar:hover:not(:disabled)",
+   "decl": "background: #eeeeee;border-color: #111111",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".btn-contenedor:disabled",
+   "decl": "opacity: 0.55;cursor: not-allowed",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".btn-contenedor:hover:not(:disabled)",
+   "decl": "background: var(--suave);border-color: #eeeeee",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".btn-mapeo",
+   "decl": "border: 1px solid var(--borde);background: #f5f5f5;border-radius: 10px;padding: 0.7rem 0.85rem;font: inherit;font-weight: 700;cursor: pointer;white-space: nowrap;height: fit-content",
+   "en": [
+    "kraaijeveld_cargar.html"
+   ]
+  },
+  {
+   "sel": ".btn-mapeo.quitar",
+   "decl": "color: #111111",
+   "en": [
+    "kraaijeveld_cargar.html"
+   ]
+  },
+  {
+   "sel": ".chart-wrap",
+   "decl": "position: relative;height: 320px",
+   "en": [
+    "ingresos.html"
+   ]
+  },
+  {
+   "sel": ".col",
+   "decl": "display: grid;gap: 0.9rem",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".col-izq > .tarjeta:last-child",
+   "decl": "margin-bottom: 0",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".col-lateral",
+   "decl": "display: grid;gap: 0.85rem;align-content: start;min-width: 0",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".dato",
+   "decl": "border-radius: var(--radius);padding: 1.2rem 1.25rem;background: #ffffff;box-shadow: var(--shadow)",
+   "en": [
+    "panel.html"
+   ]
+  },
+  {
+   "sel": ".dato span",
+   "decl": "font-size: 1.8rem;font-weight: 700;letter-spacing: -0.03em",
+   "en": [
+    "panel.html"
+   ]
+  },
+  {
+   "sel": ".dato.destacado",
+   "decl": "background: #111111;color: #ffffff",
+   "en": [
+    "panel.html"
+   ]
+  },
+  {
+   "sel": ".dato.destacado span",
+   "decl": "color: #ffffff",
+   "en": [
+    "panel.html"
+   ]
+  },
+  {
+   "sel": ".dato.destacado strong",
+   "decl": "color: rgba(255, 255, 255, 0.65)",
+   "en": [
+    "panel.html"
+   ]
+  },
+  {
+   "sel": ".dot",
+   "decl": "width: 8px;height: 8px;border-radius: 2px",
+   "en": [
+    "ingresos.html"
+   ]
+  },
+  {
+   "sel": ".estado-completado, .estado-completada",
+   "decl": "background: #111111 !important;color: #ffffff !important",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".estado-pill",
+   "decl": "display: inline-flex;align-items: center;gap: .4rem;padding: .35rem .7rem;border-radius: var(--radius-sm);font-size: .82rem;font-weight: 700",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".etiqueta",
+   "decl": "display: inline-block;width: fit-content;padding: 0.2rem 0.55rem;border-radius: 999px;font-size: 0.7rem;font-weight: 650",
+   "en": [
+    "panel.html"
+   ]
+  },
+  {
+   "sel": ".etiqueta-ok",
+   "decl": "background: #111111;color: #ffffff",
+   "en": [
+    "panel.html"
+   ]
+  },
+  {
+   "sel": ".etiqueta-prox",
+   "decl": "background: #efefef;color: var(--muted)",
+   "en": [
+    "panel.html"
+   ]
+  },
+  {
+   "sel": ".etiqueta-sin-comision",
+   "decl": "display: inline-block;margin-left: 0.35rem;font-size: 0.68rem;font-weight: 700;color: var(--aviso);background: #fff7e6;border-radius: var(--radius-sm);padding: 0.1rem 0.4rem",
+   "en": [
+    "sifa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".etiqueta-vertical",
+   "decl": "display: inline-block;margin-left: 0.35rem;font-size: 0.72rem;font-weight: 700;color: #111111;background: #f0e2b6;border-radius: var(--radius-sm);padding: 0.1rem 0.4rem",
+   "en": [
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": ".fila-contenedor-especial",
+   "decl": "display: grid;grid-template-columns: minmax(0, 1fr) auto;gap: 0.75rem;align-items: end",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".fila-contenedor-especial .campo",
+   "decl": "min-width: 0",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".fila-contenedor-especial .campo label",
+   "decl": "font-size: 0.88rem;color: var(--muted)",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".fila-destino",
+   "decl": "display: grid;grid-template-columns: 1.5rem 1fr auto;align-items: center;gap: 0.5rem",
+   "en": [
+    "orsero_cargar.html"
+   ]
+  },
+  {
+   "sel": ".fila-destino input[type=\"text\"]",
+   "decl": "text-transform: uppercase",
+   "en": [
+    "orsero_cargar.html"
+   ]
+  },
+  {
+   "sel": ".fila-mapeo-fijo",
+   "decl": "display: grid;grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr) minmax(0, 0.9fr) auto;gap: 0.75rem;align-items: end",
+   "en": [
+    "kraaijeveld_cargar.html"
+   ]
+  },
+  {
+   "sel": ".fila-mapeo-fijo .campo",
+   "decl": "min-width: 0",
+   "en": [
+    "kraaijeveld_cargar.html"
+   ]
+  },
+  {
+   "sel": ".filtros-grid",
+   "decl": "grid-template-columns: repeat(3, minmax(0, 1fr)) auto;align-items: end",
+   "en": [
+    "ingresos.html"
+   ]
+  },
+  {
+   "sel": ".financiero",
+   "decl": "margin: 0;color: var(--texto);letter-spacing: 0.01em;line-height: 1.6",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".incidencias > .tarjeta",
+   "decl": "margin-bottom: 0",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".incidencias-cabecera",
+   "decl": "display: flex;flex-wrap: wrap;gap: .65rem 1rem;align-items: center;margin-bottom: 1rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".indice-destino",
+   "decl": "color: var(--muted);font-size: 0.82rem;font-weight: 650;text-align: right",
+   "en": [
+    "orsero_cargar.html"
+   ]
+  },
+  {
+   "sel": ".kpi-box",
+   "decl": "background: #f7f7f7;border: 0;border-radius: var(--radius);padding: 1.05rem 1.15rem",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".kpi-box span",
+   "decl": "font-size: 1.35rem;font-weight: 700;letter-spacing: -0.03em;font-family: var(--font-mono)",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".kpi-box strong",
+   "decl": "display: block;font-size: 0.68rem;text-transform: uppercase;letter-spacing: 0.04em;margin-bottom: 0.35rem;font-weight: 600;color: var(--muted)",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".kpi-box:first-child",
+   "decl": "background: #111111;color: #ffffff",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".kpi-box:first-child span",
+   "decl": "color: #ffffff",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".kpi-box:first-child strong",
+   "decl": "color: rgba(255,255,255,.65)",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".kpis",
+   "decl": "display: grid;grid-template-columns: 1fr 1fr;gap: 0.75rem",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".lista li",
+   "decl": "padding-left: .15rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".lista-contenedores",
+   "decl": "display: grid;gap: 0.75rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": ".lista-destinos",
+   "decl": "display: grid;gap: 0.5rem",
+   "en": [
+    "orsero_cargar.html"
+   ]
+  },
+  {
+   "sel": ".lista-destinos.una-sola .quitar-destino",
+   "decl": "visibility: hidden",
+   "en": [
+    "orsero_cargar.html"
+   ]
+  },
+  {
+   "sel": ".lista-resumen",
+   "decl": "display: grid;gap: 0",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".lista-resumen .fila",
+   "decl": "display: grid;grid-template-columns: minmax(140px, 0.42fr) minmax(0, 1fr);gap: 0.75rem 1.25rem;align-items: baseline;padding: 0.7rem 0;border-bottom: 1px solid #eeeeee",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".lista-resumen .fila .estado",
+   "decl": "width: fit-content;max-width: 100%;justify-self: start;align-self: center;line-height: 1.3",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".lista-resumen .fila span",
+   "decl": "font-size: 0.95rem;font-weight: 500;color: var(--texto)",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".lista-resumen .fila strong",
+   "decl": "font-size: 0.72rem;letter-spacing: 0.05em;text-transform: uppercase;font-weight: 600;color: var(--muted)",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".lista-resumen .fila:first-child",
+   "decl": "padding-top: 0",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".lista-resumen .fila:last-child",
+   "decl": "border-bottom: 0;padding-bottom: 0",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".mapeos-fijos",
+   "decl": "display: flex;flex-direction: column;gap: 0.75rem",
+   "en": [
+    "kraaijeveld_cargar.html"
+   ]
+  },
+  {
+   "sel": ".merma-card",
+   "decl": "background: #fffaf0;border: 1px solid #f0e0b8;border-radius: 12px;padding: .85rem .95rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".merma-card .tag",
+   "decl": "flex-shrink: 0;background: var(--acento);color: #ffffff;font-size: .72rem;font-weight: 700;letter-spacing: 0.04em;text-transform: uppercase;padding: .2rem .5rem;border-radius: var(--radius-sm)",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".merma-card strong",
+   "decl": "font-size: .95rem;letter-spacing: 0.01em",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".merma-card-top",
+   "decl": "display: flex;justify-content: space-between;gap: .75rem;align-items: baseline;margin-bottom: .45rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".merma-grid",
+   "decl": "display: grid;grid-template-columns: repeat(3, minmax(0, 1fr));gap: .75rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".merma-meta",
+   "decl": "color: var(--muted);font-size: .86rem;display: grid;gap: .2rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".meta",
+   "decl": "margin: 0;color: var(--muted)",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".metrica:last-of-type",
+   "decl": "border-bottom: 0",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".modo-precio-fijo",
+   "decl": "display: flex;flex-wrap: wrap;gap: 1rem 1.5rem;margin-top: 0.35rem",
+   "en": [
+    "kraaijeveld_cargar.html"
+   ]
+  },
+  {
+   "sel": ".modo-precio-fijo input[type=\"radio\"]",
+   "decl": "width: 1.05rem;height: 1.05rem;margin: 0;flex-shrink: 0;accent-color: var(--acento)",
+   "en": [
+    "kraaijeveld_cargar.html"
+   ]
+  },
+  {
+   "sel": ".modo-precio-fijo label",
+   "decl": "display: flex;align-items: center;gap: 0.45rem;font-weight: 600;cursor: pointer",
+   "en": [
+    "kraaijeveld_cargar.html"
+   ]
+  },
+  {
+   "sel": ".nota-rubros",
+   "decl": "margin: 0 0 0.9rem;color: var(--muted);font-size: 0.9rem;line-height: 1.45",
+   "en": [
+    "visafruits_gastos_editar.html"
+   ]
+  },
+  {
+   "sel": ".nota-suave",
+   "decl": "margin: 0 0 .85rem;color: var(--muted);font-size: .9rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".opciones",
+   "decl": "list-style: none;margin: 0;padding: 0",
+   "en": [
+    "dimanno_destino_resolver.html"
+   ]
+  },
+  {
+   "sel": ".opciones label",
+   "decl": "font-weight: 500;display: flex;gap: 0.55rem;align-items: flex-start",
+   "en": [
+    "dimanno_destino_resolver.html"
+   ]
+  },
+  {
+   "sel": ".opciones li",
+   "decl": "margin: 0.55rem 0",
+   "en": [
+    "dimanno_destino_resolver.html"
+   ]
+  },
+  {
+   "sel": ".otra-adv",
+   "decl": "background: #fff8e8;border-radius: 10px;padding: .7rem .8rem;color: var(--aviso);font-size: .88rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".otras-adv",
+   "decl": "display: grid;grid-template-columns: repeat(3, minmax(0, 1fr));gap: .65rem;margin-top: .85rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".panel",
+   "decl": "background: #ffffff;border: 0;border-radius: var(--radius);padding: 1.2rem;box-shadow: var(--shadow);position: sticky;top: 1rem;display: grid;gap: 0.85rem",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".panel .intro",
+   "decl": "margin: 0;color: var(--muted);font-size: 0.88rem;line-height: 1.45",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".panel h2",
+   "decl": "margin: 0;font-size: 1.05rem;font-weight: 650;letter-spacing: -0.01em;text-transform: none",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".pie-acciones",
+   "decl": "margin-top: .5rem",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".pill-aviso",
+   "decl": "background: #fff3d6;color: var(--aviso)",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".pill-error",
+   "decl": "background: #eeeeee;color: var(--error)",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".pill-ok",
+   "decl": "background: var(--acento-suave);color: var(--acento-oscuro)",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".quitar-destino, .agregar-destino",
+   "decl": "border: 1px solid var(--borde);background: #ffffff;color: var(--texto);border-radius: var(--radius-pill);font: inherit;font-size: 0.85rem;font-weight: 650;padding: 0.5rem 0.9rem;min-width: 0;cursor: pointer",
+   "en": [
+    "orsero_cargar.html"
+   ]
+  },
+  {
+   "sel": ".quitar-destino:hover, .quitar-destino:focus, .agregar-destino:hover, .agregar-destino:focus",
+   "decl": "background: #ffffff;color: var(--texto);border-color: #c9a227;box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.16)",
+   "en": [
+    "orsero_cargar.html"
+   ]
+  },
+  {
+   "sel": ".rank-item",
+   "decl": "display: grid;grid-template-columns: 8px 1fr auto;gap: 0.55rem;align-items: center;padding: 0.5rem 0.05rem;border-bottom: 1px solid var(--line)",
+   "en": [
+    "ingresos.html"
+   ]
+  },
+  {
+   "sel": ".rank-item span",
+   "decl": "color: var(--muted);font-size: 0.86rem",
+   "en": [
+    "ingresos.html"
+   ]
+  },
+  {
+   "sel": ".rank-item strong",
+   "decl": "font-family: var(--font-mono);font-size: 0.84rem;font-weight: 600",
+   "en": [
+    "ingresos.html"
+   ]
+  },
+  {
+   "sel": ".rank-item:last-child",
+   "decl": "border-bottom: 0",
+   "en": [
+    "ingresos.html"
+   ]
+  },
+  {
+   "sel": ".ranking",
+   "decl": "display: grid;gap: 0.15rem",
+   "en": [
+    "ingresos.html"
+   ]
+  },
+  {
+   "sel": ".resumen .valor",
+   "decl": "display: block;font-size: 1rem;line-height: 1.35;letter-spacing: 0.01em;word-break: break-word",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".resumen > div",
+   "decl": "display: flex;flex-direction: column;gap: .4rem;min-width: 0",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".resumen strong",
+   "decl": "display: block;margin: 0;font-size: .75rem;text-transform: uppercase;letter-spacing: 0.04em;color: var(--muted);font-weight: 700",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": ".subtitulo-bloque",
+   "decl": "margin: 0;color: var(--muted);font-size: 0.86rem",
+   "en": [
+    "fruver_validacion.html"
+   ]
+  },
+  {
+   "sel": ".tabla-lineas",
+   "decl": "min-width: 640px;table-layout: auto",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".tabla-lineas td:nth-child(3)",
+   "decl": "white-space: normal;min-width: 9rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".tabla-lineas th, .tabla-lineas td",
+   "decl": "white-space: nowrap;padding: 0.55rem 0.55rem",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".tabla-wrap",
+   "decl": "overflow-x: auto",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-aviso",
+   "decl": "background: rgba(239, 68, 68, 0.10) !important;border: 1px solid rgba(239, 68, 68, 0.28) !important;box-shadow: none !important",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-aviso .seccion-titulo",
+   "decl": "color: #b91c1c",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-error",
+   "decl": "background: rgba(239, 68, 68, 0.14) !important;border: 1px solid rgba(185, 28, 28, 0.35) !important;box-shadow: none !important",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": ".tarjeta-error .seccion-titulo",
+   "decl": "color: #991b1b",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": "<style> .layout",
+   "decl": "display: grid;grid-template-columns: minmax(0, 1.7fr) minmax(250px, 0.9fr);gap: 0.75rem",
+   "en": [
+    "ingresos.html"
+   ]
+  },
+  {
+   "sel": "<style> .resumen",
+   "decl": "display: grid;grid-template-columns: repeat(3, minmax(0, 1fr));gap: 0.95rem;margin-bottom: 1.35rem",
+   "en": [
+    "panel.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 1100px) @@ .layout, .filtros-grid",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "ingresos.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 1180px) @@ .metrics",
+   "decl": "grid-template-columns: repeat(2, minmax(0, 1fr))",
+   "en": [
+    "orsero_validacion.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 900px) @@ .acciones",
+   "decl": "flex-direction: column",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 900px) @@ .layout, .kpis",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 900px) @@ .layout, .resumen",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 900px) @@ .lista-resumen .fila",
+   "decl": "grid-template-columns: 1fr;gap: 0.2rem",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 900px) @@ .panel",
+   "decl": "position: static",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 900px) @@ a.boton",
+   "decl": "width: 100%",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 960px) @@ .acciones-form button",
+   "decl": "width: 100%",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 960px) @@ .cabecera",
+   "decl": "align-items: flex-start;flex-direction: column;gap: 0.65rem;margin-bottom: 1.25rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 960px) @@ .fila-contenedor-especial .btn-contenedor.quitar",
+   "decl": "justify-self: start",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 960px) @@ .fila-tres, .fila-factura, .fila-contenedor-especial",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 960px) @@ .fila-tres, .fila-precio-fijo",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "fruver_cargar.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 960px) @@ .fila-tres, .fila-precio-fijo, .fila-mapeo-fijo",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "kraaijeveld_cargar.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 960px) @@ .intro-corta",
+   "decl": "max-width: none;padding-top: 0.15rem",
+   "en": [
+    "tdv_europa_cargar.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 980px) @@ .grid-principal, .bloque-tablas, .metrics, .merma-grid, .otras-adv",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": "@media (max-width: 980px) @@ .grid-principal, .incidencias, .detalle-grid, .chips",
+   "decl": "grid-template-columns: 1fr",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": "a.boton-secundario:hover",
+   "decl": "background: #eeeeee;color: #111111;border-color: #2a2a2a",
+   "en": [
+    "glamour_validacion.html"
+   ]
+  },
+  {
+   "sel": "a.boton-secundario:hover, a.boton-secundario:focus, a.boton-secundario:active",
+   "decl": "background: #eeeeee;color: #111111;border-color: #2a2a2a",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "button.boton:disabled, button.boton:disabled:hover",
+   "decl": "opacity: 0.45;cursor: not-allowed",
+   "en": [
+    "visafruits_validacion.html"
+   ]
+  },
+  {
+   "sel": "button.boton:disabled, button.procesando",
+   "decl": "background: #eeeeee;color: #111111",
+   "en": [
+    "glamour_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "header",
+   "decl": "margin-bottom: 1.25rem",
+   "en": [
+    "tdv_europa_generacion_detalle.html"
+   ]
+  },
+  {
+   "sel": "input[type=\"text\"], textarea",
+   "decl": "width: 100%;padding: 0.7rem 0.85rem;border: 1px solid var(--borde);border-radius: var(--radius-sm);font: inherit;background: var(--suave)",
+   "en": [
+    "dimanno_destino_resolver.html"
+   ]
+  },
+  {
+   "sel": "label.campo",
+   "decl": "display: block;font-weight: 600;margin: 0.85rem 0 0.35rem",
+   "en": [
+    "dimanno_destino_resolver.html"
+   ]
+  },
+  {
+   "sel": "tbody tr:last-child td",
+   "decl": "border-bottom: 0",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": "td",
+   "decl": "word-break: normal;overflow-wrap: anywhere",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": "th.num, td.num",
+   "decl": "text-align: right;white-space: nowrap;font-variant-numeric: tabular-nums",
+   "en": [
+    "tdv_europa_validacion.html"
+   ]
+  },
+  {
+   "sel": "tr.fila-sin-precio td",
+   "decl": "background: rgba(239, 68, 68, 0.10)",
+   "en": [
+    "visafruits_validacion.html"
+   ]
+  }
+ ]
+}
