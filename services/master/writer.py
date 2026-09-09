@@ -85,7 +85,12 @@ _CELL_RE = re.compile(
 _ROW_OPEN_RE = re.compile(r'<row r="(\d+)"([^>]*)>')
 _ROW_RE = re.compile(r"<row\b[^>]*>.*?</row>", re.DOTALL)
 _TABLE_REF_RE = re.compile(r'\bref="([^"]+)"')
+_AUTO_FILTER_REF_RE = re.compile(
+    r'(<autoFilter[^>]*ref=")([^"]+)(")'
+)
 _DIMENSION_RE = re.compile(r'<dimension[^>]*ref="([^"]+)"[^>]*/>')
+# Filas huérfanas (1 fórmula suelta) no cuentan como datos reales.
+_MIN_CELDAS_FILA_DATOS = 10
 _V_RE = re.compile(r"<v>(.*?)</v>", re.DOTALL)
 _INLINE_T_RE = re.compile(r"<t[^>]*>(.*?)</t>", re.DOTALL)
 _ATTR_T_RE = re.compile(r'\bt="([^"]*)"')
@@ -622,14 +627,152 @@ def _actualizar_ref_tabla(tabla_xml: str, nueva_ref: str) -> str:
     return _TABLE_REF_RE.sub(f'ref="{nueva_ref}"', tabla_xml, count=1)
 
 
+def _actualizar_auto_filter_tabla(
+    tabla_xml: str,
+    nueva_ref: str,
+) -> str:
+    if "<autoFilter" not in tabla_xml:
+        return tabla_xml
+    return _AUTO_FILTER_REF_RE.sub(
+        rf"\1{nueva_ref}\3",
+        tabla_xml,
+        count=1,
+    )
+
+
+def _contar_celdas_en_fila(fila_xml: str) -> int:
+    return len(re.findall(r"<c r=", fila_xml))
+
+
+def _detectar_ultima_fila_datos(sheet_xml: str) -> int:
+    """Última fila con datos reales (digitados o fila completa)."""
+    ultima = 1
+    for match in _ROW_RE.finditer(sheet_xml):
+        abierta = _ROW_OPEN_RE.match(match.group(0))
+        if abierta is None:
+            continue
+        num_fila = int(abierta.group(1))
+        if num_fila < 2:
+            continue
+        if _contar_celdas_en_fila(match.group(0)) >= (
+            _MIN_CELDAS_FILA_DATOS
+        ):
+            ultima = max(ultima, num_fila)
+    return ultima
+
+
+def _resolver_fila_fin_datos(
+    sheet_xml: str,
+    fila_fin_tabla: int,
+) -> int:
+    """
+    Ajusta el fin de tabla si hay hueco/huérfanas tras el último
+    dato real, o si la tabla quedó atrasada respecto a filas ya
+    escritas.
+    """
+    detectada = _detectar_ultima_fila_datos(sheet_xml)
+    if detectada < 2:
+        return fila_fin_tabla
+    if detectada != fila_fin_tabla:
+        logger.warning(
+            "generacion_master=%s fila_fin_tabla=%s "
+            "fila_fin_detectada=%s (se usa la detectada)",
+            _contexto_generacion.get(),
+            fila_fin_tabla,
+            detectada,
+        )
+        return detectada
+    return fila_fin_tabla
+
+
+def _extraer_cuerpo_sheet_data(
+    sheet_xml: str,
+) -> tuple[str, str, str]:
+    inicio = sheet_xml.find("<sheetData")
+    if inicio < 0:
+        raise ErrorEscrituraMaster(
+            "La hoja Raw Data no contiene <sheetData>."
+        )
+    apertura = sheet_xml.find(">", inicio) + 1
+    cierre = sheet_xml.find("</sheetData>", apertura)
+    if cierre < 0:
+        raise ErrorEscrituraMaster(
+            "La hoja Raw Data no contiene </sheetData>."
+        )
+    return (
+        sheet_xml[:apertura],
+        sheet_xml[apertura:cierre],
+        sheet_xml[cierre:],
+    )
+
+
+def _preparar_sheet_antes_escritura(
+    sheet_xml: str,
+    fila_limite: int,
+) -> str:
+    """
+    Quita filas > fila_limite, deduplica números de fila (huérfanas
+    con fórmulas sueltas) y ordena sheetData.
+
+    Sin esto, Excel se queda con la fila vacía cuando hay dos
+    <row r="N"> y descarta los datos nuevos.
+    """
+    cabecera, cuerpo, cola = _extraer_cuerpo_sheet_data(
+        sheet_xml
+    )
+    conservadas: dict[int, str] = {}
+    for match in _ROW_RE.finditer(cuerpo):
+        fila_xml = match.group(0)
+        abierta = _ROW_OPEN_RE.match(fila_xml)
+        if abierta is None:
+            continue
+        num_fila = int(abierta.group(1))
+        if num_fila > fila_limite:
+            continue
+        celdas = _contar_celdas_en_fila(fila_xml)
+        previa = conservadas.get(num_fila)
+        if previa is None or celdas > _contar_celdas_en_fila(
+            previa
+        ):
+            conservadas[num_fila] = fila_xml
+
+    nuevo_cuerpo = "".join(
+        conservadas[num] for num in sorted(conservadas)
+    )
+    return cabecera + nuevo_cuerpo + cola
+
+
 def _actualizar_dimension(sheet_xml: str, nueva_ref: str) -> str:
-    if _DIMENSION_RE.search(sheet_xml):
+    """
+    Expande la dimensión de la hoja para cubrir la nueva tabla
+    sin achicar rangos previos (evita reparación de Excel).
+    """
+    match = _DIMENSION_RE.search(sheet_xml)
+    if match is None:
+        return sheet_xml
+
+    try:
+        _c1, _f1, col_nueva, fila_nueva = _parsear_ref_tabla(
+            nueva_ref
+        )
+        _c0, _f0, col_old, fila_old = _parsear_ref_tabla(
+            match.group(1)
+        )
+    except Exception:
         return _DIMENSION_RE.sub(
             f'<dimension ref="{nueva_ref}"/>',
             sheet_xml,
             count=1,
         )
-    return sheet_xml
+
+    col_fin = max(col_old, col_nueva)
+    fila_fin = max(fila_old, fila_nueva)
+    ref_final = f"A1:{get_column_letter(col_fin)}{fila_fin}"
+    return _DIMENSION_RE.sub(
+        f'<dimension ref="{ref_final}"/>',
+        sheet_xml,
+        count=1,
+    )
 
 
 def _insertar_filas_en_sheet(
@@ -750,6 +893,10 @@ def escribir_archivo_master(
             col_ini, fila_enc, col_fin, fila_fin = (
                 _parsear_ref_tabla(ref_actual)
             )
+            fila_fin = _resolver_fila_fin_datos(
+                sheet_xml,
+                fila_fin,
+            )
             if fila_enc != 1:
                 raise EstructuraRawDataMasterError(
                     "Se esperaba encabezado de Tabla1 en fila 1."
@@ -790,6 +937,12 @@ def escribir_archivo_master(
 
         cantidad = len(
             procesamiento.validacion.lineas_preparadas
+        )
+        # Limpia huérfanas, pegados parciales previos y duplicados
+        # de número de fila (causan "reparar Excel" y huecos).
+        sheet_xml = _preparar_sheet_antes_escritura(
+            sheet_xml,
+            fila_fin,
         )
         fila_inicial = fila_fin + 1
         fila_final = fila_fin + cantidad
@@ -835,6 +988,10 @@ def escribir_archivo_master(
         )
         sheet_xml = _actualizar_dimension(sheet_xml, nueva_ref)
         tabla_xml = _actualizar_ref_tabla(tabla_xml, nueva_ref)
+        tabla_xml = _actualizar_auto_filter_tabla(
+            tabla_xml,
+            nueva_ref,
+        )
         _log_fase(
             "construir_filas_xml",
             time.perf_counter() - inicio,

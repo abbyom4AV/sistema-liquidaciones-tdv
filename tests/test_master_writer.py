@@ -22,6 +22,9 @@ from procesamientos.services.generacion_master import (
 from services.master.writer import (
     COLUMNAS_ENTRADA,
     NOMBRE_DESCARGA_MASTER,
+    _detectar_ultima_fila_datos,
+    _preparar_sheet_antes_escritura,
+    _resolver_fila_fin_datos,
     _resolver_rutas_raw_data,
     construir_valores_fila_master,
     escribir_archivo_master,
@@ -123,6 +126,78 @@ class WriterMasterTests(unittest.TestCase):
                 NOMBRE_DESCARGA_MASTER,
                 "Master Liquidaciones (1).xlsx",
             )
+
+    def test_preparar_sheet_quita_huerfanas_y_duplicados(self):
+        """
+        Reproduce el fallo de la semana 28: filas huérfanas vacías
+        con el mismo r="N" que las nuevas. Excel se queda con la
+        vacía y descarta los datos.
+        """
+        fila_completa = (
+            '<row r="1067" spans="1:101">'
+            + ('<c r="A1067"><v>1</v></c>' * 50)
+            + "</row>"
+        )
+        # Huérfanas como las de 1071-1075 del resultado real.
+        huerfanas = "".join(
+            (
+                f'<row r="{n}" spans="74:74">'
+                f'<c r="BV{n}"><f>+1</f><v>0</v></c></row>'
+            )
+            for n in range(1071, 1076)
+        )
+        digitada = (
+            '<row r="1068" spans="1:101">'
+            + (
+                '<c r="A1068" t="inlineStr">'
+                "<is><t>28-2026</t></is></c>"
+                * 21
+            )
+            + "</row>"
+        )
+        # Duplicado: primero vacía, luego con datos (como en el XML roto).
+        duplicada_vacia = (
+            '<row r="1071" spans="74:74">'
+            '<c r="BV1071"><f>+1</f><v>0</v></c></row>'
+        )
+        duplicada_datos = (
+            '<row r="1071" spans="1:101">'
+            + (
+                '<c r="A1071" t="inlineStr">'
+                "<is><t>MASTERFRUITS</t></is></c>"
+                * 21
+            )
+            + "</row>"
+        )
+        sheet = (
+            '<?xml version="1.0"?><worksheet>'
+            "<sheetData>"
+            '<row r="1"><c r="A1"><v>Semana</v></c></row>'
+            f"{fila_completa}{digitada}{huerfanas}"
+            f"{duplicada_vacia}{duplicada_datos}"
+            "</sheetData></worksheet>"
+        )
+
+        self.assertEqual(_detectar_ultima_fila_datos(sheet), 1071)
+        self.assertEqual(
+            _resolver_fila_fin_datos(sheet, 1067),
+            1071,
+        )
+
+        # Con límite en la última fila real previa a las huérfanas
+        # sueltas (1067), se eliminan 1068+ y las huérfanas.
+        limpio = _preparar_sheet_antes_escritura(sheet, 1067)
+        self.assertIn('r="1067"', limpio)
+        self.assertNotIn('r="1068"', limpio)
+        self.assertNotIn('r="1071"', limpio)
+        self.assertNotIn('r="1075"', limpio)
+
+        # Con límite en 1071 (tabla atrasada o digitada previa),
+        # conserva la fila con más celdas y descarta la vacía.
+        limpio_dup = _preparar_sheet_antes_escritura(sheet, 1071)
+        self.assertEqual(limpio_dup.count('<row r="1071"'), 1)
+        self.assertIn("MASTERFRUITS", limpio_dup)
+        self.assertNotIn('r="1075"', limpio_dup)
 
 
 if __name__ == "__main__":
