@@ -41,3 +41,4 @@ Thumbs.db
 *.log
 
 runtime/
+backups/

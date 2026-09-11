@@ -206,13 +206,39 @@ Reglas:
 
 ---
 
-## 10. Backups (obligatorio)
+## 10. Backups (política liviana)
 
-Hacer copia diaria (o al menos semanal) de:
+No hace falta copiar todo todos los días: `media\` y los Excel
+pesan mucho. Lo crítico es la base de datos.
 
-1. `db.sqlite3`  → base de datos (usuarios, historial, estados)
-2. carpeta `media\` → archivos subidos y resultados
-3. los Excel acumulativos de cada cliente
+| Qué | Frecuencia | Notas |
+|-----|------------|--------|
+| `db.sqlite3` | **Diario** | Chico. Tiene usuarios, historial y estados. |
+| `media\` | **Semanal** | Pesada. Solo si quieren conservar descargas viejas. |
+| Excel acumulativos | OneDrive / carpeta compartida | No duplicarlos en el backup del sistema. |
+
+### Script incluido
+
+Respaldo diario (solo base):
+
+```text
+scripts\backup_sistema_tdv.cmd
+```
+
+Respaldo semanal (base + media):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\backup_sistema_tdv.ps1 -IncluirMedia
+```
+
+Los archivos quedan en `backups\AAAA-MM-DD\`.
+El script borra automáticamente respaldos de más de 14 días.
+
+### Programar en el servidor
+
+1. Programador de tareas → tarea diaria →
+   `scripts\backup_sistema_tdv.cmd`
+2. (Opcional) otra tarea semanal con `-IncluirMedia`
 
 Sin backup de `db.sqlite3` se pierde el historial del sistema.
 
@@ -229,7 +255,8 @@ Sin backup de `db.sqlite3` se pierde el historial del sistema.
 - [ ] `start_sistema_tdv.cmd` abre el login en `127.0.0.1:8000`
 - [ ] Se puede entrar desde otra PC de la oficina
 - [ ] Arranque automático configurado
-- [ ] Backup de `db.sqlite3` y `media` definido
+- [ ] Backup diario de `db.sqlite3` programado
+- [ ] Backup semanal de `media\` definido (opcional)
 
 ---
 
