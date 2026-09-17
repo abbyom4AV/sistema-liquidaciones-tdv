@@ -72,7 +72,7 @@
 
   .focos {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.9rem;
   }
   .foco {
@@ -248,8 +248,7 @@
     <p class="cabecera-kicker">Pulso de la jornada</p>
     <h1>Panel de control</h1>
     <p class="intro">
-      {{ saludo }}, {{ nombre_usuario_sesion }}. Aquí ve el ritmo del día
-      sin mezclar bitácoras ni ingresos.
+      {{ saludo }}, {{ nombre_usuario_sesion }}.
     </p>
   </div>
   {% include "procesamientos/_reloj.html" %}
@@ -260,7 +259,7 @@
     <article class="tarjeta-pulso">
       <h2>{{ saludo }}</h2>
       <p class="sub">
-        Hoy lleva <strong>{{ total_procesamientos }}</strong> procesamiento{{ total_procesamientos|pluralize:"es" }}
+        Hoy lleva <strong>{{ total_procesamientos }}</strong> procesamiento{{ total_procesamientos|pluralize:"s" }}
         y en la semana van <strong>{{ total_semana }}</strong>.
         Use Clientes para abrir el módulo que toque trabajar.
       </p>
@@ -270,8 +269,7 @@
         <p class="kicker">Arranque rápido</p>
         <h2>Ir a Clientes</h2>
         <p>
-          {{ clientes_disponibles }} módulo{{ clientes_disponibles|pluralize }} listo{{ clientes_disponibles|pluralize:"s" }}
-          para validar y generar liquidaciones.
+          Elija el módulo del cliente para validar y generar liquidaciones.
         </p>
       </div>
       <a class="boton" href="{% url 'procesamientos:clientes' %}">Abrir Clientes</a>
@@ -282,26 +280,21 @@
     <article class="foco">
       <span class="etiqueta">Procesamientos de hoy</span>
       <div class="valor">{{ total_procesamientos }}</div>
-      <p class="nota">Se reinicia a medianoche (hora local).</p>
+      <p class="nota">Solo los suyos. Se reinicia a medianoche.</p>
     </article>
     <article class="foco">
       <span class="etiqueta">Cliente de la semana</span>
       <div class="valor" style="font-size:1.15rem;padding-top:0.35rem;">
         {{ cliente_destacado|default:"—" }}
       </div>
-      <p class="nota">Más cargas en los últimos 7 días.</p>
-    </article>
-    <article class="foco">
-      <span class="etiqueta">Módulos listos</span>
-      <div class="valor">{{ clientes_disponibles }}</div>
-      <a class="nota-enlace" href="{% url 'procesamientos:clientes' %}">Elegir módulo →</a>
+      <p class="nota">Más cargas suyas en los últimos 7 días.</p>
     </article>
   </section>
 
   <section class="franja-7" aria-label="Procesamientos de los últimos 7 días">
     <div class="franja-cab">
       <h3>Ritmo de 7 días</h3>
-      <span>{{ total_semana }} en total</span>
+      <span>{{ total_semana }} en total (suyos)</span>
     </div>
     <div class="barras">
       {% for dia in pulso_7_dias %}

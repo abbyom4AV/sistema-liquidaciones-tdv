@@ -1341,6 +1341,11 @@ class PruebasAutenticacionDimanno(TestCase):
         self.assertContains(panel, "Pulso de la jornada")
         self.assertContains(panel, "Ir a Clientes")
         self.assertContains(panel, "Ritmo de 7 días")
+        self.assertNotContains(
+            panel,
+            "sin mezclar bitácoras ni ingresos",
+        )
+        self.assertNotContains(panel, "Módulos listos")
         clientes = self.cliente.get("/procesamientos/clientes/")
         self.assertEqual(clientes.status_code, 200)
         self.assertContains(clientes, "Di Manno")

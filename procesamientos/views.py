@@ -81,7 +81,7 @@ _MODELOS_PROCESAMIENTO_PANEL = (
 )
 
 
-def total_procesamientos_del_dia() -> int:
+def total_procesamientos_del_dia(*, usuario=None) -> int:
     """Cuenta cargas creadas hoy (zona horaria local). Se reinicia a medianoche."""
     hoy = timezone.localdate()
     inicio = timezone.make_aware(
@@ -90,11 +90,14 @@ def total_procesamientos_del_dia() -> int:
     fin = timezone.make_aware(
         datetime.combine(hoy, datetime.max.time())
     )
+    filtros: dict = {
+        "creado_en__gte": inicio,
+        "creado_en__lte": fin,
+    }
+    if usuario is not None:
+        filtros["creado_por"] = usuario
     return sum(
-        modelo.objects.filter(
-            creado_en__gte=inicio,
-            creado_en__lte=fin,
-        ).count()
+        modelo.objects.filter(**filtros).count()
         for modelo in _MODELOS_PROCESAMIENTO_PANEL
     )
 
@@ -124,7 +127,7 @@ _MODELOS_CON_CLIENTE = (
 )
 
 
-def pulso_ultimos_7_dias() -> list[dict]:
+def pulso_ultimos_7_dias(*, usuario=None) -> list[dict]:
     """Conteos diarios de procesamientos para la franja del panel."""
     hoy = timezone.localdate()
     dias: list[dict] = []
@@ -137,11 +140,14 @@ def pulso_ultimos_7_dias() -> list[dict]:
         fin = timezone.make_aware(
             datetime.combine(dia, datetime.max.time())
         )
+        filtros: dict = {
+            "creado_en__gte": inicio,
+            "creado_en__lte": fin,
+        }
+        if usuario is not None:
+            filtros["creado_por"] = usuario
         total = sum(
-            modelo.objects.filter(
-                creado_en__gte=inicio,
-                creado_en__lte=fin,
-            ).count()
+            modelo.objects.filter(**filtros).count()
             for modelo in _MODELOS_PROCESAMIENTO_PANEL
         )
         max_total = max(max_total, total)
@@ -165,7 +171,7 @@ def pulso_ultimos_7_dias() -> list[dict]:
     return dias
 
 
-def cliente_mas_activo_semana() -> str | None:
+def cliente_mas_activo_semana(*, usuario=None) -> str | None:
     """Cliente con más cargas en los últimos 7 días (local)."""
     hoy = timezone.localdate()
     inicio = timezone.make_aware(
@@ -177,10 +183,13 @@ def cliente_mas_activo_semana() -> str | None:
     mejor_nombre = None
     mejor_total = 0
     for nombre, modelo in _MODELOS_CON_CLIENTE:
-        total = modelo.objects.filter(
-            creado_en__gte=inicio,
-            creado_en__lte=fin,
-        ).count()
+        filtros: dict = {
+            "creado_en__gte": inicio,
+            "creado_en__lte": fin,
+        }
+        if usuario is not None:
+            filtros["creado_por"] = usuario
+        total = modelo.objects.filter(**filtros).count()
         if total > mejor_total:
             mejor_total = total
             mejor_nombre = nombre
@@ -254,7 +263,11 @@ def _item_reciente(
     }
 
 
-def recolectar_actividad_reciente(limite: int = 5) -> list[dict]:
+def recolectar_actividad_reciente(
+    limite: int = 5,
+    *,
+    usuario=None,
+) -> list[dict]:
     """Últimos procesamientos de todos los módulos activos."""
     fuentes = (
         (
@@ -326,7 +339,10 @@ def recolectar_actividad_reciente(limite: int = 5) -> list[dict]:
     )
     recientes: list[dict] = []
     for cliente, modelo, ref, url_name in fuentes:
-        for item in modelo.objects.order_by("-creado_en")[:10]:
+        qs = modelo.objects.order_by("-creado_en")
+        if usuario is not None:
+            qs = qs.filter(creado_por=usuario)
+        for item in qs[:10]:
             recientes.append(
                 _item_reciente(
                     cliente=cliente,
@@ -459,10 +475,8 @@ CLIENTES_PANEL = (
 
 @login_required
 def panel_control(request):
-    clientes_disponibles = sum(
-        1 for cliente in CLIENTES_PANEL if cliente["disponible"]
-    )
-    pulso = pulso_ultimos_7_dias()
+    usuario = request.user
+    pulso = pulso_ultimos_7_dias(usuario=usuario)
     return render(
         request,
         "procesamientos/panel.html",
@@ -470,10 +484,16 @@ def panel_control(request):
             **contexto_sesion(request, nav_activo="panel"),
             "saludo": saludo_por_hora(),
             "pulso_7_dias": pulso,
-            "procesamientos_recientes": recolectar_actividad_reciente(3),
-            "total_procesamientos": total_procesamientos_del_dia(),
-            "clientes_disponibles": clientes_disponibles,
-            "cliente_destacado": cliente_mas_activo_semana(),
+            "procesamientos_recientes": recolectar_actividad_reciente(
+                3,
+                usuario=usuario,
+            ),
+            "total_procesamientos": total_procesamientos_del_dia(
+                usuario=usuario,
+            ),
+            "cliente_destacado": cliente_mas_activo_semana(
+                usuario=usuario,
+            ),
             "total_semana": sum(d["total"] for d in pulso),
         },
     )
