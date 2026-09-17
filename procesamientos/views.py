@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 
 from procesamientos.forms import (
@@ -27,11 +28,15 @@ from procesamientos.models import (
     GastoProcesamientoDimanno,
     GeneracionDimanno,
     ProcesamientoDimanno,
+    ProcesamientoEurobanan,
     ProcesamientoFruver,
+    ProcesamientoGlamour,
     ProcesamientoKraaijeveld,
     ProcesamientoMaster,
+    ProcesamientoNufri,
     ProcesamientoOrsero,
     ProcesamientoSifa,
+    ProcesamientoTdvEuropa,
     ProcesamientoVisafruits,
     ResolucionDestinoDimanno,
 )
@@ -54,6 +59,39 @@ from services.dimanno.processor import (
 )
 
 logger = logging.getLogger(__name__)
+
+# Modelos que alimentan el contador del panel.
+_MODELOS_PROCESAMIENTO_PANEL = (
+    ProcesamientoDimanno,
+    ProcesamientoMaster,
+    ProcesamientoOrsero,
+    ProcesamientoKraaijeveld,
+    ProcesamientoFruver,
+    ProcesamientoSifa,
+    ProcesamientoVisafruits,
+    ProcesamientoGlamour,
+    ProcesamientoNufri,
+    ProcesamientoEurobanan,
+    ProcesamientoTdvEuropa,
+)
+
+
+def total_procesamientos_del_dia() -> int:
+    """Cuenta cargas creadas hoy (zona horaria local). Se reinicia a medianoche."""
+    hoy = timezone.localdate()
+    inicio = timezone.make_aware(
+        datetime.combine(hoy, datetime.min.time())
+    )
+    fin = timezone.make_aware(
+        datetime.combine(hoy, datetime.max.time())
+    )
+    return sum(
+        modelo.objects.filter(
+            creado_en__gte=inicio,
+            creado_en__lte=fin,
+        ).count()
+        for modelo in _MODELOS_PROCESAMIENTO_PANEL
+    )
 
 
 def obtener_nombre_usuario(usuario) -> str:
@@ -339,15 +377,7 @@ def panel_control(request):
         {
             **contexto_sesion(request, nav_activo="panel"),
             "procesamientos_recientes": recientes,
-            "total_procesamientos": (
-                ProcesamientoDimanno.objects.count()
-                + ProcesamientoMaster.objects.count()
-                + ProcesamientoOrsero.objects.count()
-                + ProcesamientoKraaijeveld.objects.count()
-                + ProcesamientoFruver.objects.count()
-                + ProcesamientoSifa.objects.count()
-                + ProcesamientoVisafruits.objects.count()
-            ),
+            "total_procesamientos": total_procesamientos_del_dia(),
             "clientes_panel": CLIENTES_PANEL,
             "total_clientes": len(CLIENTES_PANEL),
             "clientes_disponibles": clientes_disponibles,
