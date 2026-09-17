@@ -151,8 +151,7 @@
 
   .form-campos {
     display: grid;
-    gap: 1.15rem;
-    flex: 1;
+    gap: 1rem;
   }
   .campo label {
     display: block;
@@ -220,7 +219,8 @@
     flex-direction: row;
     align-items: center;
     gap: 0.7rem;
-    margin-top: 1.75rem;
+    margin-top: auto;
+    padding-top: 1.25rem;
   }
   .drawer-acciones .boton,
   .drawer-acciones a.boton {
@@ -389,12 +389,12 @@
       <div class="campo">
         <label for="{{ formulario.password1.id_for_label }}">{{ formulario.password1.label }}</label>
         {{ formulario.password1 }}
-        <p class="ayuda">Solo complete esta sección si desea cambiar la clave.</p>
         {% if formulario.password1.errors %}<div class="errores">{{ formulario.password1.errors|striptags }}</div>{% endif %}
       </div>
       <div class="campo">
         <label for="{{ formulario.password2.id_for_label }}">{{ formulario.password2.label }}</label>
         {{ formulario.password2 }}
+        <p class="ayuda">Debe coincidir con la nueva contraseña.</p>
         {% if formulario.password2.errors %}<div class="errores">{{ formulario.password2.errors|striptags }}</div>{% endif %}
       </div>
       {% endif %}
