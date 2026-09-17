@@ -410,10 +410,7 @@ def bitacoras(request):
     )
 
 
-@login_required
-@requiere_admin
-@require_GET
-def listar_usuarios(request):
+def _filas_usuarios() -> list[dict]:
     User = get_user_model()
     usuarios = (
         User.objects.select_related("perfil")
@@ -442,12 +439,19 @@ def listar_usuarios(request):
                 "ultimo_acceso": usuario.last_login,
             }
         )
+    return filas
+
+
+@login_required
+@requiere_admin
+@require_GET
+def listar_usuarios(request):
     return render(
         request,
         "procesamientos/usuarios.html",
         {
             **contexto_sesion(request, nav_activo="usuarios"),
-            "usuarios": filas,
+            "usuarios": _filas_usuarios(),
         },
     )
 
@@ -512,6 +516,7 @@ def crear_usuario(request):
         {
             **contexto_sesion(request, nav_activo="usuarios"),
             "formulario": formulario,
+            "usuarios": _filas_usuarios(),
         },
     )
 

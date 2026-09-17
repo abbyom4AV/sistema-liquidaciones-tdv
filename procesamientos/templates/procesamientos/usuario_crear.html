@@ -4,22 +4,85 @@
 {% block clases_contenido %} contenido-medio{% endblock %}
 {% block estilos %}
 <style>
-  .drawer-pantalla {
+  .crear-fondo {
+    filter: blur(3px);
+    opacity: 0.55;
+    pointer-events: none;
+    user-select: none;
+  }
+  .crear-fondo .cabecera-usuarios {
+    margin-bottom: 1.25rem;
+  }
+  .crear-fondo .cabecera-kicker { margin: 0 0 0.25rem; }
+  .crear-fondo h1 { margin: 0; }
+  .crear-fondo .intro {
+    margin: 0.45rem 0 0;
+    max-width: 40rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+  .crear-fondo .badge-rol {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 650;
+  }
+  .crear-fondo .badge-admin { background: #111; color: #fff; }
+  .crear-fondo .badge-basico { background: #efefef; color: var(--muted); }
+  .crear-fondo .enlace-accion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2rem;
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--borde);
+    background: #fff;
+    font-size: 0.82rem;
+    font-weight: 650;
+  }
+  .crear-fondo .tabla-usuarios td.mono { font-weight: 650; }
+  .crear-fondo .pie-usuarios {
     display: flex;
     justify-content: flex-end;
-    min-height: calc(100vh - 3rem);
-    margin: -0.25rem 0 -1rem;
+    margin-top: 1rem;
+  }
+  .crear-fondo .pie-usuarios .boton {
+    min-width: 10rem;
+    border-radius: var(--radius-pill);
+  }
+
+  .drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(245, 245, 245, 0.45);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 40;
+  }
+  .drawer-pantalla {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: flex-end;
+    align-items: stretch;
+    padding: 1rem 1rem 1rem 0;
+    pointer-events: none;
   }
   .drawer-panel {
-    width: 100%;
-    max-width: 420px;
+    pointer-events: auto;
+    width: min(100%, 420px);
+    max-height: calc(100vh - 2rem);
+    overflow: auto;
     background: #fff;
     border-radius: 18px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.06);
     padding: 1.5rem 1.45rem 1.35rem;
     display: flex;
     flex-direction: column;
-    align-self: stretch;
   }
   .drawer-cabecera {
     display: flex;
@@ -109,7 +172,6 @@
     align-items: center;
     gap: 0.7rem;
     margin-top: 1.75rem;
-    padding-top: 0.25rem;
   }
   .drawer-acciones .boton,
   .drawer-acciones a.boton {
@@ -146,13 +208,72 @@
     box-shadow: none;
   }
   @media (max-width: 720px) {
-    .drawer-pantalla { justify-content: center; }
-    .drawer-panel { max-width: 100%; }
+    .drawer-pantalla {
+      padding: 0.75rem;
+      justify-content: center;
+    }
+    .drawer-panel {
+      width: 100%;
+      max-height: calc(100vh - 1.5rem);
+    }
   }
 </style>
 {% endblock %}
 
 {% block contenido %}
+<div class="crear-fondo" aria-hidden="true">
+  <header class="cabecera-usuarios">
+    <p class="cabecera-kicker">Administración</p>
+    <h1>Usuarios</h1>
+    <p class="intro">
+      Admin: acceso total y gestión de cuentas. Básico: módulos e Ingresos.
+    </p>
+  </header>
+
+  <section class="tarjeta">
+    {% if usuarios %}
+    <table class="tabla-usuarios">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Nombre</th>
+          <th>Nivel</th>
+          <th>Estado</th>
+          <th>Último acceso</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in usuarios %}
+        <tr>
+          <td class="mono">{{ u.username }}</td>
+          <td>{{ u.nombre }}</td>
+          <td>
+            <span class="badge-rol {% if u.rol == 'admin' %}badge-admin{% else %}badge-basico{% endif %}">
+              {{ u.rol_legible }}
+            </span>
+          </td>
+          <td>{% if u.activo %}Activo{% else %}Inactivo{% endif %}</td>
+          <td class="mono">
+            {% if u.ultimo_acceso %}{{ u.ultimo_acceso|date:"d/m/Y H:i" }}{% else %}—{% endif %}
+          </td>
+          <td><span class="enlace-accion">Modificar</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="vacio">No hay usuarios registrados.</p>
+    {% endif %}
+  </section>
+
+  <div class="pie-usuarios">
+    <span class="boton">+ Crear usuario</span>
+  </div>
+</div>
+
+<a class="drawer-overlay" href="{% url 'procesamientos:usuarios' %}" aria-label="Cerrar panel"></a>
+
 <div class="drawer-pantalla">
   <form method="post" novalidate class="drawer-panel">
     {% csrf_token %}
