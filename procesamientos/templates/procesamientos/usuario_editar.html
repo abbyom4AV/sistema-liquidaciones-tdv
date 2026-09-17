@@ -6,22 +6,23 @@
 <style>
   .form-usuario {
     display: grid;
-    gap: 1rem;
-    max-width: 720px;
+    gap: 1.1rem;
+    max-width: 760px;
   }
   .bloque-form {
     background: #fff;
-    border-radius: var(--radius);
+    border-radius: 18px;
     box-shadow: var(--shadow);
-    padding: 1.25rem 1.35rem 1.35rem;
+    padding: 1.35rem 1.45rem 1.45rem;
   }
   .bloque-form h2 {
-    margin: 0 0 0.25rem;
-    font-size: 1.05rem;
+    margin: 0 0 0.2rem;
+    font-size: 1.08rem;
     font-weight: 650;
+    letter-spacing: -0.02em;
   }
   .bloque-form .bloque-intro {
-    margin: 0 0 1.1rem;
+    margin: 0 0 1.15rem;
     color: var(--muted);
     font-size: 0.88rem;
   }
@@ -38,40 +39,51 @@
   .fila-campos {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.9rem 1rem;
+    gap: 1rem 1.1rem;
   }
+  .campo.ancho-completo { grid-column: 1 / -1; }
   .campo label {
     display: block;
-    font-size: 0.82rem;
-    font-weight: 600;
-    margin-bottom: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 650;
+    margin-bottom: 0.45rem;
     color: #333;
   }
   .campo input[type="text"],
   .campo input[type="password"],
   .campo select {
     width: 100%;
-    padding: 0.7rem 0.85rem;
-    border: 1px solid #e4e4e4;
-    border-radius: 10px;
+    box-sizing: border-box;
+    padding: 0.78rem 1rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
     font: inherit;
-    background: #f4f6f8;
+    background: #f3f5f7;
+  }
+  .campo select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M1.2 1.2 6 6l4.8-4.8'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.4rem;
   }
   .campo input:focus,
   .campo select:focus {
     outline: none;
     border-color: #111;
     background: #fff;
+    box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08);
   }
   .campo-check {
     display: flex;
     align-items: center;
     gap: 0.55rem;
-    padding: 0.75rem 0.9rem;
-    background: #f4f6f8;
-    border-radius: 10px;
-    border: 1px solid #e4e4e4;
+    padding: 0.75rem 1rem;
+    background: #f3f5f7;
+    border-radius: 999px;
+    border: 1px solid transparent;
     min-height: 2.85rem;
+    box-sizing: border-box;
   }
   .campo-check label { margin: 0; font-weight: 600; }
   .ayuda {
@@ -86,29 +98,51 @@
   }
   .acciones-form {
     display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     gap: 0.75rem;
     justify-content: flex-end;
     align-items: center;
   }
   .acciones-form .boton,
-  .acciones-form .boton-suave {
-    min-width: 7.5rem;
+  .acciones-form a.boton {
+    box-sizing: border-box;
+    min-width: 8rem;
+    min-height: 2.75rem;
+    height: 2.75rem;
+    margin: 0;
     border-radius: var(--radius-pill);
-    padding: 0.65rem 1.25rem;
+    padding: 0 1.35rem;
+    font: inherit;
     font-weight: 650;
+    line-height: 1;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    vertical-align: middle;
+    cursor: pointer;
   }
-  .acciones-form .boton-suave {
+  .acciones-form a.boton.boton-suave {
     background: #fff;
     color: var(--texto);
     border: 1px solid var(--borde);
   }
-  .acciones-form .boton-suave:hover { background: #f3f3f3; }
+  .acciones-form a.boton.boton-suave:hover {
+    background: #f3f3f3;
+    color: var(--texto);
+    box-shadow: none;
+  }
+  .acciones-form button.boton {
+    background: #111;
+    color: #fff;
+    border: 1px solid #111;
+  }
   @media (max-width: 700px) {
     .fila-campos { grid-template-columns: 1fr; }
+    .acciones-form { flex-wrap: wrap; }
+    .acciones-form .boton,
+    .acciones-form a.boton { flex: 1; }
   }
 </style>
 {% endblock %}
@@ -176,7 +210,7 @@
   {% endif %}
 
   <div class="acciones-form">
-    <a class="boton-suave" href="{% url 'procesamientos:usuarios' %}">Cancelar</a>
+    <a class="boton boton-suave" href="{% url 'procesamientos:usuarios' %}">Cancelar</a>
     <button class="boton" type="submit">Guardar cambios</button>
   </div>
 </form>

@@ -453,6 +453,31 @@ def listar_usuarios(request):
 
 
 @login_required
+@require_GET
+def mi_perfil(request):
+    usuario = request.user
+    rol = obtener_rol(usuario)
+    nombre = usuario.get_full_name().strip()
+    return render(
+        request,
+        "procesamientos/mi_perfil.html",
+        {
+            **contexto_sesion(request, nav_activo="perfil"),
+            "user_id": usuario.pk,
+            "username": usuario.username,
+            "nombre_completo": nombre or usuario.username,
+            "nombre_mostrar": nombre or "—",
+            "rol": rol,
+            "rol_legible": (
+                "Administrador" if rol == "admin" else "Usuario básico"
+            ),
+            "activo": usuario.is_active,
+            "ultimo_acceso": usuario.last_login,
+        },
+    )
+
+
+@login_required
 @requiere_admin
 def crear_usuario(request):
     if request.method == "POST":
