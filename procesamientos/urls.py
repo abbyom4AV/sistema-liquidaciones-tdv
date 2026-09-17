@@ -23,6 +23,11 @@ urlpatterns = [
         name="panel",
     ),
     path(
+        "clientes/",
+        views.listar_clientes,
+        name="clientes",
+    ),
+    path(
         "bitacoras/",
         views.bitacoras,
         name="bitacoras",

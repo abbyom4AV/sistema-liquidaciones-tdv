@@ -2,156 +2,343 @@
 
 {% block titulo %}Panel de control — Sistema TDV{% endblock %}
 {% block estilos %}
-    <style>
-      .resumen {
-   display: grid;
-   grid-template-columns: repeat(3, minmax(0, 1fr));
-   gap: 0.9rem 1rem;
-   margin-bottom: 1.35rem;
- }
-      .dato {
-        border-radius: var(--radius);
-        padding: 1.2rem 1.25rem;
-        background: #ffffff;
-        box-shadow: var(--shadow);
-      }
-      .dato strong {
-   display: block;
-   color: var(--muted);
-   font-size: 0.78rem;
-   letter-spacing: 0.06em;
-   text-transform: uppercase;
-   margin-bottom: 0.2rem;
-   font-weight: 600;
- }
-      .dato span {
-        font-size: 1.8rem;
-        font-weight: 700;
-        letter-spacing: -0.03em;
-      }
-      .dato.destacado {
-        background: #111111;
-        color: #ffffff;
-      }
-      .dato.destacado strong { color: rgba(255, 255, 255, 0.65); }
-      .dato.destacado span { color: #ffffff; }
-      .seccion-titulo {
-   margin: 0 0 0.75rem;
-   font-size: 0.78rem;
-   font-weight: 700;
-   letter-spacing: 0.05em;
-   text-transform: uppercase;
-   color: var(--muted);
- }
-      .etiqueta {
-        display: inline-block;
-        width: fit-content;
-        padding: 0.2rem 0.55rem;
-        border-radius: 999px;
-        font-size: 0.7rem;
-        font-weight: 650;
-      }
-      .etiqueta-ok {
-        background: #111111;
-        color: #ffffff;
-      }
-      .etiqueta-prox {
-        background: #efefef;
-        color: var(--muted);
-      }
-      @media (max-width: 900px) {
-        .resumen { grid-template-columns: 1fr; }
-      }
-    </style>
+<style>
+  .pulso-layout {
+    display: grid;
+    gap: 1.15rem;
+  }
+  .pulso-hero {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  .tarjeta-pulso {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.35rem 1.4rem;
+  }
+  .tarjeta-pulso h2 {
+    margin: 0 0 0.35rem;
+    font-size: 1.55rem;
+    letter-spacing: -0.03em;
+  }
+  .tarjeta-pulso .sub {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+  .arranque {
+    background: #111;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
+  }
+  .arranque .kicker {
+    margin: 0 0 0.35rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 650;
+  }
+  .arranque h2 {
+    margin: 0 0 0.4rem;
+    font-size: 1.35rem;
+    color: #fff;
+  }
+  .arranque p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  .arranque .boton {
+    align-self: flex-start;
+    background: #fff;
+    color: #111;
+    border-radius: var(--radius-pill);
+  }
+  .arranque .boton:hover,
+  .arranque .boton:focus {
+    background: #fff;
+    color: #111;
+    box-shadow: 0 0 0 2px #111, 0 0 0 4px var(--oro);
+  }
+
+  .focos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+  .foco {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.15rem 1.2rem;
+  }
+  .foco .etiqueta {
+    display: block;
+    color: var(--muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 650;
+    margin-bottom: 0.35rem;
+  }
+  .foco .valor {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .foco .nota {
+    margin: 0.4rem 0 0;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+  .foco a.nota-enlace {
+    display: inline-block;
+    margin-top: 0.55rem;
+    font-size: 0.84rem;
+    font-weight: 650;
+    color: #111;
+    text-decoration: none;
+  }
+  .foco a.nota-enlace:hover {
+    text-decoration: underline;
+  }
+
+  .franja-7 {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.25rem 1.35rem 1.15rem;
+  }
+  .franja-cab {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .franja-cab h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 650;
+  }
+  .franja-cab span {
+    color: var(--muted);
+    font-size: 0.84rem;
+  }
+  .barras {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.55rem;
+    align-items: end;
+    min-height: 140px;
+  }
+  .barra-dia {
+    display: grid;
+    grid-template-rows: 1fr auto auto;
+    gap: 0.35rem;
+    align-items: end;
+    text-align: center;
+    min-height: 140px;
+  }
+  .barra-col {
+    height: 100px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .barra-fill {
+    width: 100%;
+    max-width: 36px;
+    min-height: 4px;
+    border-radius: 8px 8px 4px 4px;
+    background: #e8e8e8;
+    transition: height 0.2s ease;
+  }
+  .barra-dia.es-hoy .barra-fill {
+    background: #111;
+  }
+  .barra-dia .cuenta {
+    font-size: 0.78rem;
+    font-weight: 650;
+    font-family: "IBM Plex Mono", monospace;
+  }
+  .barra-dia .dia-lbl {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .barra-dia.es-hoy .dia-lbl {
+    color: #111;
+    font-weight: 700;
+  }
+
+  .continuar {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.25rem 1.35rem;
+  }
+  .continuar h3 {
+    margin: 0 0 0.85rem;
+    font-size: 1rem;
+    font-weight: 650;
+  }
+  .continuar-lista {
+    display: grid;
+    gap: 0.65rem;
+  }
+  .continuar-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 0.95rem;
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    background: #fafafa;
+  }
+  .continuar-item strong {
+    display: block;
+    font-size: 0.95rem;
+  }
+  .continuar-item span {
+    display: block;
+    margin-top: 0.15rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+  .continuar-item .boton,
+  .continuar-item a.boton {
+    flex-shrink: 0;
+    min-height: 2.2rem;
+    height: 2.2rem;
+    padding: 0 1rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.84rem;
+  }
+  .continuar .vacio {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  @media (max-width: 900px) {
+    .pulso-hero,
+    .focos {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
 {% endblock %}
 
 {% block contenido %}
 <header class="cabecera">
+  <div>
+    <p class="cabecera-kicker">Pulso de la jornada</p>
+    <h1>Panel de control</h1>
+    <p class="intro">
+      {{ saludo }}, {{ nombre_usuario_sesion }}. Aquí ve el ritmo del día
+      sin mezclar bitácoras ni ingresos.
+    </p>
+  </div>
+  {% include "procesamientos/_reloj.html" %}
+</header>
+
+<div class="pulso-layout">
+  <section class="pulso-hero">
+    <article class="tarjeta-pulso">
+      <h2>{{ saludo }}</h2>
+      <p class="sub">
+        Hoy lleva <strong>{{ total_procesamientos }}</strong> procesamiento{{ total_procesamientos|pluralize:"es" }}
+        y en la semana van <strong>{{ total_semana }}</strong>.
+        Use Clientes para abrir el módulo que toque trabajar.
+      </p>
+    </article>
+    <article class="tarjeta-pulso arranque">
       <div>
-        <p class="cabecera-kicker">Operaciones · TDV</p>
-        <h1>Panel de control</h1>
-        <p class="intro">
-          Seleccione el módulo del cliente. Cada uno valida, corrige
-          y genera liquidaciones con su propio formato y rubros.
+        <p class="kicker">Arranque rápido</p>
+        <h2>Ir a Clientes</h2>
+        <p>
+          {{ clientes_disponibles }} módulo{{ clientes_disponibles|pluralize }} listo{{ clientes_disponibles|pluralize:"s" }}
+          para validar y generar liquidaciones.
         </p>
       </div>
-      {% include "procesamientos/_reloj.html" %}
-    </header>
+      <a class="boton" href="{% url 'procesamientos:clientes' %}">Abrir Clientes</a>
+    </article>
+  </section>
 
-    <section class="resumen">
-      <div class="dato destacado">
-        <strong>Clientes en catálogo</strong>
-        <span>{{ total_clientes }}</span>
+  <section class="focos">
+    <article class="foco">
+      <span class="etiqueta">Procesamientos de hoy</span>
+      <div class="valor">{{ total_procesamientos }}</div>
+      <p class="nota">Se reinicia a medianoche (hora local).</p>
+    </article>
+    <article class="foco">
+      <span class="etiqueta">Cliente de la semana</span>
+      <div class="valor" style="font-size:1.15rem;padding-top:0.35rem;">
+        {{ cliente_destacado|default:"—" }}
       </div>
-      <div class="dato">
-        <strong>Módulos disponibles</strong>
-        <span>{{ clientes_disponibles }}</span>
-      </div>
-      <div class="dato">
-        <strong>Procesamientos de hoy</strong>
-        <span>{{ total_procesamientos }}</span>
-      </div>
-    </section>
+      <p class="nota">Más cargas en los últimos 7 días.</p>
+    </article>
+    <article class="foco">
+      <span class="etiqueta">Módulos listos</span>
+      <div class="valor">{{ clientes_disponibles }}</div>
+      <a class="nota-enlace" href="{% url 'procesamientos:clientes' %}">Elegir módulo →</a>
+    </article>
+  </section>
 
-    <h2 class="seccion-titulo">Módulos por cliente</h2>
-    <section class="modulos">
-      {% for cliente in clientes_panel %}
-        <article class="modulo {% if cliente.disponible %}disponible{% else %}proximo{% endif %}">
-          <span class="modulo-codigo">{{ cliente.codigo }}</span>
-          {% if cliente.disponible %}
-            <span class="etiqueta etiqueta-ok">Disponible</span>
-          {% else %}
-            <span class="etiqueta etiqueta-prox">Próximamente</span>
-          {% endif %}
-          <strong class="titulo">{{ cliente.nombre }}</strong>
-          <p>{{ cliente.descripcion }}</p>
-          <div class="modulo-pie">
-            {% if cliente.disponible and cliente.url_name %}
-              <a class="boton" href="{% url cliente.url_name %}">Abrir módulo</a>
-            {% else %}
-              <span class="boton-deshabilitado">No disponible</span>
-            {% endif %}
-          </div>
-        </article>
+  <section class="franja-7" aria-label="Procesamientos de los últimos 7 días">
+    <div class="franja-cab">
+      <h3>Ritmo de 7 días</h3>
+      <span>{{ total_semana }} en total</span>
+    </div>
+    <div class="barras">
+      {% for dia in pulso_7_dias %}
+      <div class="barra-dia {% if dia.es_hoy %}es-hoy{% endif %}">
+        <div class="barra-col">
+          <div class="barra-fill" style="height: {% if dia.total %}{{ dia.altura_pct }}{% else %}4{% endif %}%;" title="{{ dia.total }}"></div>
+        </div>
+        <div class="cuenta">{{ dia.total }}</div>
+        <div class="dia-lbl">{{ dia.etiqueta }} {{ dia.dia_num }}</div>
+      </div>
       {% endfor %}
-    </section>
+    </div>
+  </section>
 
-    <h2 class="seccion-titulo" style="margin-top: 1.5rem;">Actividad reciente</h2>
-    <section class="tarjeta">
-      {% if procesamientos_recientes %}
-        <table>
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Factura</th>
-              <th>Semana</th>
-              <th>Año</th>
-              <th>Estado</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in procesamientos_recientes %}
-              <tr>
-                <td>{{ item.cliente }}</td>
-                <td class="mono">{{ item.factura_corta|default:"—" }}</td>
-                <td class="mono">{{ item.semana }}</td>
-                <td class="mono">{{ item.anio }}</td>
-                <td>
-                  <span class="estado estado-completada">{{ item.estado_legible }}</span>
-                </td>
-                <td>
-                  <a class="enlace" href="{% url item.url_name item.id %}">Abrir</a>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      {% else %}
-        <p class="vacio">
-          Aún no hay procesamientos. Abra un módulo disponible
-          para cargar una liquidación.
-        </p>
-      {% endif %}
-    </section>
+  <section class="continuar">
+    <h3>Continuar trabajo</h3>
+    {% if procesamientos_recientes %}
+    <div class="continuar-lista">
+      {% for item in procesamientos_recientes %}
+      <div class="continuar-item">
+        <div>
+          <strong>{{ item.cliente }}</strong>
+          <span>
+            {{ item.factura_corta|default:"—" }}
+            · Sem {{ item.semana }}/{{ item.anio }}
+            · {{ item.estado_legible }}
+          </span>
+        </div>
+        <a class="boton" href="{% url item.url_name item.id %}">Abrir</a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="vacio">
+      Aún no hay procesamientos. Abra Clientes y cargue una liquidación.
+    </p>
+    {% endif %}
+  </section>
+</div>
 {% endblock %}

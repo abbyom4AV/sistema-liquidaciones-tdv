@@ -1,0 +1,113 @@
+{% extends "procesamientos/base.html" %}
+
+{% block titulo %}Clientes — Sistema TDV{% endblock %}
+{% block estilos %}
+<style>
+  .resumen {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem 1rem;
+    margin-bottom: 1.35rem;
+  }
+  .dato {
+    border-radius: var(--radius);
+    padding: 1.2rem 1.25rem;
+    background: #ffffff;
+    box-shadow: var(--shadow);
+  }
+  .dato strong {
+    display: block;
+    color: var(--muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+    font-weight: 600;
+  }
+  .dato span {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .dato.destacado {
+    background: #111111;
+    color: #ffffff;
+  }
+  .dato.destacado strong { color: rgba(255, 255, 255, 0.65); }
+  .dato.destacado span { color: #ffffff; }
+  .seccion-titulo {
+    margin: 0 0 0.75rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .etiqueta {
+    display: inline-block;
+    width: fit-content;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 650;
+  }
+  .etiqueta-ok {
+    background: #111111;
+    color: #ffffff;
+  }
+  .etiqueta-prox {
+    background: #efefef;
+    color: var(--muted);
+  }
+  @media (max-width: 700px) {
+    .resumen { grid-template-columns: 1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<header class="cabecera">
+  <div>
+    <p class="cabecera-kicker">Operaciones · TDV</p>
+    <h1>Clientes</h1>
+    <p class="intro">
+      Seleccione el módulo del cliente. Cada uno valida, corrige
+      y genera liquidaciones con su propio formato y rubros.
+    </p>
+  </div>
+</header>
+
+<section class="resumen">
+  <div class="dato destacado">
+    <strong>Clientes en catálogo</strong>
+    <span>{{ total_clientes }}</span>
+  </div>
+  <div class="dato">
+    <strong>Módulos disponibles</strong>
+    <span>{{ clientes_disponibles }}</span>
+  </div>
+</section>
+
+<h2 class="seccion-titulo">Módulos por cliente</h2>
+<section class="modulos">
+  {% for cliente in clientes_panel %}
+  <article class="modulo {% if cliente.disponible %}disponible{% else %}proximo{% endif %}">
+    <span class="modulo-codigo">{{ cliente.codigo }}</span>
+    {% if cliente.disponible %}
+    <span class="etiqueta etiqueta-ok">Disponible</span>
+    {% else %}
+    <span class="etiqueta etiqueta-prox">Próximamente</span>
+    {% endif %}
+    <strong class="titulo">{{ cliente.nombre }}</strong>
+    <p>{{ cliente.descripcion }}</p>
+    <div class="modulo-pie">
+      {% if cliente.disponible and cliente.url_name %}
+      <a class="boton" href="{% url cliente.url_name %}">Abrir módulo</a>
+      {% else %}
+      <span class="boton-deshabilitado">No disponible</span>
+      {% endif %}
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}

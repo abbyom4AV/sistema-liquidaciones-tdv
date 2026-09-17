@@ -18,6 +18,12 @@
     >
       Panel de control
     </a>
+    <a
+      class="nav-item {% if nav_activo == 'clientes' %}activo{% endif %}"
+      href="{% url 'procesamientos:clientes' %}"
+    >
+      Clientes
+    </a>
     {% if es_admin_sesion %}
     <a
       class="nav-item {% if nav_activo == 'bitacoras' %}activo{% endif %}"

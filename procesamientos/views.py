@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import shutil
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
@@ -97,6 +97,104 @@ def total_procesamientos_del_dia() -> int:
         ).count()
         for modelo in _MODELOS_PROCESAMIENTO_PANEL
     )
+
+
+_DIAS_SEMANA_ES = (
+    "lun",
+    "mar",
+    "mié",
+    "jue",
+    "vie",
+    "sáb",
+    "dom",
+)
+
+_MODELOS_CON_CLIENTE = (
+    ("Di Manno", ProcesamientoDimanno),
+    ("Master Fruits", ProcesamientoMaster),
+    ("ORSERO", ProcesamientoOrsero),
+    ("KRAAIJEVELD", ProcesamientoKraaijeveld),
+    ("FRU&VER", ProcesamientoFruver),
+    ("SIFA", ProcesamientoSifa),
+    ("VISAFRUITS", ProcesamientoVisafruits),
+    ("Glamour", ProcesamientoGlamour),
+    ("NUFRI", ProcesamientoNufri),
+    ("EUROBANAN", ProcesamientoEurobanan),
+    ("TDV Europa", ProcesamientoTdvEuropa),
+)
+
+
+def pulso_ultimos_7_dias() -> list[dict]:
+    """Conteos diarios de procesamientos para la franja del panel."""
+    hoy = timezone.localdate()
+    dias: list[dict] = []
+    max_total = 1
+    for offset in range(6, -1, -1):
+        dia = hoy - timedelta(days=offset)
+        inicio = timezone.make_aware(
+            datetime.combine(dia, datetime.min.time())
+        )
+        fin = timezone.make_aware(
+            datetime.combine(dia, datetime.max.time())
+        )
+        total = sum(
+            modelo.objects.filter(
+                creado_en__gte=inicio,
+                creado_en__lte=fin,
+            ).count()
+            for modelo in _MODELOS_PROCESAMIENTO_PANEL
+        )
+        max_total = max(max_total, total)
+        dias.append(
+            {
+                "fecha": dia,
+                "etiqueta": _DIAS_SEMANA_ES[dia.weekday()],
+                "dia_num": dia.day,
+                "total": total,
+                "es_hoy": dia == hoy,
+            }
+        )
+    for item in dias:
+        item["altura_pct"] = (
+            int(round(100 * item["total"] / max_total))
+            if max_total
+            else 0
+        )
+        if item["total"] > 0 and item["altura_pct"] < 12:
+            item["altura_pct"] = 12
+    return dias
+
+
+def cliente_mas_activo_semana() -> str | None:
+    """Cliente con más cargas en los últimos 7 días (local)."""
+    hoy = timezone.localdate()
+    inicio = timezone.make_aware(
+        datetime.combine(hoy - timedelta(days=6), datetime.min.time())
+    )
+    fin = timezone.make_aware(
+        datetime.combine(hoy, datetime.max.time())
+    )
+    mejor_nombre = None
+    mejor_total = 0
+    for nombre, modelo in _MODELOS_CON_CLIENTE:
+        total = modelo.objects.filter(
+            creado_en__gte=inicio,
+            creado_en__lte=fin,
+        ).count()
+        if total > mejor_total:
+            mejor_total = total
+            mejor_nombre = nombre
+    return mejor_nombre if mejor_total else None
+
+
+def saludo_por_hora(ahora=None) -> str:
+    momento = timezone.localtime(ahora) if ahora else timezone.localtime()
+    hora = momento.hour
+    if hora < 12:
+        return "Buenos días"
+    if hora < 19:
+        return "Buenas tardes"
+    return "Buenas noches"
 
 
 def obtener_nombre_usuario(usuario) -> str:
@@ -361,17 +459,37 @@ CLIENTES_PANEL = (
 
 @login_required
 def panel_control(request):
-    recientes = recolectar_actividad_reciente(5)
     clientes_disponibles = sum(
         1 for cliente in CLIENTES_PANEL if cliente["disponible"]
     )
+    pulso = pulso_ultimos_7_dias()
     return render(
         request,
         "procesamientos/panel.html",
         {
             **contexto_sesion(request, nav_activo="panel"),
-            "procesamientos_recientes": recientes,
+            "saludo": saludo_por_hora(),
+            "pulso_7_dias": pulso,
+            "procesamientos_recientes": recolectar_actividad_reciente(3),
             "total_procesamientos": total_procesamientos_del_dia(),
+            "clientes_disponibles": clientes_disponibles,
+            "cliente_destacado": cliente_mas_activo_semana(),
+            "total_semana": sum(d["total"] for d in pulso),
+        },
+    )
+
+
+@login_required
+@require_GET
+def listar_clientes(request):
+    clientes_disponibles = sum(
+        1 for cliente in CLIENTES_PANEL if cliente["disponible"]
+    )
+    return render(
+        request,
+        "procesamientos/clientes.html",
+        {
+            **contexto_sesion(request, nav_activo="clientes"),
             "clientes_panel": CLIENTES_PANEL,
             "total_clientes": len(CLIENTES_PANEL),
             "clientes_disponibles": clientes_disponibles,
