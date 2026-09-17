@@ -5,16 +5,7 @@
 {% block estilos %}
 <style>
   .cabecera-usuarios {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1.25rem;
     margin-bottom: 1.25rem;
-    flex-wrap: wrap;
-  }
-  .cabecera-usuarios .texto {
-    flex: 1 1 16rem;
-    min-width: 0;
   }
   .cabecera-usuarios .cabecera-kicker {
     margin: 0 0 0.25rem;
@@ -24,17 +15,10 @@
   }
   .cabecera-usuarios .intro {
     margin: 0.45rem 0 0;
-    max-width: none;
+    max-width: 40rem;
     color: var(--muted);
     font-size: 0.95rem;
     line-height: 1.45;
-  }
-  .acciones-cabecera {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    flex-shrink: 0;
-    padding-top: 0.15rem;
   }
   .badge-rol {
     display: inline-block;
@@ -66,23 +50,27 @@
   .tabla-usuarios td.mono {
     font-weight: 650;
   }
+  .pie-usuarios {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 0.15rem;
+  }
+  .pie-usuarios .boton {
+    min-width: 10rem;
+    border-radius: var(--radius-pill);
+  }
 </style>
 {% endblock %}
 
 {% block contenido %}
 <header class="cabecera-usuarios">
-  <div class="texto">
-    <p class="cabecera-kicker">Administración</p>
-    <h1>Usuarios</h1>
-    <p class="intro">
-      Admin: acceso total y gestión de cuentas. Básico: módulos e Ingresos.
-    </p>
-  </div>
-  <div class="acciones-cabecera">
-    <a class="boton" href="{% url 'procesamientos:usuario_crear' %}">
-      Crear usuario
-    </a>
-  </div>
+  <p class="cabecera-kicker">Administración</p>
+  <h1>Usuarios</h1>
+  <p class="intro">
+    Admin: acceso total y gestión de cuentas. Básico: módulos e Ingresos.
+  </p>
 </header>
 
 <section class="tarjeta">
@@ -125,4 +113,10 @@
   <p class="vacio">No hay usuarios registrados.</p>
   {% endif %}
 </section>
+
+<div class="pie-usuarios">
+  <a class="boton" href="{% url 'procesamientos:usuario_crear' %}">
+    + Crear usuario
+  </a>
+</div>
 {% endblock %}

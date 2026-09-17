@@ -4,39 +4,48 @@
 {% block clases_contenido %} contenido-medio{% endblock %}
 {% block estilos %}
 <style>
-  .crear-wrap {
+  .drawer-pantalla {
     display: flex;
-    justify-content: center;
-    padding: 0.5rem 0 1.5rem;
+    justify-content: flex-end;
+    min-height: calc(100vh - 3rem);
+    margin: -0.25rem 0 -1rem;
   }
-  .modal-usuario {
+  .drawer-panel {
     width: 100%;
-    max-width: 520px;
+    max-width: 420px;
     background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
-    padding: 1.35rem 1.45rem 1.25rem;
-  }
-  .modal-cabecera {
+    border-radius: 18px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem 1.45rem 1.35rem;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-self: stretch;
+  }
+  .drawer-cabecera {
+    display: flex;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
   }
-  .modal-cabecera h1 {
+  .drawer-cabecera h1 {
     margin: 0;
-    font-size: 1.35rem;
-    letter-spacing: -0.02em;
+    font-size: 1.45rem;
+    letter-spacing: -0.03em;
   }
-  .modal-cerrar {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    border: 0;
-    background: transparent;
+  .drawer-cabecera .intro-form {
+    margin: 0.4rem 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.45;
+    max-width: 20rem;
+  }
+  .drawer-cerrar {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
     color: #666;
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     line-height: 1;
     text-decoration: none;
     display: inline-flex;
@@ -44,22 +53,18 @@
     justify-content: center;
     flex-shrink: 0;
   }
-  .modal-cerrar:hover {
+  .drawer-cerrar:hover {
     background: #f3f3f3;
     color: #111;
   }
-  .form-grid {
+  .form-campos {
     display: grid;
-    gap: 1rem;
-  }
-  .fila-dos {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.9rem;
+    gap: 1.15rem;
+    flex: 1;
   }
   .campo label {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 650;
     margin-bottom: 0.4rem;
     color: #333;
@@ -68,19 +73,18 @@
   .campo select {
     width: 100%;
     box-sizing: border-box;
-    padding: 0.7rem 0.85rem;
+    padding: 0.72rem 0.9rem;
     border: 1px solid #d8d8d8;
-    border-radius: 8px;
+    border-radius: 10px;
     font: inherit;
     background: #fff;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
   .campo select {
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M1.2 1.2 6 6l4.8-4.8'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 0.85rem center;
-    padding-right: 2.2rem;
+    background-position: right 0.9rem center;
+    padding-right: 2.3rem;
   }
   .campo input:focus,
   .campo select:focus {
@@ -88,55 +92,34 @@
     border-color: #111;
     box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08);
   }
-  .aviso-info {
-    display: flex;
-    gap: 0.65rem;
-    align-items: flex-start;
-    margin-top: 0.15rem;
-    padding: 0.75rem 0.9rem;
-    border-radius: 8px;
-    background: #f7f4ec;
-    border: 1px solid #e8dfc8;
-    color: #5c5340;
-    font-size: 0.84rem;
-    line-height: 1.45;
-  }
-  .aviso-info .icono {
-    flex-shrink: 0;
-    width: 18px;
-    height: 18px;
-    margin-top: 0.1rem;
-    border-radius: 50%;
-    background: #c4a35a;
-    color: #fff;
-    font-size: 0.72rem;
-    font-weight: 700;
-    display: grid;
-    place-items: center;
+  .ayuda {
+    margin: 0.4rem 0 0;
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.4;
   }
   .errores {
     color: #b42318;
     font-size: 0.8rem;
     margin-top: 0.3rem;
   }
-  .modal-pie {
+  .drawer-acciones {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    justify-content: flex-end;
-    gap: 0.65rem;
-    margin-top: 1.25rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--borde);
+    gap: 0.7rem;
+    margin-top: 1.75rem;
+    padding-top: 0.25rem;
   }
-  .modal-pie .boton,
-  .modal-pie a.boton {
+  .drawer-acciones .boton,
+  .drawer-acciones a.boton {
     box-sizing: border-box;
-    min-width: 7.25rem;
-    min-height: 2.55rem;
-    height: 2.55rem;
+    flex: 1;
+    min-height: 2.75rem;
+    height: 2.75rem;
     margin: 0;
-    border-radius: 10px;
-    padding: 0 1.15rem;
+    border-radius: var(--radius-pill);
+    padding: 0 1.1rem;
     font: inherit;
     font-weight: 650;
     line-height: 1;
@@ -146,55 +129,56 @@
     justify-content: center;
     cursor: pointer;
   }
-  .modal-pie a.boton.boton-suave {
-    background: #f3f3f3;
-    color: var(--texto);
-    border: 1px solid transparent;
-  }
-  .modal-pie a.boton.boton-suave:hover {
-    background: #eaeaea;
-    box-shadow: none;
-  }
-  .modal-pie button.boton {
+  .drawer-acciones button.boton {
     background: #111;
     color: #fff;
     border: 1px solid #111;
+    order: 1;
   }
-  @media (max-width: 560px) {
-    .fila-dos { grid-template-columns: 1fr; }
-    .modal-pie {
-      flex-wrap: wrap;
-    }
-    .modal-pie .boton,
-    .modal-pie a.boton {
-      flex: 1;
-    }
+  .drawer-acciones a.boton.boton-suave {
+    background: #fff;
+    color: var(--texto);
+    border: 1px solid var(--borde);
+    order: 2;
+  }
+  .drawer-acciones a.boton.boton-suave:hover {
+    background: #f3f3f3;
+    box-shadow: none;
+  }
+  @media (max-width: 720px) {
+    .drawer-pantalla { justify-content: center; }
+    .drawer-panel { max-width: 100%; }
   }
 </style>
 {% endblock %}
 
 {% block contenido %}
-<div class="crear-wrap">
-  <form method="post" novalidate class="modal-usuario">
+<div class="drawer-pantalla">
+  <form method="post" novalidate class="drawer-panel">
     {% csrf_token %}
 
-    <div class="modal-cabecera">
-      <h1>Crear usuario</h1>
-      <a class="modal-cerrar" href="{% url 'procesamientos:usuarios' %}" title="Cerrar" aria-label="Cerrar">×</a>
+    <div class="drawer-cabecera">
+      <div>
+        <h1>Crear usuario</h1>
+        <p class="intro-form">
+          Complete los datos para agregar un usuario al sistema.
+        </p>
+      </div>
+      <a class="drawer-cerrar" href="{% url 'procesamientos:usuarios' %}" title="Cerrar" aria-label="Cerrar">×</a>
     </div>
 
-    <div class="form-grid">
-      <div class="fila-dos">
-        <div class="campo">
-          <label for="{{ formulario.username.id_for_label }}">{{ formulario.username.label }}</label>
-          {{ formulario.username }}
-          {% if formulario.username.errors %}<div class="errores">{{ formulario.username.errors|striptags }}</div>{% endif %}
-        </div>
-        <div class="campo">
-          <label for="{{ formulario.first_name.id_for_label }}">{{ formulario.first_name.label }}</label>
-          {{ formulario.first_name }}
-          {% if formulario.first_name.errors %}<div class="errores">{{ formulario.first_name.errors|striptags }}</div>{% endif %}
-        </div>
+    <div class="form-campos">
+      <div class="campo">
+        <label for="{{ formulario.username.id_for_label }}">{{ formulario.username.label }}</label>
+        {{ formulario.username }}
+        {% if formulario.username.errors %}<div class="errores">{{ formulario.username.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="campo">
+        <label for="{{ formulario.first_name.id_for_label }}">{{ formulario.first_name.label }}</label>
+        {{ formulario.first_name }}
+        <p class="ayuda">Opcional. Nombre visible en el sistema.</p>
+        {% if formulario.first_name.errors %}<div class="errores">{{ formulario.first_name.errors|striptags }}</div>{% endif %}
       </div>
 
       <div class="campo">
@@ -206,31 +190,27 @@
       <div class="campo">
         <label for="{{ formulario.password2.id_for_label }}">{{ formulario.password2.label }}</label>
         {{ formulario.password2 }}
+        <p class="ayuda">Debe coincidir con la contraseña anterior.</p>
         {% if formulario.password2.errors %}<div class="errores">{{ formulario.password2.errors|striptags }}</div>{% endif %}
       </div>
 
       <div class="campo">
         <label for="{{ formulario.rol.id_for_label }}">{{ formulario.rol.label }}</label>
         {{ formulario.rol }}
+        <p class="ayuda">
+          Administrador: todo + usuarios. Usuario básico: módulos e Ingresos.
+        </p>
         {% if formulario.rol.errors %}<div class="errores">{{ formulario.rol.errors|striptags }}</div>{% endif %}
       </div>
 
       {% if formulario.non_field_errors %}
       <div class="errores">{{ formulario.non_field_errors|striptags }}</div>
       {% endif %}
-
-      <div class="aviso-info">
-        <span class="icono" aria-hidden="true">i</span>
-        <span>
-          Administrador: todo + usuarios. Usuario básico: módulos e Ingresos.
-          Podrá modificar más detalles después de crear la cuenta.
-        </span>
-      </div>
     </div>
 
-    <div class="modal-pie">
-      <a class="boton boton-suave" href="{% url 'procesamientos:usuarios' %}">Cancelar</a>
+    <div class="drawer-acciones">
       <button class="boton" type="submit">Crear usuario</button>
+      <a class="boton boton-suave" href="{% url 'procesamientos:usuarios' %}">Cancelar</a>
     </div>
   </form>
 </div>
