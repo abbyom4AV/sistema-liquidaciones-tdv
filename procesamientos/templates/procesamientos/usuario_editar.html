@@ -4,46 +4,115 @@
 {% block clases_contenido %} contenido-medio{% endblock %}
 {% block estilos %}
 <style>
-  .crear-wrap {
-    display: flex;
+  .crear-fondo {
+    filter: blur(3px);
+    opacity: 0.55;
+    pointer-events: none;
+    user-select: none;
+  }
+  .crear-fondo .cabecera-usuarios { margin-bottom: 1.25rem; }
+  .crear-fondo .cabecera-kicker { margin: 0 0 0.25rem; }
+  .crear-fondo h1 { margin: 0; }
+  .crear-fondo .intro {
+    margin: 0.45rem 0 0;
+    max-width: 40rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+  .crear-fondo .badge-rol {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 650;
+  }
+  .crear-fondo .badge-admin { background: #111; color: #fff; }
+  .crear-fondo .badge-basico { background: #efefef; color: var(--muted); }
+  .crear-fondo .enlace-accion {
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
-    padding: 0.5rem 0 1.5rem;
-  }
-  .modal-usuario {
-    width: 100%;
-    max-width: 520px;
+    min-height: 2rem;
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--borde);
     background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
-    padding: 1.35rem 1.45rem 1.25rem;
+    font-size: 0.82rem;
+    font-weight: 650;
   }
-  .modal-cabecera {
+  .crear-fondo .tabla-usuarios td.mono { font-weight: 650; }
+  .crear-fondo .pie-usuarios {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+  .crear-fondo .pie-usuarios .boton {
+    min-width: 10rem;
+    border-radius: var(--radius-pill);
+  }
+
+  .drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(245, 245, 245, 0.45);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 40;
+  }
+  .drawer-pantalla {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: flex-end;
+    align-items: stretch;
+    padding: 1rem 1rem 1rem 0;
+    pointer-events: none;
+  }
+  .drawer-panel {
+    pointer-events: auto;
+    width: min(100%, 420px);
+    max-height: calc(100vh - 2rem);
+    overflow: auto;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.06);
+    padding: 1.5rem 1.45rem 1.35rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .drawer-cabecera {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.15rem;
   }
-  .modal-cabecera h1 {
+  .drawer-cabecera h1 {
     margin: 0;
-    font-size: 1.35rem;
-    letter-spacing: -0.02em;
+    font-size: 1.45rem;
+    letter-spacing: -0.03em;
   }
-  .usuario-chip {
-    margin-top: 0.3rem;
+  .drawer-cabecera .usuario-chip {
+    margin: 0.35rem 0 0;
     font-family: "IBM Plex Mono", monospace;
     font-size: 0.88rem;
     font-weight: 600;
     color: var(--muted);
   }
-  .modal-cerrar {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    border: 0;
-    background: transparent;
+  .drawer-cabecera .intro-form {
+    margin: 0.45rem 0 0;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+  .drawer-cerrar {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
     color: #666;
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     line-height: 1;
     text-decoration: none;
     display: inline-flex;
@@ -51,22 +120,43 @@
     justify-content: center;
     flex-shrink: 0;
   }
-  .modal-cerrar:hover {
+  .drawer-cerrar:hover {
     background: #f3f3f3;
     color: #111;
   }
-  .form-grid {
+
+  .tabs-edicion {
     display: grid;
-    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.35rem;
+    padding: 0.3rem;
+    margin-bottom: 1.25rem;
+    background: #f3f3f3;
+    border-radius: 12px;
   }
-  .fila-dos {
+  .tabs-edicion a {
+    text-align: center;
+    text-decoration: none;
+    color: #555;
+    font-size: 0.8rem;
+    font-weight: 650;
+    padding: 0.55rem 0.35rem;
+    border-radius: 9px;
+  }
+  .tabs-edicion a.activa {
+    background: #fff;
+    color: #111;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+
+  .form-campos {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.9rem;
+    gap: 1.15rem;
+    flex: 1;
   }
   .campo label {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 650;
     margin-bottom: 0.4rem;
     color: #333;
@@ -76,9 +166,9 @@
   .campo select {
     width: 100%;
     box-sizing: border-box;
-    padding: 0.7rem 0.85rem;
+    padding: 0.72rem 0.9rem;
     border: 1px solid #d8d8d8;
-    border-radius: 8px;
+    border-radius: 10px;
     font: inherit;
     background: #fff;
   }
@@ -86,8 +176,8 @@
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M1.2 1.2 6 6l4.8-4.8'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 0.85rem center;
-    padding-right: 2.2rem;
+    background-position: right 0.9rem center;
+    padding-right: 2.3rem;
   }
   .campo input:focus,
   .campo select:focus {
@@ -99,41 +189,48 @@
     display: flex;
     align-items: center;
     gap: 0.55rem;
-    padding: 0.7rem 0.85rem;
+    padding: 0.75rem 0.9rem;
     border: 1px solid #d8d8d8;
-    border-radius: 8px;
-    min-height: 2.7rem;
+    border-radius: 10px;
+    min-height: 2.75rem;
     box-sizing: border-box;
   }
   .campo-check label { margin: 0; font-weight: 600; }
   .ayuda {
+    margin: 0.4rem 0 0;
     color: var(--muted);
-    font-size: 0.78rem;
-    margin-top: 0.3rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
   }
   .errores {
     color: #b42318;
     font-size: 0.8rem;
     margin-top: 0.3rem;
   }
-  .modal-pie {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.65rem;
-    margin-top: 1.25rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--borde);
+  .campos-ocultos {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
   }
-  .modal-pie .boton,
-  .modal-pie a.boton {
+
+  .drawer-acciones {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: 1.75rem;
+  }
+  .drawer-acciones .boton,
+  .drawer-acciones a.boton {
     box-sizing: border-box;
-    min-width: 7.25rem;
-    min-height: 2.55rem;
-    height: 2.55rem;
+    flex: 1;
+    min-height: 2.75rem;
+    height: 2.75rem;
     margin: 0;
-    border-radius: 10px;
-    padding: 0 1.15rem;
+    border-radius: var(--radius-pill);
+    padding: 0 1.1rem;
     font: inherit;
     font-weight: 650;
     line-height: 1;
@@ -143,55 +240,144 @@
     justify-content: center;
     cursor: pointer;
   }
-  .modal-pie a.boton.boton-suave {
-    background: #f3f3f3;
-    color: var(--texto);
-    border: 1px solid transparent;
-  }
-  .modal-pie a.boton.boton-suave:hover {
-    background: #eaeaea;
-    box-shadow: none;
-  }
-  .modal-pie button.boton {
+  .drawer-acciones button.boton {
     background: #111;
     color: #fff;
     border: 1px solid #111;
+    order: 1;
   }
-  @media (max-width: 560px) {
-    .fila-dos { grid-template-columns: 1fr; }
-    .modal-pie .boton,
-    .modal-pie a.boton { flex: 1; }
+  .drawer-acciones a.boton.boton-suave {
+    background: #fff;
+    color: var(--texto);
+    border: 1px solid var(--borde);
+    order: 2;
+  }
+  .drawer-acciones a.boton.boton-suave:hover {
+    background: #f3f3f3;
+    box-shadow: none;
+  }
+  @media (max-width: 720px) {
+    .drawer-pantalla {
+      padding: 0.75rem;
+      justify-content: center;
+    }
+    .drawer-panel {
+      width: 100%;
+      max-height: calc(100vh - 1.5rem);
+    }
   }
 </style>
 {% endblock %}
 
 {% block contenido %}
-<div class="crear-wrap">
-  <form method="post" novalidate class="modal-usuario">
-    {% csrf_token %}
+<div class="crear-fondo" aria-hidden="true">
+  <header class="cabecera-usuarios">
+    <p class="cabecera-kicker">Administración</p>
+    <h1>Usuarios</h1>
+    <p class="intro">
+      Admin: acceso total y gestión de cuentas. Básico: módulos e Ingresos.
+    </p>
+  </header>
 
-    <div class="modal-cabecera">
+  <section class="tarjeta">
+    {% if usuarios %}
+    <table class="tabla-usuarios">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Nombre</th>
+          <th>Nivel</th>
+          <th>Estado</th>
+          <th>Último acceso</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in usuarios %}
+        <tr>
+          <td class="mono">{{ u.username }}</td>
+          <td>{{ u.nombre }}</td>
+          <td>
+            <span class="badge-rol {% if u.rol == 'admin' %}badge-admin{% else %}badge-basico{% endif %}">
+              {{ u.rol_legible }}
+            </span>
+          </td>
+          <td>{% if u.activo %}Activo{% else %}Inactivo{% endif %}</td>
+          <td class="mono">
+            {% if u.ultimo_acceso %}{{ u.ultimo_acceso|date:"d/m/Y H:i" }}{% else %}—{% endif %}
+          </td>
+          <td><span class="enlace-accion">Modificar</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="vacio">No hay usuarios registrados.</p>
+    {% endif %}
+  </section>
+
+  <div class="pie-usuarios">
+    <span class="boton">+ Crear usuario</span>
+  </div>
+</div>
+
+<a class="drawer-overlay" href="{% url 'procesamientos:usuarios' %}" aria-label="Cerrar panel"></a>
+
+<div class="drawer-pantalla">
+  <form method="post" novalidate class="drawer-panel">
+    {% csrf_token %}
+    <input type="hidden" name="seccion" value="{{ seccion }}">
+
+    {# Valores actuales ocultos para que el formulario valide al guardar solo una sección #}
+    <div class="campos-ocultos" aria-hidden="true">
+      {% if seccion != 'datos' %}
+      <input type="hidden" name="first_name" value="{{ formulario.first_name.value|default_if_none:'' }}">
+      {% endif %}
+      {% if seccion != 'acceso' %}
+      <input type="hidden" name="rol" value="{{ formulario.rol.value|default_if_none:'basico' }}">
+      {% if formulario.is_active.value %}<input type="hidden" name="is_active" value="on">{% endif %}
+      {% endif %}
+    </div>
+
+    <div class="drawer-cabecera">
       <div>
         <h1>Modificar usuario</h1>
         <div class="usuario-chip">{{ usuario_editado.username }}</div>
+        <p class="intro-form">Elija qué desea cambiar. Solo se guarda esa parte.</p>
       </div>
-      <a class="modal-cerrar" href="{% url 'procesamientos:usuarios' %}" title="Cerrar" aria-label="Cerrar">×</a>
+      <a class="drawer-cerrar" href="{% url 'procesamientos:usuarios' %}" title="Cerrar" aria-label="Cerrar">×</a>
     </div>
 
-    <div class="form-grid">
-      <div class="fila-dos">
-        <div class="campo">
-          <label for="{{ formulario.first_name.id_for_label }}">{{ formulario.first_name.label }}</label>
-          {{ formulario.first_name }}
-          {% if formulario.first_name.errors %}<div class="errores">{{ formulario.first_name.errors|striptags }}</div>{% endif %}
-        </div>
-        <div class="campo">
-          <label for="{{ formulario.rol.id_for_label }}">{{ formulario.rol.label }}</label>
-          {{ formulario.rol }}
-          {% if formulario.rol.errors %}<div class="errores">{{ formulario.rol.errors|striptags }}</div>{% endif %}
-        </div>
-      </div>
+    <nav class="tabs-edicion" aria-label="Qué modificar">
+      <a
+        class="{% if seccion == 'datos' %}activa{% endif %}"
+        href="?seccion=datos"
+      >Nombre</a>
+      <a
+        class="{% if seccion == 'acceso' %}activa{% endif %}"
+        href="?seccion=acceso"
+      >Acceso</a>
+      <a
+        class="{% if seccion == 'clave' %}activa{% endif %}"
+        href="?seccion=clave"
+      >Contraseña</a>
+    </nav>
 
+    <div class="form-campos">
+      {% if seccion == 'datos' %}
+      <div class="campo">
+        <label for="{{ formulario.first_name.id_for_label }}">{{ formulario.first_name.label }}</label>
+        {{ formulario.first_name }}
+        <p class="ayuda">Nombre visible en el sistema. El usuario de acceso no cambia.</p>
+        {% if formulario.first_name.errors %}<div class="errores">{{ formulario.first_name.errors|striptags }}</div>{% endif %}
+      </div>
+      {% elif seccion == 'acceso' %}
+      <div class="campo">
+        <label for="{{ formulario.rol.id_for_label }}">{{ formulario.rol.label }}</label>
+        {{ formulario.rol }}
+        <p class="ayuda">Administrador: todo + usuarios. Básico: módulos e Ingresos.</p>
+        {% if formulario.rol.errors %}<div class="errores">{{ formulario.rol.errors|striptags }}</div>{% endif %}
+      </div>
       <div class="campo">
         <div class="campo-check">
           {{ formulario.is_active }}
@@ -199,28 +385,32 @@
         </div>
         {% if formulario.is_active.errors %}<div class="errores">{{ formulario.is_active.errors|striptags }}</div>{% endif %}
       </div>
-
+      {% else %}
       <div class="campo">
         <label for="{{ formulario.password1.id_for_label }}">{{ formulario.password1.label }}</label>
         {{ formulario.password1 }}
-        {% if formulario.password1.help_text %}<p class="ayuda">{{ formulario.password1.help_text }}</p>{% endif %}
+        <p class="ayuda">Solo complete esta sección si desea cambiar la clave.</p>
         {% if formulario.password1.errors %}<div class="errores">{{ formulario.password1.errors|striptags }}</div>{% endif %}
       </div>
-
       <div class="campo">
         <label for="{{ formulario.password2.id_for_label }}">{{ formulario.password2.label }}</label>
         {{ formulario.password2 }}
         {% if formulario.password2.errors %}<div class="errores">{{ formulario.password2.errors|striptags }}</div>{% endif %}
       </div>
+      {% endif %}
 
       {% if formulario.non_field_errors %}
       <div class="errores">{{ formulario.non_field_errors|striptags }}</div>
       {% endif %}
     </div>
 
-    <div class="modal-pie">
+    <div class="drawer-acciones">
+      <button class="boton" type="submit">
+        {% if seccion == 'datos' %}Guardar nombre
+        {% elif seccion == 'acceso' %}Guardar acceso
+        {% else %}Guardar contraseña{% endif %}
+      </button>
       <a class="boton boton-suave" href="{% url 'procesamientos:usuarios' %}">Cancelar</a>
-      <button class="boton" type="submit">Guardar cambios</button>
     </div>
   </form>
 </div>
