@@ -4,127 +4,219 @@
 {% block clases_contenido %} contenido-medio{% endblock %}
 {% block estilos %}
 <style>
-  .perfil {
-    max-width: 720px;
+  .perfil-pagina {
+    max-width: 680px;
   }
+  .perfil-pagina > .cabecera-perfil {
+    margin-bottom: 1.15rem;
+  }
+  .perfil-pagina .cabecera-kicker {
+    margin: 0 0 0.2rem;
+  }
+  .perfil-pagina h1.titulo-pagina {
+    margin: 0;
+    font-size: clamp(1.45rem, 2vw, 1.7rem);
+    letter-spacing: -0.03em;
+  }
+  .perfil-pagina .intro-pagina {
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+
   .perfil-card {
     background: #fff;
-    border-radius: 18px;
+    border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: 1.5rem 1.55rem 1.35rem;
+    overflow: hidden;
   }
-  .perfil-cabecera {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-bottom: 1.25rem;
-  }
-  .perfil-identidad {
+
+  .perfil-top {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    min-width: 0;
+    gap: 1.15rem;
+    padding: 1.55rem 1.6rem 1.35rem;
   }
   .perfil-avatar {
-    width: 68px;
-    height: 68px;
+    position: relative;
+    width: 76px;
+    height: 76px;
     border-radius: 50%;
     background: #111;
     color: #fff;
     display: grid;
     place-items: center;
     font-weight: 700;
-    font-size: 1.2rem;
-    letter-spacing: 0.04em;
+    font-size: 1.25rem;
+    letter-spacing: 0.05em;
     flex-shrink: 0;
+    box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--oro);
   }
-  .perfil-identidad h1 {
+  .perfil-identidad {
+    min-width: 0;
+    flex: 1;
+  }
+  .perfil-identidad h2 {
     margin: 0;
-    font-size: 1.4rem;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
   }
   .perfil-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.45rem 0.75rem;
-    margin-top: 0.45rem;
     align-items: center;
+    gap: 0.5rem 0.85rem;
+    margin-top: 0.55rem;
   }
   .badge-rol {
-    display: inline-block;
-    padding: 0.22rem 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.28rem 0.7rem;
     border-radius: 999px;
     font-size: 0.72rem;
     font-weight: 650;
+    letter-spacing: 0.01em;
   }
-  .badge-admin { background: #111; color: #fff; }
-  .badge-basico { background: #efefef; color: var(--muted); }
-  .meta-hora {
-    font-size: 0.85rem;
+  .badge-admin {
+    background: #111;
+    color: #fff;
+  }
+  .badge-basico {
+    background: #f0f0f0;
+    color: #555;
+  }
+  .meta-linea {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.84rem;
     color: var(--muted);
   }
-  .perfil-sep {
-    height: 1px;
-    background: var(--borde);
-    margin: 0 0 1.2rem;
+  .meta-linea svg {
+    width: 14px;
+    height: 14px;
+    opacity: 0.75;
   }
+
+  .perfil-bloque {
+    padding: 0 1.6rem 1.35rem;
+  }
+  .perfil-bloque + .perfil-bloque {
+    border-top: 1px solid var(--borde);
+    padding-top: 1.25rem;
+  }
+
   .datos-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.15rem 1.75rem;
-    padding-bottom: 1.25rem;
+    gap: 1.25rem 2rem;
   }
   .dato-item {
-    display: grid;
-    grid-template-columns: 28px 1fr;
-    gap: 0.55rem;
-    align-items: start;
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    min-width: 0;
   }
   .dato-icono {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    background: #f3f5f7;
-    color: #555;
-    display: grid;
-    place-items: center;
+    width: 20px;
+    height: 20px;
+    margin-top: 0.15rem;
+    color: #8a8a8a;
     flex-shrink: 0;
   }
   .dato-icono svg {
-    width: 14px;
-    height: 14px;
+    width: 20px;
+    height: 20px;
+    stroke-width: 1.7;
   }
-  .dato-item span {
+  .dato-item .etiqueta {
     display: block;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 650;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 0.15rem;
+    margin-bottom: 0.2rem;
   }
-  .dato-item strong {
-    font-size: 0.95rem;
+  .dato-item .valor {
+    display: block;
+    font-size: 0.98rem;
     font-weight: 600;
+    color: var(--texto);
     word-break: break-word;
+    line-height: 1.3;
   }
-  .dato-item .mono {
+  .dato-item .valor.mono {
     font-family: "IBM Plex Mono", monospace;
+    font-size: 0.92rem;
   }
-  .privilegios {
-    display: grid;
-    gap: 0;
-    padding-bottom: 0.25rem;
+  .dato-item .valor.vacio {
+    color: #b0b0b0;
+    font-weight: 500;
   }
+
+  .plan-acceso {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    background: linear-gradient(180deg, #fafafa 0%, #fff 100%);
+  }
+  .plan-acceso h3 {
+    margin: 0 0 0.25rem;
+    font-size: 0.95rem;
+    font-weight: 650;
+  }
+  .plan-acceso p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.84rem;
+    line-height: 1.4;
+    max-width: 22rem;
+  }
+  .plan-badge {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: var(--oro-soft);
+    color: #8a6d12;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  .plan-badge.basico {
+    background: #f0f0f0;
+    color: #555;
+  }
+  .plan-badge svg {
+    width: 13px;
+    height: 13px;
+  }
+
   .privilegio {
     display: flex;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 1.25rem;
     align-items: center;
     padding: 0.95rem 0;
+  }
+  .privilegio + .privilegio {
     border-top: 1px solid var(--borde);
+  }
+  .privilegio:first-child {
+    padding-top: 0;
+  }
+  .privilegio:last-child {
+    padding-bottom: 0;
   }
   .privilegio h3 {
     margin: 0 0 0.2rem;
@@ -136,200 +228,239 @@
     color: var(--muted);
     font-size: 0.84rem;
     line-height: 1.4;
+    max-width: 26rem;
   }
   .switch-visual {
     flex-shrink: 0;
-    width: 44px;
-    height: 26px;
+    width: 46px;
+    height: 28px;
     border-radius: 999px;
-    background: #d4d4d4;
+    background: #d8d8d8;
     position: relative;
   }
-  .switch-visual.on { background: #111; }
+  .switch-visual.on {
+    background: #111;
+  }
   .switch-visual::after {
     content: "";
     position: absolute;
     top: 3px;
     left: 3px;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
     transition: left 0.15s ease;
   }
-  .switch-visual.on::after { left: 21px; }
+  .switch-visual.on::after {
+    left: 21px;
+  }
+
   .perfil-pie {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
-    margin-top: 0.35rem;
-    padding-top: 1.1rem;
+    padding: 1.15rem 1.6rem 1.3rem;
     border-top: 1px solid var(--borde);
+    background: #fafafa;
   }
-  .estado-punto {
+  .estado-bloque .estado-punto {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    font-size: 0.88rem;
-    font-weight: 600;
+    gap: 0.45rem;
+    font-size: 0.9rem;
+    font-weight: 650;
     color: #15803d;
   }
-  .estado-punto::before {
+  .estado-bloque .estado-punto::before {
     content: "";
     width: 8px;
     height: 8px;
     border-radius: 50%;
     background: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.18);
   }
-  .estado-punto.inactivo {
+  .estado-bloque .estado-punto.inactivo {
     color: var(--muted);
   }
-  .estado-punto.inactivo::before { background: #9ca3af; }
-  .estado-hora {
+  .estado-bloque .estado-punto.inactivo::before {
+    background: #9ca3af;
+    box-shadow: none;
+  }
+  .estado-bloque .estado-hora {
     display: block;
-    margin-top: 0.2rem;
+    margin: 0.25rem 0 0 1.15rem;
     font-size: 0.78rem;
-    font-weight: 500;
     color: var(--muted);
   }
-  .perfil-pie-acciones {
+  .perfil-acciones {
     display: flex;
-    gap: 0.65rem;
+    gap: 0.6rem;
     flex-wrap: wrap;
     align-items: center;
   }
-  .perfil-pie .boton,
-  .perfil-pie a.boton {
+  .perfil-acciones .boton,
+  .perfil-acciones a.boton {
     box-sizing: border-box;
-    min-height: 2.55rem;
-    height: 2.55rem;
+    min-height: 2.5rem;
+    height: 2.5rem;
     margin: 0;
     border-radius: var(--radius-pill);
     padding: 0 1.15rem;
     font: inherit;
     font-weight: 650;
+    font-size: 0.9rem;
     line-height: 1;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
-  .perfil-pie a.boton.boton-suave {
+  .perfil-acciones a.boton.boton-suave {
     background: #fff;
     color: var(--texto);
     border: 1px solid var(--borde);
   }
-  .perfil-pie a.boton.boton-suave:hover {
+  .perfil-acciones a.boton.boton-suave:hover {
     background: #f3f3f3;
     box-shadow: none;
   }
+
   @media (max-width: 700px) {
     .datos-grid { grid-template-columns: 1fr; }
-    .perfil-cabecera { flex-direction: column; }
+    .plan-acceso { flex-direction: column; align-items: flex-start; }
+    .perfil-top { align-items: flex-start; }
+    .perfil-pie { align-items: flex-start; }
+    .perfil-acciones { width: 100%; }
+    .perfil-acciones .boton,
+    .perfil-acciones a.boton { flex: 1; }
   }
 </style>
 {% endblock %}
 
 {% block contenido %}
-<header class="cabecera">
-  <div>
+<div class="perfil-pagina">
+  <header class="cabecera-perfil">
     <p class="cabecera-kicker">Cuenta</p>
-    <h1 style="position:absolute;left:-9999px;">Mi perfil</h1>
-    <p class="intro">Información de su sesión en el Sistema TDV.</p>
-  </div>
-</header>
+    <h1 class="titulo-pagina">Mi perfil</h1>
+    <p class="intro-pagina">Resumen de su sesión y permisos en el Sistema TDV.</p>
+  </header>
 
-<div class="perfil">
   <section class="perfil-card">
-    <div class="perfil-cabecera">
+    <div class="perfil-top">
+      <div class="perfil-avatar" aria-hidden="true">{{ iniciales_usuario }}</div>
       <div class="perfil-identidad">
-        <div class="perfil-avatar" aria-hidden="true">{{ iniciales_usuario }}</div>
-        <div>
-          <h1>{{ nombre_completo }}</h1>
-          <div class="perfil-meta">
-            <span class="badge-rol {% if rol == 'admin' %}badge-admin{% else %}badge-basico{% endif %}">
-              {{ rol_legible }}
+        <h2>{{ nombre_completo }}</h2>
+        <div class="perfil-meta">
+          <span class="badge-rol {% if rol == 'admin' %}badge-admin{% else %}badge-basico{% endif %}">
+            {{ rol_legible }}
+          </span>
+          {% if ultimo_acceso %}
+          <span class="meta-linea">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 1.8"/>
+            </svg>
+            Último acceso {{ ultimo_acceso|date:"H:i" }}
+          </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="perfil-bloque">
+      <div class="datos-grid">
+        <div class="dato-item">
+          <div class="dato-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h6M7 13h4"/></svg>
+          </div>
+          <div>
+            <span class="etiqueta">Usuario</span>
+            <span class="valor mono">{{ username }}</span>
+          </div>
+        </div>
+        <div class="dato-item">
+          <div class="dato-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div>
+            <span class="etiqueta">Nombre</span>
+            <span class="valor {% if nombre_mostrar == '—' %}vacio{% endif %}">{{ nombre_mostrar }}</span>
+          </div>
+        </div>
+        <div class="dato-item">
+          <div class="dato-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <span class="etiqueta">Nivel</span>
+            <span class="valor">{{ rol_legible }}</span>
+          </div>
+        </div>
+        <div class="dato-item">
+          <div class="dato-icono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </div>
+          <div>
+            <span class="etiqueta">Último acceso</span>
+            <span class="valor mono">
+              {% if ultimo_acceso %}{{ ultimo_acceso|date:"d/m/Y H:i" }}{% else %}—{% endif %}
             </span>
-            {% if ultimo_acceso %}
-            <span class="meta-hora">Último acceso {{ ultimo_acceso|date:"H:i" }}</span>
-            {% endif %}
           </div>
         </div>
       </div>
     </div>
 
-    <div class="perfil-sep"></div>
-
-    <div class="datos-grid">
-      <div class="dato-item">
-        <div class="dato-icono" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </div>
+    <div class="perfil-bloque">
+      <div class="plan-acceso">
         <div>
-          <span>Usuario</span>
-          <strong class="mono">{{ username }}</strong>
+          <h3>Nivel de acceso</h3>
+          <p>
+            {% if rol == 'admin' %}
+              Puede administrar usuarios, ver bitácoras y usar todos los módulos.
+            {% else %}
+              Acceso a módulos de liquidación e Ingresos. Sin gestión de usuarios.
+            {% endif %}
+          </p>
         </div>
-      </div>
-      <div class="dato-item">
-        <div class="dato-icono" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
-        </div>
-        <div>
-          <span>Nombre</span>
-          <strong>{{ nombre_mostrar }}</strong>
-        </div>
-      </div>
-      <div class="dato-item">
-        <div class="dato-icono" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </div>
-        <div>
-          <span>Nivel</span>
-          <strong>{{ rol_legible }}</strong>
-        </div>
-      </div>
-      <div class="dato-item">
-        <div class="dato-icono" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-        </div>
-        <div>
-          <span>Último acceso</span>
-          <strong class="mono">
-            {% if ultimo_acceso %}{{ ultimo_acceso|date:"d/m/Y H:i" }}{% else %}—{% endif %}
-          </strong>
-        </div>
+        <span class="plan-badge {% if rol != 'admin' %}basico{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          {{ rol_legible }}
+        </span>
       </div>
     </div>
 
-    <div class="privilegios">
+    <div class="perfil-bloque">
       <div class="privilegio">
         <div>
           <h3>Privilegios de administrador</h3>
-          <p>Acceso a bitácoras y gestión de usuarios.</p>
+          <p>Bitácoras y gestión de cuentas de usuario.</p>
         </div>
-        <div class="switch-visual {% if rol == 'admin' %}on{% endif %}" aria-hidden="true"></div>
+        <div class="switch-visual {% if rol == 'admin' %}on{% endif %}" title="{% if rol == 'admin' %}Activo{% else %}Inactivo{% endif %}" aria-hidden="true"></div>
       </div>
       <div class="privilegio">
         <div>
           <h3>Módulos e ingresos</h3>
-          <p>Puede usar todos los módulos de liquidación y ver el gráfico de ingresos.</p>
+          <p>Liquidaciones y gráfico de ingresos disponibles en su sesión.</p>
         </div>
-        <div class="switch-visual on" aria-hidden="true"></div>
+        <div class="switch-visual on" title="Activo" aria-hidden="true"></div>
       </div>
     </div>
 
     <div class="perfil-pie">
-      <div>
+      <div class="estado-bloque">
         <span class="estado-punto {% if not activo %}inactivo{% endif %}">
           {% if activo %}Sesión activa{% else %}Cuenta inactiva{% endif %}
         </span>
         {% if ultimo_acceso %}
-        <span class="estado-hora">{{ ultimo_acceso|date:"H:i / d M Y" }}</span>
+        <span class="estado-hora">{{ ultimo_acceso|date:"H:i · d M Y" }}</span>
         {% endif %}
       </div>
-      <div class="perfil-pie-acciones">
+      <div class="perfil-acciones">
         {% if es_admin_sesion %}
         <a class="boton boton-suave" href="{% url 'procesamientos:usuarios' %}">Administrar usuarios</a>
         <a class="boton" href="{% url 'procesamientos:usuario_editar' user_id %}">Modificar mi cuenta</a>
