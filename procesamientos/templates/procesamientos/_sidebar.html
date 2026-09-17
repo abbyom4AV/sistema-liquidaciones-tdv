@@ -40,16 +40,23 @@
       Usuarios
     </a>
     {% endif %}
+    <a
+      class="nav-item {% if nav_activo == 'perfil' %}activo{% endif %}"
+      href="{% url 'procesamientos:mi_perfil' %}"
+    >
+      Ver perfil
+    </a>
   </nav>
 
   <div class="sidebar-pie">
-    <a class="usuario-card" href="{% url 'procesamientos:mi_perfil' %}" style="text-decoration:none;color:inherit;display:block;">
+    <div class="usuario-card">
       <strong>{{ nombre_usuario_sesion }}</strong>
-      <span>{{ rol_sesion_legible|default:"Sesión activa" }} · Ver perfil</span>
-    </a>
+      <span>{{ rol_sesion_legible|default:"Sesión activa" }}</span>
+    </div>
     <form method="post" action="{% url 'logout' %}">
       {% csrf_token %}
       <button class="cerrar-sesion" type="submit">Cerrar sesión</button>
     </form>
   </div>
 </aside>
+
