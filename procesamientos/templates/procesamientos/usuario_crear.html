@@ -1,32 +1,96 @@
 {% extends "procesamientos/base.html" %}
 
 {% block titulo %}Crear usuario — Sistema TDV{% endblock %}
-{% block clases_contenido %} contenido-angosto{% endblock %}
+{% block clases_contenido %} contenido-medio{% endblock %}
 {% block estilos %}
 <style>
-  .campo { margin-bottom: 1rem; }
+  .form-usuario {
+    display: grid;
+    gap: 1rem;
+    max-width: 720px;
+  }
+  .bloque-form {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.25rem 1.35rem 1.35rem;
+  }
+  .bloque-form h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.05rem;
+    font-weight: 650;
+  }
+  .bloque-form .bloque-intro {
+    margin: 0 0 1.1rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+  .fila-campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem 1rem;
+  }
+  .campo { margin-bottom: 0; }
+  .campo.ancho-completo { grid-column: 1 / -1; }
   .campo label {
     display: block;
     font-size: 0.82rem;
     font-weight: 600;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.4rem;
+    color: #333;
   }
-  .campo input, .campo select {
+  .campo input,
+  .campo select {
     width: 100%;
-    padding: 0.65rem 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid #e4e4e4;
+    border-radius: 10px;
     font: inherit;
+    background: #f4f6f8;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .campo input:focus,
+  .campo select:focus {
+    outline: none;
+    border-color: #111;
+    background: #fff;
   }
   .errores {
     color: #b42318;
     font-size: 0.82rem;
     margin-top: 0.35rem;
   }
-  .acciones {
+  .acciones-form {
     display: flex;
     gap: 0.75rem;
-    margin-top: 1.25rem;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 0.25rem;
+  }
+  .acciones-form .boton,
+  .acciones-form .boton-suave {
+    min-width: 7.5rem;
+    border-radius: var(--radius-pill);
+    padding: 0.65rem 1.25rem;
+    font-weight: 650;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .acciones-form .boton-suave {
+    background: #fff;
+    color: var(--texto);
+    border: 1px solid var(--borde);
+  }
+  .acciones-form .boton-suave:hover {
+    background: #f3f3f3;
+  }
+  @media (max-width: 700px) {
+    .fila-campos { grid-template-columns: 1fr; }
+    .acciones-form { justify-content: stretch; }
+    .acciones-form .boton,
+    .acciones-form .boton-suave { flex: 1; }
   }
 </style>
 {% endblock %}
@@ -39,31 +103,69 @@
     </p>
     <h1>Crear usuario</h1>
     <p class="intro">
-      Elija el nivel: administrador (todo + usuarios) o
-      usuario básico (módulos e ingresos).
+      Complete los datos de acceso y elija el nivel del nuevo usuario.
     </p>
   </div>
 </header>
 
-<section class="tarjeta">
-  <form method="post" novalidate>
-    {% csrf_token %}
-    {% for field in formulario %}
-    <div class="campo">
-      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-      {{ field }}
-      {% if field.errors %}
-      <div class="errores">{{ field.errors|striptags }}</div>
-      {% endif %}
+<form method="post" novalidate class="form-usuario">
+  {% csrf_token %}
+
+  <section class="bloque-form">
+    <h2>Datos básicos</h2>
+    <p class="bloque-intro">Identificación con la que entrará al sistema.</p>
+    <div class="fila-campos">
+      <div class="campo">
+        <label for="{{ formulario.username.id_for_label }}">{{ formulario.username.label }}</label>
+        {{ formulario.username }}
+        {% if formulario.username.errors %}<div class="errores">{{ formulario.username.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="campo">
+        <label for="{{ formulario.first_name.id_for_label }}">{{ formulario.first_name.label }}</label>
+        {{ formulario.first_name }}
+        {% if formulario.first_name.errors %}<div class="errores">{{ formulario.first_name.errors|striptags }}</div>{% endif %}
+      </div>
     </div>
-    {% endfor %}
-    {% if formulario.non_field_errors %}
-    <div class="errores">{{ formulario.non_field_errors|striptags }}</div>
-    {% endif %}
-    <div class="acciones">
-      <button class="boton" type="submit">Guardar</button>
-      <a class="enlace" href="{% url 'procesamientos:usuarios' %}">Cancelar</a>
+  </section>
+
+  <section class="bloque-form">
+    <h2>Contraseña</h2>
+    <p class="bloque-intro">Debe coincidir en ambos campos.</p>
+    <div class="fila-campos">
+      <div class="campo">
+        <label for="{{ formulario.password1.id_for_label }}">{{ formulario.password1.label }}</label>
+        {{ formulario.password1 }}
+        {% if formulario.password1.errors %}<div class="errores">{{ formulario.password1.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="campo">
+        <label for="{{ formulario.password2.id_for_label }}">{{ formulario.password2.label }}</label>
+        {{ formulario.password2 }}
+        {% if formulario.password2.errors %}<div class="errores">{{ formulario.password2.errors|striptags }}</div>{% endif %}
+      </div>
     </div>
-  </form>
-</section>
+  </section>
+
+  <section class="bloque-form">
+    <h2>Nivel de acceso</h2>
+    <p class="bloque-intro">
+      Administrador: todo + usuarios. Básico: módulos e ingresos.
+    </p>
+    <div class="fila-campos">
+      <div class="campo ancho-completo">
+        <label for="{{ formulario.rol.id_for_label }}">{{ formulario.rol.label }}</label>
+        {{ formulario.rol }}
+        {% if formulario.rol.errors %}<div class="errores">{{ formulario.rol.errors|striptags }}</div>{% endif %}
+      </div>
+    </div>
+  </section>
+
+  {% if formulario.non_field_errors %}
+  <div class="errores">{{ formulario.non_field_errors|striptags }}</div>
+  {% endif %}
+
+  <div class="acciones-form">
+    <a class="boton-suave" href="{% url 'procesamientos:usuarios' %}">Cancelar</a>
+    <button class="boton" type="submit">Guardar</button>
+  </div>
+</form>
 {% endblock %}

@@ -43,10 +43,10 @@
   </nav>
 
   <div class="sidebar-pie">
-    <div class="usuario-card">
+    <a class="usuario-card" href="{% url 'procesamientos:mi_perfil' %}" style="text-decoration:none;color:inherit;display:block;">
       <strong>{{ nombre_usuario_sesion }}</strong>
-      <span>{{ rol_sesion_legible|default:"Sesión activa" }}</span>
-    </div>
+      <span>{{ rol_sesion_legible|default:"Sesión activa" }} · Ver perfil</span>
+    </a>
     <form method="post" action="{% url 'logout' %}">
       {% csrf_token %}
       <button class="cerrar-sesion" type="submit">Cerrar sesión</button>

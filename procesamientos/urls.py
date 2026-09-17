@@ -38,6 +38,11 @@ urlpatterns = [
         name="usuarios",
     ),
     path(
+        "mi-perfil/",
+        views.mi_perfil,
+        name="mi_perfil",
+    ),
+    path(
         "usuarios/nuevo/",
         views.crear_usuario,
         name="usuario_crear",

@@ -1,0 +1,245 @@
+{% extends "procesamientos/base.html" %}
+
+{% block titulo %}Mi perfil — Sistema TDV{% endblock %}
+{% block clases_contenido %} contenido-medio{% endblock %}
+{% block estilos %}
+<style>
+  .perfil {
+    display: grid;
+    gap: 1rem;
+    max-width: 820px;
+  }
+  .perfil-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.35rem 1.4rem;
+  }
+  .perfil-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1.15rem;
+    border-bottom: 1px solid var(--borde);
+    margin-bottom: 1.15rem;
+  }
+  .perfil-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #111;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+  .perfil-cabecera h1 {
+    margin: 0;
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+  }
+  .perfil-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.75rem;
+    margin-top: 0.4rem;
+    align-items: center;
+  }
+  .badge-rol {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 650;
+  }
+  .badge-admin { background: #111; color: #fff; }
+  .badge-basico { background: #efefef; color: var(--muted); }
+  .estado-punto {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .estado-punto::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #16a34a;
+  }
+  .estado-punto.inactivo::before { background: #9ca3af; }
+  .datos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1.5rem;
+  }
+  .dato-item {
+    display: grid;
+    gap: 0.2rem;
+  }
+  .dato-item span {
+    font-size: 0.75rem;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .dato-item strong {
+    font-size: 0.98rem;
+    font-weight: 600;
+  }
+  .dato-item .mono {
+    font-family: "IBM Plex Mono", monospace;
+  }
+  .privilegio {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--borde);
+  }
+  .privilegio:last-child { border-bottom: 0; padding-bottom: 0; }
+  .privilegio:first-child { padding-top: 0; }
+  .privilegio h3 {
+    margin: 0 0 0.2rem;
+    font-size: 0.95rem;
+    font-weight: 650;
+  }
+  .privilegio p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.84rem;
+    line-height: 1.4;
+  }
+  .switch-visual {
+    flex-shrink: 0;
+    width: 44px;
+    height: 26px;
+    border-radius: 999px;
+    background: #d4d4d4;
+    position: relative;
+  }
+  .switch-visual.on { background: #111; }
+  .switch-visual::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    transition: left 0.15s ease;
+  }
+  .switch-visual.on::after { left: 21px; }
+  .perfil-pie {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .perfil-pie .boton,
+  .perfil-pie .boton-suave {
+    border-radius: var(--radius-pill);
+    padding: 0.6rem 1.15rem;
+    font-weight: 650;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+  .perfil-pie .boton-suave {
+    background: #fff;
+    color: var(--texto);
+    border: 1px solid var(--borde);
+  }
+  @media (max-width: 700px) {
+    .datos-grid { grid-template-columns: 1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<header class="cabecera">
+  <div>
+    <p class="cabecera-kicker">Cuenta</p>
+    <h1 style="position:absolute;left:-9999px;">Mi perfil</h1>
+    <p class="intro">Información de su sesión en el Sistema TDV.</p>
+  </div>
+</header>
+
+<div class="perfil">
+  <section class="perfil-card">
+    <div class="perfil-cabecera">
+      <div class="perfil-avatar" aria-hidden="true">{{ iniciales_usuario }}</div>
+      <div>
+        <h1>{{ nombre_completo }}</h1>
+        <div class="perfil-meta">
+          <span class="badge-rol {% if rol == 'admin' %}badge-admin{% else %}badge-basico{% endif %}">
+            {{ rol_legible }}
+          </span>
+          <span class="estado-punto {% if not activo %}inactivo{% endif %}">
+            {% if activo %}Activo{% else %}Inactivo{% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="datos-grid">
+      <div class="dato-item">
+        <span>Usuario</span>
+        <strong class="mono">{{ username }}</strong>
+      </div>
+      <div class="dato-item">
+        <span>Nombre</span>
+        <strong>{{ nombre_mostrar }}</strong>
+      </div>
+      <div class="dato-item">
+        <span>Nivel</span>
+        <strong>{{ rol_legible }}</strong>
+      </div>
+      <div class="dato-item">
+        <span>Último acceso</span>
+        <strong class="mono">
+          {% if ultimo_acceso %}{{ ultimo_acceso|date:"d/m/Y H:i" }}{% else %}—{% endif %}
+        </strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="perfil-card">
+    <div class="privilegio">
+      <div>
+        <h3>Privilegios de administrador</h3>
+        <p>Acceso a bitácoras y gestión de usuarios.</p>
+      </div>
+      <div class="switch-visual {% if rol == 'admin' %}on{% endif %}" aria-hidden="true"></div>
+    </div>
+    <div class="privilegio">
+      <div>
+        <h3>Módulos e ingresos</h3>
+        <p>Puede usar todos los módulos de liquidación y ver el gráfico de ingresos.</p>
+      </div>
+      <div class="switch-visual on" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section class="perfil-card perfil-pie">
+    <span class="estado-punto {% if not activo %}inactivo{% endif %}">
+      {% if activo %}Sesión activa{% else %}Cuenta inactiva{% endif %}
+      {% if ultimo_acceso %} · {{ ultimo_acceso|date:"H:i / d M Y" }}{% endif %}
+    </span>
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+      {% if es_admin_sesion %}
+      <a class="boton-suave" href="{% url 'procesamientos:usuarios' %}">Administrar usuarios</a>
+      <a class="boton" href="{% url 'procesamientos:usuario_editar' user_id %}">Modificar mi cuenta</a>
+      {% endif %}
+    </div>
+  </section>
+</div>
+{% endblock %}
