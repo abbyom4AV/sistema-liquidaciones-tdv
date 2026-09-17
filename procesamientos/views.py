@@ -359,100 +359,70 @@ CLIENTES_PANEL = (
     {
         "codigo": "dimanno",
         "nombre": "Di Manno",
-        "descripcion": (
-            "Validar liquidaciones, corregir gastos "
-            "y generar el acumulativo."
-        ),
+        "descripcion": "Módulo de liquidaciones Di Manno.",
         "disponible": True,
         "url_name": "procesamientos:dimanno_cargar",
     },
     {
         "codigo": "eurobanan",
         "nombre": "EUROBANAN",
-        "descripcion": (
-            "Validar liquidaciones PDF, cruzar Despachos "
-            "y generar el acumulativo."
-        ),
+        "descripcion": "Módulo de liquidaciones EUROBANAN.",
         "disponible": True,
         "url_name": "procesamientos:eurobanan_cargar",
     },
     {
         "codigo": "fruver",
         "nombre": "FRU&VER",
-        "descripcion": (
-            "Validar liquidaciones PDF por contenedor, cruzar "
-            "Despachos y generar el acumulativo."
-        ),
+        "descripcion": "Módulo de liquidaciones FRU&VER.",
         "disponible": True,
         "url_name": "procesamientos:fruver_cargar",
     },
     {
         "codigo": "glamour",
         "nombre": "Glamour",
-        "descripcion": (
-            "Validar liquidaciones PDF, mapear gastos "
-            "y generar el acumulativo."
-        ),
+        "descripcion": "Módulo de liquidaciones Glamour.",
         "disponible": True,
         "url_name": "procesamientos:glamour_cargar",
     },
     {
         "codigo": "kraaijeveld",
         "nombre": "Kraaijeveld",
-        "descripcion": (
-            "Validar liquidaciones PDF por contenedor, cruzar "
-            "Despachos y generar el acumulativo."
-        ),
+        "descripcion": "Módulo de liquidaciones Kraaijeveld.",
         "disponible": True,
         "url_name": "procesamientos:kraaijeveld_cargar",
     },
     {
         "codigo": "master",
         "nombre": "Master Fruits",
-        "descripcion": (
-            "Validar liquidaciones PDF, cruzar Despachos "
-            "y generar el acumulativo."
-        ),
+        "descripcion": "Módulo de liquidaciones Master Fruits.",
         "disponible": True,
         "url_name": "procesamientos:master_cargar",
     },
     {
         "codigo": "nufri",
         "nombre": "NUFRI",
-        "descripcion": (
-            "Validar liquidaciones PDF por página, cruzar "
-            "Despachos y generar el acumulativo."
-        ),
+        "descripcion": "Módulo de liquidaciones NUFRI.",
         "disponible": True,
         "url_name": "procesamientos:nufri_cargar",
     },
     {
         "codigo": "orsero",
         "nombre": "ORSERO",
-        "descripcion": (
-            "Validar screenshots de liquidación, cruzar "
-            "Despachos y generar el acumulativo."
-        ),
+        "descripcion": "Módulo de liquidaciones ORSERO.",
         "disponible": True,
         "url_name": "procesamientos:orsero_cargar",
     },
     {
         "codigo": "sifa",
         "nombre": "SIFA",
-        "descripcion": (
-            "Validar liquidación Excel, cruzar Despachos "
-            "y generar el acumulativo."
-        ),
+        "descripcion": "Módulo de liquidaciones SIFA.",
         "disponible": True,
         "url_name": "procesamientos:sifa_cargar",
     },
     {
         "codigo": "tdv_europa",
         "nombre": "TDV Europa",
-        "descripcion": (
-            "Validar liquidaciones PDF, cruzar Despachos "
-            "y generar el acumulativo."
-        ),
+        "descripcion": "Módulo de liquidaciones TDV Europa.",
         "disponible": True,
         "url_name": "procesamientos:tdv_europa_cargar",
     },
