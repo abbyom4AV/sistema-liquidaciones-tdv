@@ -4,49 +4,71 @@
 {% block clases_contenido %} contenido-medio{% endblock %}
 {% block estilos %}
 <style>
-  .form-usuario {
-    display: grid;
-    gap: 1.1rem;
-    max-width: 760px;
+  .crear-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 0 1.5rem;
   }
-  .bloque-form {
+  .modal-usuario {
+    width: 100%;
+    max-width: 520px;
     background: #fff;
-    border-radius: 18px;
-    box-shadow: var(--shadow);
-    padding: 1.35rem 1.45rem 1.45rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+    padding: 1.35rem 1.45rem 1.25rem;
   }
-  .bloque-form h2 {
-    margin: 0 0 0.2rem;
-    font-size: 1.08rem;
-    font-weight: 650;
+  .modal-cabecera {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .modal-cabecera h1 {
+    margin: 0;
+    font-size: 1.35rem;
     letter-spacing: -0.02em;
   }
-  .bloque-form .bloque-intro {
-    margin: 0 0 1.15rem;
-    color: var(--muted);
-    font-size: 0.88rem;
-  }
   .usuario-chip {
+    margin-top: 0.3rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .modal-cerrar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 0;
+    background: transparent;
+    color: #666;
+    font-size: 1.25rem;
+    line-height: 1;
+    text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 0.55rem;
-    margin-top: 0.35rem;
+    justify-content: center;
+    flex-shrink: 0;
   }
-  .usuario-chip .mono {
-    font-family: "IBM Plex Mono", monospace;
-    font-weight: 600;
+  .modal-cerrar:hover {
+    background: #f3f3f3;
+    color: #111;
   }
-  .fila-campos {
+  .form-grid {
+    display: grid;
+    gap: 1rem;
+  }
+  .fila-dos {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem 1.1rem;
+    gap: 0.9rem;
   }
-  .campo.ancho-completo { grid-column: 1 / -1; }
   .campo label {
     display: block;
     font-size: 0.8rem;
     font-weight: 650;
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.4rem;
     color: #333;
   }
   .campo input[type="text"],
@@ -54,65 +76,64 @@
   .campo select {
     width: 100%;
     box-sizing: border-box;
-    padding: 0.78rem 1rem;
-    border: 1px solid transparent;
-    border-radius: 999px;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
     font: inherit;
-    background: #f3f5f7;
+    background: #fff;
   }
   .campo select {
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M1.2 1.2 6 6l4.8-4.8'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 1rem center;
-    padding-right: 2.4rem;
+    background-position: right 0.85rem center;
+    padding-right: 2.2rem;
   }
   .campo input:focus,
   .campo select:focus {
     outline: none;
     border-color: #111;
-    background: #fff;
     box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08);
   }
   .campo-check {
     display: flex;
     align-items: center;
     gap: 0.55rem;
-    padding: 0.75rem 1rem;
-    background: #f3f5f7;
-    border-radius: 999px;
-    border: 1px solid transparent;
-    min-height: 2.85rem;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+    min-height: 2.7rem;
     box-sizing: border-box;
   }
   .campo-check label { margin: 0; font-weight: 600; }
   .ayuda {
     color: var(--muted);
     font-size: 0.78rem;
-    margin-top: 0.35rem;
+    margin-top: 0.3rem;
   }
   .errores {
     color: #b42318;
-    font-size: 0.82rem;
-    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
   }
-  .acciones-form {
+  .modal-pie {
     display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    gap: 0.75rem;
-    justify-content: flex-end;
     align-items: center;
+    justify-content: flex-end;
+    gap: 0.65rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--borde);
   }
-  .acciones-form .boton,
-  .acciones-form a.boton {
+  .modal-pie .boton,
+  .modal-pie a.boton {
     box-sizing: border-box;
-    min-width: 8rem;
-    min-height: 2.75rem;
-    height: 2.75rem;
+    min-width: 7.25rem;
+    min-height: 2.55rem;
+    height: 2.55rem;
     margin: 0;
-    border-radius: var(--radius-pill);
-    padding: 0 1.35rem;
+    border-radius: 10px;
+    padding: 0 1.15rem;
     font: inherit;
     font-weight: 650;
     line-height: 1;
@@ -120,98 +141,87 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    vertical-align: middle;
     cursor: pointer;
   }
-  .acciones-form a.boton.boton-suave {
-    background: #fff;
-    color: var(--texto);
-    border: 1px solid var(--borde);
-  }
-  .acciones-form a.boton.boton-suave:hover {
+  .modal-pie a.boton.boton-suave {
     background: #f3f3f3;
     color: var(--texto);
+    border: 1px solid transparent;
+  }
+  .modal-pie a.boton.boton-suave:hover {
+    background: #eaeaea;
     box-shadow: none;
   }
-  .acciones-form button.boton {
+  .modal-pie button.boton {
     background: #111;
     color: #fff;
     border: 1px solid #111;
   }
-  @media (max-width: 700px) {
-    .fila-campos { grid-template-columns: 1fr; }
-    .acciones-form { flex-wrap: wrap; }
-    .acciones-form .boton,
-    .acciones-form a.boton { flex: 1; }
+  @media (max-width: 560px) {
+    .fila-dos { grid-template-columns: 1fr; }
+    .modal-pie .boton,
+    .modal-pie a.boton { flex: 1; }
   }
 </style>
 {% endblock %}
 
 {% block contenido %}
-<header class="cabecera">
-  <div>
-    <p class="nav-volver">
-      <a href="{% url 'procesamientos:usuarios' %}">← Usuarios</a>
-    </p>
-    <h1>Modificar usuario</h1>
-    <div class="usuario-chip">
-      <span class="mono">{{ usuario_editado.username }}</span>
+<div class="crear-wrap">
+  <form method="post" novalidate class="modal-usuario">
+    {% csrf_token %}
+
+    <div class="modal-cabecera">
+      <div>
+        <h1>Modificar usuario</h1>
+        <div class="usuario-chip">{{ usuario_editado.username }}</div>
+      </div>
+      <a class="modal-cerrar" href="{% url 'procesamientos:usuarios' %}" title="Cerrar" aria-label="Cerrar">×</a>
     </div>
-  </div>
-</header>
 
-<form method="post" novalidate class="form-usuario">
-  {% csrf_token %}
+    <div class="form-grid">
+      <div class="fila-dos">
+        <div class="campo">
+          <label for="{{ formulario.first_name.id_for_label }}">{{ formulario.first_name.label }}</label>
+          {{ formulario.first_name }}
+          {% if formulario.first_name.errors %}<div class="errores">{{ formulario.first_name.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="campo">
+          <label for="{{ formulario.rol.id_for_label }}">{{ formulario.rol.label }}</label>
+          {{ formulario.rol }}
+          {% if formulario.rol.errors %}<div class="errores">{{ formulario.rol.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
 
-  <section class="bloque-form">
-    <h2>Datos básicos</h2>
-    <p class="bloque-intro">Nombre visible y nivel de acceso.</p>
-    <div class="fila-campos">
       <div class="campo">
-        <label for="{{ formulario.first_name.id_for_label }}">{{ formulario.first_name.label }}</label>
-        {{ formulario.first_name }}
-        {% if formulario.first_name.errors %}<div class="errores">{{ formulario.first_name.errors|striptags }}</div>{% endif %}
-      </div>
-      <div class="campo">
-        <label for="{{ formulario.rol.id_for_label }}">{{ formulario.rol.label }}</label>
-        {{ formulario.rol }}
-        {% if formulario.rol.errors %}<div class="errores">{{ formulario.rol.errors|striptags }}</div>{% endif %}
-      </div>
-      <div class="campo ancho-completo">
         <div class="campo-check">
           {{ formulario.is_active }}
           <label for="{{ formulario.is_active.id_for_label }}">{{ formulario.is_active.label }}</label>
         </div>
         {% if formulario.is_active.errors %}<div class="errores">{{ formulario.is_active.errors|striptags }}</div>{% endif %}
       </div>
-    </div>
-  </section>
 
-  <section class="bloque-form">
-    <h2>Contraseña</h2>
-    <p class="bloque-intro">Opcional. Déjela vacía si no desea cambiarla.</p>
-    <div class="fila-campos">
       <div class="campo">
         <label for="{{ formulario.password1.id_for_label }}">{{ formulario.password1.label }}</label>
         {{ formulario.password1 }}
         {% if formulario.password1.help_text %}<p class="ayuda">{{ formulario.password1.help_text }}</p>{% endif %}
         {% if formulario.password1.errors %}<div class="errores">{{ formulario.password1.errors|striptags }}</div>{% endif %}
       </div>
+
       <div class="campo">
         <label for="{{ formulario.password2.id_for_label }}">{{ formulario.password2.label }}</label>
         {{ formulario.password2 }}
         {% if formulario.password2.errors %}<div class="errores">{{ formulario.password2.errors|striptags }}</div>{% endif %}
       </div>
+
+      {% if formulario.non_field_errors %}
+      <div class="errores">{{ formulario.non_field_errors|striptags }}</div>
+      {% endif %}
     </div>
-  </section>
 
-  {% if formulario.non_field_errors %}
-  <div class="errores">{{ formulario.non_field_errors|striptags }}</div>
-  {% endif %}
-
-  <div class="acciones-form">
-    <a class="boton boton-suave" href="{% url 'procesamientos:usuarios' %}">Cancelar</a>
-    <button class="boton" type="submit">Guardar cambios</button>
-  </div>
-</form>
+    <div class="modal-pie">
+      <a class="boton boton-suave" href="{% url 'procesamientos:usuarios' %}">Cancelar</a>
+      <button class="boton" type="submit">Guardar cambios</button>
+    </div>
+  </form>
+</div>
 {% endblock %}

@@ -4,11 +4,37 @@
 {% block clases_contenido %} contenido-medio{% endblock %}
 {% block estilos %}
 <style>
+  .cabecera-usuarios {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .cabecera-usuarios .texto {
+    flex: 1 1 16rem;
+    min-width: 0;
+  }
+  .cabecera-usuarios .cabecera-kicker {
+    margin: 0 0 0.25rem;
+  }
+  .cabecera-usuarios h1 {
+    margin: 0;
+  }
+  .cabecera-usuarios .intro {
+    margin: 0.45rem 0 0;
+    max-width: none;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
   .acciones-cabecera {
     display: flex;
     gap: 0.75rem;
     align-items: center;
-    flex-wrap: wrap;
+    flex-shrink: 0;
+    padding-top: 0.15rem;
   }
   .badge-rol {
     display: inline-block;
@@ -19,17 +45,37 @@
   }
   .badge-admin { background: #111; color: #fff; }
   .badge-basico { background: #efefef; color: var(--muted); }
+  .enlace-accion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2rem;
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--borde);
+    background: #fff;
+    color: var(--texto);
+    font-size: 0.82rem;
+    font-weight: 650;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .enlace-accion:hover {
+    background: #f3f3f3;
+  }
+  .tabla-usuarios td.mono {
+    font-weight: 650;
+  }
 </style>
 {% endblock %}
 
 {% block contenido %}
-<header class="cabecera">
-  <div>
+<header class="cabecera-usuarios">
+  <div class="texto">
     <p class="cabecera-kicker">Administración</p>
     <h1>Usuarios</h1>
     <p class="intro">
-      Los administradores ven todo y pueden crear o modificar usuarios.
-      Los usuarios básicos usan los módulos e Ingresos.
+      Admin: acceso total y gestión de cuentas. Básico: módulos e Ingresos.
     </p>
   </div>
   <div class="acciones-cabecera">
@@ -41,7 +87,7 @@
 
 <section class="tarjeta">
   {% if usuarios %}
-  <table>
+  <table class="tabla-usuarios">
     <thead>
       <tr>
         <th>Usuario</th>
@@ -67,7 +113,7 @@
           {% if u.ultimo_acceso %}{{ u.ultimo_acceso|date:"d/m/Y H:i" }}{% else %}—{% endif %}
         </td>
         <td>
-          <a class="enlace" href="{% url 'procesamientos:usuario_editar' u.id %}">
+          <a class="enlace-accion" href="{% url 'procesamientos:usuario_editar' u.id %}">
             Modificar
           </a>
         </td>
