@@ -1,0 +1,76 @@
+{% extends "procesamientos/base.html" %}
+
+{% block titulo %}Usuarios — Sistema TDV{% endblock %}
+{% block clases_contenido %} contenido-medio{% endblock %}
+{% block estilos %}
+<style>
+  .acciones-cabecera {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .badge-rol {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 650;
+  }
+  .badge-admin { background: #111; color: #fff; }
+  .badge-basico { background: #efefef; color: var(--muted); }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<header class="cabecera">
+  <div>
+    <p class="cabecera-kicker">Administración</p>
+    <h1>Usuarios</h1>
+    <p class="intro">
+      Los administradores ven todo y pueden crear usuarios.
+      Los usuarios básicos usan los módulos e Ingresos.
+    </p>
+  </div>
+  <div class="acciones-cabecera">
+    <a class="boton" href="{% url 'procesamientos:usuario_crear' %}">
+      Crear usuario
+    </a>
+  </div>
+</header>
+
+<section class="tarjeta">
+  {% if usuarios %}
+  <table>
+    <thead>
+      <tr>
+        <th>Usuario</th>
+        <th>Nombre</th>
+        <th>Nivel</th>
+        <th>Estado</th>
+        <th>Último acceso</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in usuarios %}
+      <tr>
+        <td class="mono">{{ u.username }}</td>
+        <td>{{ u.nombre }}</td>
+        <td>
+          <span class="badge-rol {% if u.rol == 'admin' %}badge-admin{% else %}badge-basico{% endif %}">
+            {{ u.rol_legible }}
+          </span>
+        </td>
+        <td>{% if u.activo %}Activo{% else %}Inactivo{% endif %}</td>
+        <td class="mono">
+          {% if u.ultimo_acceso %}{{ u.ultimo_acceso|date:"d/m/Y H:i" }}{% else %}—{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="vacio">No hay usuarios registrados.</p>
+  {% endif %}
+</section>
+{% endblock %}

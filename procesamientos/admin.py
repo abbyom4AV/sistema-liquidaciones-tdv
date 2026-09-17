@@ -17,6 +17,7 @@ from procesamientos.models import (
     MapeoGastoGlamour,
     MapeoGastoEurobanan,
     MapeoGastoNufri,
+    PerfilUsuario,
     ProcesamientoDimanno,
     ProcesamientoGlamour,
     ProcesamientoKraaijeveld,
@@ -30,6 +31,13 @@ from procesamientos.models import (
     GeneracionFruver,
     ProcesamientoFruver,
 )
+
+
+@admin.register(PerfilUsuario)
+class PerfilUsuarioAdmin(admin.ModelAdmin):
+    list_display = ("usuario", "rol")
+    list_filter = ("rol",)
+    search_fields = ("usuario__username", "usuario__first_name")
 
 
 @admin.register(ProcesamientoDimanno)

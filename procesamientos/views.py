@@ -9,6 +9,7 @@ from pathlib import Path
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
 from django.http import FileResponse, Http404
@@ -18,6 +19,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from procesamientos.forms import (
     FormularioCargaDimanno,
+    FormularioCrearUsuario,
     FormularioMotivoCorreccion,
     FormularioResolucionDestinoDimanno,
     FormsetGastosDimanno,
@@ -27,6 +29,7 @@ from procesamientos.models import (
     CorreccionGastoDimanno,
     GastoProcesamientoDimanno,
     GeneracionDimanno,
+    PerfilUsuario,
     ProcesamientoDimanno,
     ProcesamientoEurobanan,
     ProcesamientoFruver,
@@ -40,6 +43,7 @@ from procesamientos.models import (
     ProcesamientoVisafruits,
     ResolucionDestinoDimanno,
 )
+from procesamientos.roles import obtener_rol, requiere_admin
 from procesamientos.services.bitacoras import (
     filtrar_eventos_bitacora,
     recolectar_eventos_bitacora,
@@ -113,6 +117,7 @@ def obtener_iniciales_usuario(usuario) -> str:
 
 
 def contexto_sesion(request, *, nav_activo: str | None = None) -> dict:
+    rol = obtener_rol(request.user)
     contexto = {
         "nombre_usuario_sesion": obtener_nombre_usuario(
             request.user
@@ -120,10 +125,119 @@ def contexto_sesion(request, *, nav_activo: str | None = None) -> dict:
         "iniciales_usuario": obtener_iniciales_usuario(
             request.user
         ),
+        "es_admin_sesion": rol == "admin",
+        "rol_sesion": rol,
+        "rol_sesion_legible": (
+            "Administrador" if rol == "admin" else "Usuario básico"
+        ),
     }
     if nav_activo is not None:
         contexto["nav_activo"] = nav_activo
     return contexto
+
+
+def _item_reciente(
+    *,
+    cliente: str,
+    item,
+    factura_corta,
+    url_name: str,
+) -> dict:
+    return {
+        "cliente": cliente,
+        "factura_corta": factura_corta,
+        "semana": item.semana,
+        "anio": item.anio,
+        "estado_legible": item.estado_legible,
+        "creado_en": item.creado_en,
+        "url_name": url_name,
+        "id": item.id,
+    }
+
+
+def recolectar_actividad_reciente(limite: int = 5) -> list[dict]:
+    """Últimos procesamientos de todos los módulos activos."""
+    fuentes = (
+        (
+            "Di Manno",
+            ProcesamientoDimanno,
+            lambda i: i.factura_corta,
+            "procesamientos:dimanno_detalle",
+        ),
+        (
+            "Master Fruits",
+            ProcesamientoMaster,
+            lambda i: i.factura_corta,
+            "procesamientos:master_detalle",
+        ),
+        (
+            "ORSERO",
+            ProcesamientoOrsero,
+            lambda i: i.nave_texto,
+            "procesamientos:orsero_detalle",
+        ),
+        (
+            "KRAAIJEVELD",
+            ProcesamientoKraaijeveld,
+            lambda i: i.destino_ui,
+            "procesamientos:kraaijeveld_detalle",
+        ),
+        (
+            "FRU&VER",
+            ProcesamientoFruver,
+            lambda i: i.factura_corta or i.destino_ui,
+            "procesamientos:fruver_detalle",
+        ),
+        (
+            "SIFA",
+            ProcesamientoSifa,
+            lambda i: i.factura_corta or i.destino_ui,
+            "procesamientos:sifa_detalle",
+        ),
+        (
+            "VISAFRUITS",
+            ProcesamientoVisafruits,
+            lambda i: i.factura_corta or i.destino_ui,
+            "procesamientos:visafruits_detalle",
+        ),
+        (
+            "Glamour",
+            ProcesamientoGlamour,
+            lambda i: i.factura_corta or i.destino_ui,
+            "procesamientos:glamour_validacion",
+        ),
+        (
+            "NUFRI",
+            ProcesamientoNufri,
+            lambda i: i.factura_corta or i.destino_ui,
+            "procesamientos:nufri_validacion",
+        ),
+        (
+            "EUROBANAN",
+            ProcesamientoEurobanan,
+            lambda i: i.factura_corta or i.destino_ui,
+            "procesamientos:eurobanan_validacion",
+        ),
+        (
+            "TDV Europa",
+            ProcesamientoTdvEuropa,
+            lambda i: i.factura_corta or i.destino_ui,
+            "procesamientos:tdv_europa_validacion",
+        ),
+    )
+    recientes: list[dict] = []
+    for cliente, modelo, ref, url_name in fuentes:
+        for item in modelo.objects.order_by("-creado_en")[:10]:
+            recientes.append(
+                _item_reciente(
+                    cliente=cliente,
+                    item=item,
+                    factura_corta=ref(item),
+                    url_name=url_name,
+                )
+            )
+    recientes.sort(key=lambda x: x["creado_en"], reverse=True)
+    return recientes[:limite]
 
 
 CLIENTES_PANEL = (
@@ -246,128 +360,7 @@ CLIENTES_PANEL = (
 
 @login_required
 def panel_control(request):
-    recientes_dimanno = [
-        {
-            "cliente": "Di Manno",
-            "factura_corta": item.factura_corta,
-            "semana": item.semana,
-            "anio": item.anio,
-            "estado_legible": item.estado_legible,
-            "creado_en": item.creado_en,
-            "url_name": "procesamientos:dimanno_detalle",
-            "id": item.id,
-        }
-        for item in ProcesamientoDimanno.objects.order_by(
-            "-creado_en"
-        )[:10]
-    ]
-    recientes_master = [
-        {
-            "cliente": "Master Fruits",
-            "factura_corta": item.factura_corta,
-            "semana": item.semana,
-            "anio": item.anio,
-            "estado_legible": item.estado_legible,
-            "creado_en": item.creado_en,
-            "url_name": "procesamientos:master_detalle",
-            "id": item.id,
-        }
-        for item in ProcesamientoMaster.objects.order_by(
-            "-creado_en"
-        )[:10]
-    ]
-    recientes_orsero = [
-        {
-            "cliente": "ORSERO",
-            "factura_corta": item.nave_texto,
-            "semana": item.semana,
-            "anio": item.anio,
-            "estado_legible": item.estado_legible,
-            "creado_en": item.creado_en,
-            "url_name": "procesamientos:orsero_detalle",
-            "id": item.id,
-        }
-        for item in ProcesamientoOrsero.objects.order_by(
-            "-creado_en"
-        )[:10]
-    ]
-    recientes_kraaijeveld = [
-        {
-            "cliente": "KRAAIJEVELD",
-            "factura_corta": item.destino_ui,
-            "semana": item.semana,
-            "anio": item.anio,
-            "estado_legible": item.estado_legible,
-            "creado_en": item.creado_en,
-            "url_name": "procesamientos:kraaijeveld_detalle",
-            "id": item.id,
-        }
-        for item in ProcesamientoKraaijeveld.objects.order_by(
-            "-creado_en"
-        )[:10]
-    ]
-    recientes_fruver = [
-        {
-            "cliente": "FRU&VER",
-            "factura_corta": (
-                item.factura_corta or item.destino_ui
-            ),
-            "semana": item.semana,
-            "anio": item.anio,
-            "estado_legible": item.estado_legible,
-            "creado_en": item.creado_en,
-            "url_name": "procesamientos:fruver_detalle",
-            "id": item.id,
-        }
-        for item in ProcesamientoFruver.objects.order_by(
-            "-creado_en"
-        )[:10]
-    ]
-    recientes_sifa = [
-        {
-            "cliente": "SIFA",
-            "factura_corta": (
-                item.factura_corta or item.destino_ui
-            ),
-            "semana": item.semana,
-            "anio": item.anio,
-            "estado_legible": item.estado_legible,
-            "creado_en": item.creado_en,
-            "url_name": "procesamientos:sifa_detalle",
-            "id": item.id,
-        }
-        for item in ProcesamientoSifa.objects.order_by(
-            "-creado_en"
-        )[:10]
-    ]
-    recientes_visafruits = [
-        {
-            "cliente": "VISAFRUITS",
-            "factura_corta": (
-                item.factura_corta or item.destino_ui
-            ),
-            "semana": item.semana,
-            "anio": item.anio,
-            "estado_legible": item.estado_legible,
-            "creado_en": item.creado_en,
-            "url_name": "procesamientos:visafruits_detalle",
-            "id": item.id,
-        }
-        for item in ProcesamientoVisafruits.objects.order_by(
-            "-creado_en"
-        )[:10]
-    ]
-    recientes = sorted(
-        recientes_dimanno
-        + recientes_master
-        + recientes_orsero
-        + recientes_kraaijeveld
-        + recientes_fruver
-        + recientes_sifa
-        + recientes_visafruits,
-        key=lambda item: item["creado_en"],
-        reverse=True,
-    )[:5]
+    recientes = recolectar_actividad_reciente(5)
     clientes_disponibles = sum(
         1 for cliente in CLIENTES_PANEL if cliente["disponible"]
     )
@@ -386,6 +379,7 @@ def panel_control(request):
 
 
 @login_required
+@requiere_admin
 def bitacoras(request):
     eventos = recolectar_eventos_bitacora()
     filtrados = filtrar_eventos_bitacora(
@@ -411,6 +405,87 @@ def bitacoras(request):
                 "fecha_desde": request.GET.get("fecha_desde", ""),
                 "fecha_hasta": request.GET.get("fecha_hasta", ""),
             },
+        },
+    )
+
+
+@login_required
+@requiere_admin
+@require_GET
+def listar_usuarios(request):
+    User = get_user_model()
+    usuarios = (
+        User.objects.select_related("perfil")
+        .order_by("username")
+    )
+    filas = []
+    for usuario in usuarios:
+        perfil = getattr(usuario, "perfil", None)
+        rol = (
+            perfil.rol
+            if perfil is not None
+            else obtener_rol(usuario)
+        )
+        filas.append(
+            {
+                "id": usuario.id,
+                "username": usuario.username,
+                "nombre": usuario.get_full_name() or "—",
+                "rol": rol,
+                "rol_legible": (
+                    "Administrador"
+                    if rol == "admin"
+                    else "Usuario básico"
+                ),
+                "activo": usuario.is_active,
+                "ultimo_acceso": usuario.last_login,
+            }
+        )
+    return render(
+        request,
+        "procesamientos/usuarios.html",
+        {
+            **contexto_sesion(request, nav_activo="usuarios"),
+            "usuarios": filas,
+        },
+    )
+
+
+@login_required
+@requiere_admin
+def crear_usuario(request):
+    if request.method == "POST":
+        formulario = FormularioCrearUsuario(request.POST)
+        if formulario.is_valid():
+            User = get_user_model()
+            datos = formulario.cleaned_data
+            with transaction.atomic():
+                usuario = User.objects.create_user(
+                    username=datos["username"],
+                    password=datos["password1"],
+                    first_name=datos.get("first_name") or "",
+                )
+                # Staff solo para admins (acceso /admin/ de Django).
+                usuario.is_staff = datos["rol"] == "admin"
+                usuario.save(update_fields=["is_staff"])
+                PerfilUsuario.objects.update_or_create(
+                    usuario=usuario,
+                    defaults={"rol": datos["rol"]},
+                )
+            messages.success(
+                request,
+                f"Usuario “{usuario.username}” creado.",
+            )
+            return redirect("procesamientos:usuarios")
+    else:
+        formulario = FormularioCrearUsuario()
+
+    return render(
+        request,
+        "procesamientos/usuario_crear.html",
+        {
+            **contexto_sesion(request, nav_activo="usuarios"),
+            "formulario": formulario,
         },
     )
 

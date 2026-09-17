@@ -18,24 +18,34 @@
     >
       Panel de control
     </a>
+    {% if es_admin_sesion %}
     <a
       class="nav-item {% if nav_activo == 'bitacoras' %}activo{% endif %}"
       href="{% url 'procesamientos:bitacoras' %}"
     >
       Bitácoras
     </a>
+    {% endif %}
     <a
       class="nav-item {% if nav_activo == 'ingresos' %}activo{% endif %}"
       href="{% url 'procesamientos:ingresos' %}"
     >
       Ingresos
     </a>
+    {% if es_admin_sesion %}
+    <a
+      class="nav-item {% if nav_activo == 'usuarios' %}activo{% endif %}"
+      href="{% url 'procesamientos:usuarios' %}"
+    >
+      Usuarios
+    </a>
+    {% endif %}
   </nav>
 
   <div class="sidebar-pie">
     <div class="usuario-card">
       <strong>{{ nombre_usuario_sesion }}</strong>
-      <span>Sesión activa</span>
+      <span>{{ rol_sesion_legible|default:"Sesión activa" }}</span>
     </div>
     <form method="post" action="{% url 'logout' %}">
       {% csrf_token %}

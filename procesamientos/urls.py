@@ -33,6 +33,16 @@ urlpatterns = [
         name="ingresos",
     ),
     path(
+        "usuarios/",
+        views.listar_usuarios,
+        name="usuarios",
+    ),
+    path(
+        "usuarios/nuevo/",
+        views.crear_usuario,
+        name="usuario_crear",
+    ),
+    path(
         "dimanno/",
         views.cargar_dimanno,
         name="dimanno_cargar",

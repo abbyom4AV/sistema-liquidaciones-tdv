@@ -4,13 +4,17 @@ import shutil
 from pathlib import Path
 
 from django.conf import settings
-from django.db.models.signals import post_delete
+from django.contrib.auth import get_user_model
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
 from procesamientos.models import (
+    PerfilUsuario,
     ProcesamientoDimanno,
     ProcesamientoMaster,
 )
+
+User = get_user_model()
 
 
 @receiver(post_delete, sender=ProcesamientoDimanno)
@@ -61,3 +65,31 @@ def eliminar_carpeta_media_procesamiento_master(
 
     if carpeta.exists() and carpeta.is_dir():
         shutil.rmtree(carpeta, ignore_errors=True)
+
+
+@receiver(post_save, sender=User)
+def asegurar_perfil_usuario(
+    sender,
+    instance,
+    created: bool,
+    **kwargs,
+) -> None:
+    """Crea el perfil si el usuario aún no tiene uno."""
+    if created:
+        rol = (
+            PerfilUsuario.Rol.ADMIN
+            if instance.is_superuser or instance.is_staff
+            else PerfilUsuario.Rol.BASICO
+        )
+        PerfilUsuario.objects.create(usuario=instance, rol=rol)
+        return
+    PerfilUsuario.objects.get_or_create(
+        usuario=instance,
+        defaults={
+            "rol": (
+                PerfilUsuario.Rol.ADMIN
+                if instance.is_superuser or instance.is_staff
+                else PerfilUsuario.Rol.BASICO
+            ),
+        },
+    )

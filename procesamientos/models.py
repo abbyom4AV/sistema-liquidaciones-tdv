@@ -3424,3 +3424,33 @@ class GeneracionVisafruits(models.Model):
     @property
     def tiene_error(self) -> bool:
         return self.estado == self.Estado.ERROR
+
+
+class PerfilUsuario(models.Model):
+    """Rol de negocio del usuario del Sistema TDV."""
+
+    class Rol(models.TextChoices):
+        ADMIN = "admin", "Administrador"
+        BASICO = "basico", "Usuario básico"
+
+    usuario = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="perfil",
+    )
+    rol = models.CharField(
+        max_length=20,
+        choices=Rol.choices,
+        default=Rol.BASICO,
+    )
+
+    class Meta:
+        verbose_name = "perfil de usuario"
+        verbose_name_plural = "perfiles de usuario"
+
+    def __str__(self) -> str:
+        return f"{self.usuario} ({self.get_rol_display()})"
+
+    @property
+    def es_admin(self) -> bool:
+        return self.rol == self.Rol.ADMIN

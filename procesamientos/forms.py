@@ -1957,3 +1957,67 @@ FormsetGastosVisafruits = modelformset_factory(
     extra=0,
     can_delete=False,
 )
+
+
+class FormularioCrearUsuario(forms.Form):
+    username = forms.CharField(
+        label="Usuario",
+        max_length=150,
+        error_messages={
+            "required": "Indique el nombre de usuario.",
+        },
+    )
+    first_name = forms.CharField(
+        label="Nombre",
+        max_length=150,
+        required=False,
+    )
+    password1 = forms.CharField(
+        label="Contraseña",
+        widget=forms.PasswordInput,
+        error_messages={
+            "required": "Indique una contraseña.",
+        },
+    )
+    password2 = forms.CharField(
+        label="Confirmar contraseña",
+        widget=forms.PasswordInput,
+        error_messages={
+            "required": "Confirme la contraseña.",
+        },
+    )
+    rol = forms.ChoiceField(
+        label="Nivel",
+        choices=(
+            ("admin", "Administrador"),
+            ("basico", "Usuario básico"),
+        ),
+        initial="basico",
+    )
+
+    def clean_username(self):
+        from django.contrib.auth import get_user_model
+
+        username = (self.cleaned_data.get("username") or "").strip()
+        if not username:
+            raise forms.ValidationError(
+                "Indique el nombre de usuario."
+            )
+        if get_user_model().objects.filter(
+            username__iexact=username
+        ).exists():
+            raise forms.ValidationError(
+                "Ese nombre de usuario ya existe."
+            )
+        return username
+
+    def clean(self):
+        cleaned = super().clean()
+        p1 = cleaned.get("password1")
+        p2 = cleaned.get("password2")
+        if p1 and p2 and p1 != p2:
+            self.add_error(
+                "password2",
+                "Las contraseñas no coinciden.",
+            )
+        return cleaned
