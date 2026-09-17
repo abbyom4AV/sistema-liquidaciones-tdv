@@ -2024,6 +2024,13 @@ class FormularioCrearUsuario(forms.Form):
 
 
 class FormularioEditarUsuario(forms.Form):
+    username = forms.CharField(
+        label="Usuario",
+        max_length=150,
+        error_messages={
+            "required": "Indique el nombre de usuario.",
+        },
+    )
     first_name = forms.CharField(
         label="Nombre",
         max_length=150,
@@ -2051,6 +2058,29 @@ class FormularioEditarUsuario(forms.Form):
         widget=forms.PasswordInput,
         required=False,
     )
+
+    def __init__(self, *args, usuario_id=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.usuario_id = usuario_id
+
+    def clean_username(self):
+        from django.contrib.auth import get_user_model
+
+        username = (self.cleaned_data.get("username") or "").strip()
+        if not username:
+            raise forms.ValidationError(
+                "Indique el nombre de usuario."
+            )
+        conflicto = get_user_model().objects.filter(
+            username__iexact=username
+        )
+        if self.usuario_id is not None:
+            conflicto = conflicto.exclude(pk=self.usuario_id)
+        if conflicto.exists():
+            raise forms.ValidationError(
+                "Ese nombre de usuario ya existe."
+            )
+        return username
 
     def clean(self):
         cleaned = super().clean()

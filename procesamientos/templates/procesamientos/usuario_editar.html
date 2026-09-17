@@ -331,6 +331,7 @@
     {# Valores actuales ocultos para que el formulario valide al guardar solo una sección #}
     <div class="campos-ocultos" aria-hidden="true">
       {% if seccion != 'datos' %}
+      <input type="hidden" name="username" value="{{ formulario.username.value|default_if_none:usuario_editado.username }}">
       <input type="hidden" name="first_name" value="{{ formulario.first_name.value|default_if_none:'' }}">
       {% endif %}
       {% if seccion != 'acceso' %}
@@ -352,7 +353,7 @@
       <a
         class="{% if seccion == 'datos' %}activa{% endif %}"
         href="?seccion=datos"
-      >Nombre</a>
+      >Datos</a>
       <a
         class="{% if seccion == 'acceso' %}activa{% endif %}"
         href="?seccion=acceso"
@@ -366,9 +367,15 @@
     <div class="form-campos">
       {% if seccion == 'datos' %}
       <div class="campo">
+        <label for="{{ formulario.username.id_for_label }}">{{ formulario.username.label }}</label>
+        {{ formulario.username }}
+        <p class="ayuda">Con este nombre inicia sesión en el sistema.</p>
+        {% if formulario.username.errors %}<div class="errores">{{ formulario.username.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="campo">
         <label for="{{ formulario.first_name.id_for_label }}">{{ formulario.first_name.label }}</label>
         {{ formulario.first_name }}
-        <p class="ayuda">Nombre visible en el sistema. El usuario de acceso no cambia.</p>
+        <p class="ayuda">Nombre visible en pantallas y menú. Opcional.</p>
         {% if formulario.first_name.errors %}<div class="errores">{{ formulario.first_name.errors|striptags }}</div>{% endif %}
       </div>
       {% elif seccion == 'acceso' %}
@@ -406,7 +413,7 @@
 
     <div class="drawer-acciones">
       <button class="boton" type="submit">
-        {% if seccion == 'datos' %}Guardar nombre
+        {% if seccion == 'datos' %}Guardar datos
         {% elif seccion == 'acceso' %}Guardar acceso
         {% else %}Guardar contraseña{% endif %}
       </button>

@@ -537,7 +537,10 @@ def editar_usuario(request, user_id: int):
         seccion = "datos"
 
     if request.method == "POST":
-        formulario = FormularioEditarUsuario(request.POST)
+        formulario = FormularioEditarUsuario(
+            request.POST,
+            usuario_id=usuario.pk,
+        )
         if formulario.is_valid():
             datos = formulario.cleaned_data
             nuevo_rol = datos["rol"]
@@ -565,10 +568,13 @@ def editar_usuario(request, user_id: int):
 
             with transaction.atomic():
                 if seccion == "datos":
+                    usuario.username = datos["username"]
                     usuario.first_name = datos.get("first_name") or ""
-                    usuario.save(update_fields=["first_name"])
+                    usuario.save(
+                        update_fields=["username", "first_name"]
+                    )
                     mensaje = (
-                        f"Nombre de “{usuario.username}” actualizado."
+                        f"Datos de “{usuario.username}” actualizados."
                     )
                 elif seccion == "acceso":
                     usuario.is_active = activo
@@ -613,10 +619,12 @@ def editar_usuario(request, user_id: int):
     else:
         formulario = FormularioEditarUsuario(
             initial={
+                "username": usuario.username,
                 "first_name": usuario.first_name,
                 "rol": rol_actual,
                 "is_active": usuario.is_active,
-            }
+            },
+            usuario_id=usuario.pk,
         )
 
     return render(
