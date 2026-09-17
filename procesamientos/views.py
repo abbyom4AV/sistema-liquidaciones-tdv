@@ -20,6 +20,7 @@ from django.views.decorators.http import require_GET, require_POST
 from procesamientos.forms import (
     FormularioCargaDimanno,
     FormularioCrearUsuario,
+    FormularioEditarUsuario,
     FormularioMotivoCorreccion,
     FormularioResolucionDestinoDimanno,
     FormsetGastosDimanno,
@@ -486,6 +487,86 @@ def crear_usuario(request):
         {
             **contexto_sesion(request, nav_activo="usuarios"),
             "formulario": formulario,
+        },
+    )
+
+
+@login_required
+@requiere_admin
+def editar_usuario(request, user_id: int):
+    User = get_user_model()
+    usuario = get_object_or_404(User, pk=user_id)
+    perfil = getattr(usuario, "perfil", None)
+    rol_actual = (
+        perfil.rol if perfil is not None else obtener_rol(usuario)
+    )
+    es_mismo = request.user.pk == usuario.pk
+
+    if request.method == "POST":
+        formulario = FormularioEditarUsuario(request.POST)
+        if formulario.is_valid():
+            datos = formulario.cleaned_data
+            nuevo_rol = datos["rol"]
+            activo = bool(datos.get("is_active"))
+
+            if es_mismo and nuevo_rol != "admin":
+                messages.error(
+                    request,
+                    "No puede quitarse el rol de administrador a sí mismo.",
+                )
+                return redirect(
+                    "procesamientos:usuario_editar",
+                    user_id=usuario.pk,
+                )
+            if es_mismo and not activo:
+                messages.error(
+                    request,
+                    "No puede desactivar su propia cuenta.",
+                )
+                return redirect(
+                    "procesamientos:usuario_editar",
+                    user_id=usuario.pk,
+                )
+
+            with transaction.atomic():
+                usuario.first_name = datos.get("first_name") or ""
+                usuario.is_active = activo
+                usuario.is_staff = nuevo_rol == "admin"
+                usuario.save(
+                    update_fields=[
+                        "first_name",
+                        "is_active",
+                        "is_staff",
+                    ]
+                )
+                if datos.get("password1"):
+                    usuario.set_password(datos["password1"])
+                    usuario.save(update_fields=["password"])
+                PerfilUsuario.objects.update_or_create(
+                    usuario=usuario,
+                    defaults={"rol": nuevo_rol},
+                )
+            messages.success(
+                request,
+                f"Usuario “{usuario.username}” actualizado.",
+            )
+            return redirect("procesamientos:usuarios")
+    else:
+        formulario = FormularioEditarUsuario(
+            initial={
+                "first_name": usuario.first_name,
+                "rol": rol_actual,
+                "is_active": usuario.is_active,
+            }
+        )
+
+    return render(
+        request,
+        "procesamientos/usuario_editar.html",
+        {
+            **contexto_sesion(request, nav_activo="usuarios"),
+            "formulario": formulario,
+            "usuario_editado": usuario,
         },
     )
 

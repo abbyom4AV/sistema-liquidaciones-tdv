@@ -28,7 +28,7 @@
     <p class="cabecera-kicker">Administración</p>
     <h1>Usuarios</h1>
     <p class="intro">
-      Los administradores ven todo y pueden crear usuarios.
+      Los administradores ven todo y pueden crear o modificar usuarios.
       Los usuarios básicos usan los módulos e Ingresos.
     </p>
   </div>
@@ -49,6 +49,7 @@
         <th>Nivel</th>
         <th>Estado</th>
         <th>Último acceso</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -64,6 +65,11 @@
         <td>{% if u.activo %}Activo{% else %}Inactivo{% endif %}</td>
         <td class="mono">
           {% if u.ultimo_acceso %}{{ u.ultimo_acceso|date:"d/m/Y H:i" }}{% else %}—{% endif %}
+        </td>
+        <td>
+          <a class="enlace" href="{% url 'procesamientos:usuario_editar' u.id %}">
+            Modificar
+          </a>
         </td>
       </tr>
       {% endfor %}

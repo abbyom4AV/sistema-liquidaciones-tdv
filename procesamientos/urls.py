@@ -43,6 +43,11 @@ urlpatterns = [
         name="usuario_crear",
     ),
     path(
+        "usuarios/<int:user_id>/editar/",
+        views.editar_usuario,
+        name="usuario_editar",
+    ),
+    path(
         "dimanno/",
         views.cargar_dimanno,
         name="dimanno_cargar",

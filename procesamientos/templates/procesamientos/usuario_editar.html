@@ -1,0 +1,97 @@
+{% extends "procesamientos/base.html" %}
+
+{% block titulo %}Modificar usuario — Sistema TDV{% endblock %}
+{% block clases_contenido %} contenido-angosto{% endblock %}
+{% block estilos %}
+<style>
+  .campo { margin-bottom: 1rem; }
+  .campo label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+  }
+  .campo input[type="text"],
+  .campo input[type="password"],
+  .campo select {
+    width: 100%;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font: inherit;
+  }
+  .campo-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .campo-check label { margin: 0; font-weight: 500; }
+  .ayuda {
+    color: var(--muted);
+    font-size: 0.78rem;
+    margin-top: 0.3rem;
+  }
+  .errores {
+    color: #b42318;
+    font-size: 0.82rem;
+    margin-top: 0.35rem;
+  }
+  .acciones {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    align-items: center;
+  }
+  .usuario-fijo {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 600;
+  }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<header class="cabecera">
+  <div>
+    <p class="nav-volver">
+      <a href="{% url 'procesamientos:usuarios' %}">← Usuarios</a>
+    </p>
+    <h1>Modificar usuario</h1>
+    <p class="intro">
+      Usuario:
+      <span class="usuario-fijo">{{ usuario_editado.username }}</span>
+    </p>
+  </div>
+</header>
+
+<section class="tarjeta">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for field in formulario %}
+    <div class="campo">
+      {% if field.name == "is_active" %}
+        <div class="campo-check">
+          {{ field }}
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        </div>
+      {% else %}
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+      {% endif %}
+      {% if field.help_text %}
+      <p class="ayuda">{{ field.help_text }}</p>
+      {% endif %}
+      {% if field.errors %}
+      <div class="errores">{{ field.errors|striptags }}</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+    {% if formulario.non_field_errors %}
+    <div class="errores">{{ formulario.non_field_errors|striptags }}</div>
+    {% endif %}
+    <div class="acciones">
+      <button class="boton" type="submit">Guardar cambios</button>
+      <a class="enlace" href="{% url 'procesamientos:usuarios' %}">Cancelar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

@@ -2021,3 +2021,50 @@ class FormularioCrearUsuario(forms.Form):
                 "Las contraseñas no coinciden.",
             )
         return cleaned
+
+
+class FormularioEditarUsuario(forms.Form):
+    first_name = forms.CharField(
+        label="Nombre",
+        max_length=150,
+        required=False,
+    )
+    rol = forms.ChoiceField(
+        label="Nivel",
+        choices=(
+            ("admin", "Administrador"),
+            ("basico", "Usuario básico"),
+        ),
+    )
+    is_active = forms.BooleanField(
+        label="Usuario activo",
+        required=False,
+    )
+    password1 = forms.CharField(
+        label="Nueva contraseña",
+        widget=forms.PasswordInput,
+        required=False,
+        help_text="Dejar vacío para no cambiarla.",
+    )
+    password2 = forms.CharField(
+        label="Confirmar nueva contraseña",
+        widget=forms.PasswordInput,
+        required=False,
+    )
+
+    def clean(self):
+        cleaned = super().clean()
+        p1 = cleaned.get("password1") or ""
+        p2 = cleaned.get("password2") or ""
+        if p1 or p2:
+            if not p1:
+                self.add_error(
+                    "password1",
+                    "Indique la nueva contraseña.",
+                )
+            elif p1 != p2:
+                self.add_error(
+                    "password2",
+                    "Las contraseñas no coinciden.",
+                )
+        return cleaned
