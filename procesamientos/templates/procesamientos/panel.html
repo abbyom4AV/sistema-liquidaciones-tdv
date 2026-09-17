@@ -280,21 +280,20 @@
     <article class="foco">
       <span class="etiqueta">Procesamientos de hoy</span>
       <div class="valor">{{ total_procesamientos }}</div>
-      <p class="nota">Solo los suyos. Se reinicia a medianoche.</p>
     </article>
     <article class="foco">
       <span class="etiqueta">Cliente de la semana</span>
       <div class="valor" style="font-size:1.15rem;padding-top:0.35rem;">
         {{ cliente_destacado|default:"—" }}
       </div>
-      <p class="nota">Más cargas suyas en los últimos 7 días.</p>
+      <p class="nota">Más cargas en los últimos 7 días.</p>
     </article>
   </section>
 
   <section class="franja-7" aria-label="Procesamientos de los últimos 7 días">
     <div class="franja-cab">
       <h3>Ritmo de 7 días</h3>
-      <span>{{ total_semana }} en total (suyos)</span>
+      <span>{{ total_semana }} en total</span>
     </div>
     <div class="barras">
       {% for dia in pulso_7_dias %}
