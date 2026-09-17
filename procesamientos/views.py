@@ -472,17 +472,12 @@ def panel_control(request):
 @login_required
 @require_GET
 def listar_clientes(request):
-    clientes_disponibles = sum(
-        1 for cliente in CLIENTES_PANEL if cliente["disponible"]
-    )
     return render(
         request,
         "procesamientos/clientes.html",
         {
             **contexto_sesion(request, nav_activo="clientes"),
             "clientes_panel": CLIENTES_PANEL,
-            "total_clientes": len(CLIENTES_PANEL),
-            "clientes_disponibles": clientes_disponibles,
         },
     )
 
