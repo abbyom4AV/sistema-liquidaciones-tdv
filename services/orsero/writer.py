@@ -295,7 +295,7 @@ def construir_valores_fila_orsero(
         "Destino": linea.destino,
         "Tipo de fruta": linea.tipo_fruta,
         "Cartón": despacho.carton,
-        "# Calibre": despacho.calibre,
+        "# Calibre": str(despacho.calibre),
         "Total Cajas": despacho.total_cajas,
         "T.C Orser": decimal_a_excel(
             linea.tipo_cambio_usd_eur

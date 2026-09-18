@@ -384,7 +384,7 @@ class ReconstruccionVisafruitsTests(unittest.TestCase):
         self.assertEqual(fila["Nave"], "STAR COURAGE V.2628")
         self.assertEqual(fila["Destino"], "Tarragona")
         self.assertEqual(fila["Tipo de fruta"], "Especial")
-        self.assertEqual(fila["# Calibre"], 6)
+        self.assertEqual(fila["# Calibre"], "6")
         self.assertEqual(fila["Total Cajas"], 880)
         self.assertEqual(fila["Cartón"], "GOLDEN DIAMOND")
         self.assertEqual(fila["Transporte"], 1202.64)

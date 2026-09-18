@@ -872,7 +872,7 @@ def construir_valores_fila(
         "Destino": procesamiento.destino_final,
         "Tipo de fruta": despacho.tipo_empaque,
         "Cartón": despacho.carton,
-        "# Calibre": despacho.calibre,
+        "# Calibre": str(despacho.calibre),
         "Total Cajas": despacho.total_cajas,
         "Flete Eu": decimal_a_excel(
             gastos["Flete Eu"]

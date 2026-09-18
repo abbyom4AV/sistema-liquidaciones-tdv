@@ -527,7 +527,7 @@ def construir_valores_fila_visafruits(
         "Contenedor": linea.contenedor,
         "Destino": linea.destino,
         "Tipo de fruta": linea.tipo_fruta,
-        "# Calibre": int(linea.calibre),
+        "# Calibre": str(linea.calibre),
         "Total Cajas": int(linea.total_cajas),
         "Cartón": linea.carton,
         "Comision Euros": decimal_a_excel(linea.comision_eur),
