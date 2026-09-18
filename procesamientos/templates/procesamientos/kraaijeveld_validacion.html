@@ -286,6 +286,45 @@
         text-align: center;
       }
 
+      .gastos-lateral {
+        margin-top: 1.15rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--borde);
+      }
+      .gastos-lateral h3 {
+        margin: 0 0 0.65rem;
+        font-size: 0.82rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 700;
+      }
+      .gastos-lateral .tabla-scroll {
+        max-height: 280px;
+        overflow: auto;
+        border: 1px solid var(--borde);
+        border-radius: 10px;
+      }
+      .gastos-lateral table {
+        font-size: 0.8rem;
+        margin: 0;
+      }
+      .gastos-lateral th,
+      .gastos-lateral td {
+        padding: 0.45rem 0.5rem;
+        vertical-align: top;
+      }
+      .gastos-lateral .rubros-pdf {
+        font-size: 0.74rem;
+        color: var(--muted);
+        line-height: 1.35;
+      }
+      .gastos-lateral .vacio {
+        margin: 0;
+        font-size: 0.86rem;
+        color: var(--muted);
+      }
+
       @media (max-width: 980px) {
         .grid-principal,
         .bloque-tablas,
@@ -479,42 +518,6 @@
               <p class="vacio">No hay líneas preparadas.</p>
             {% endif %}
           </section>
-
-          <section class="tarjeta tabla-scroll">
-            <div class="cabecera-bloque">
-              <h2>Gastos por contenedor</h2>
-            </div>
-            {% if resumen_gastos %}
-              <table>
-                <thead>
-                  <tr>
-                    <th>Contenedor</th>
-                    <th>Factura</th>
-                    <th class="num">Comisión</th>
-                    <th>Rubros capturados</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for item in resumen_gastos %}
-                    <tr>
-                      <td>{{ item.contenedor }}</td>
-                      <td>{{ item.factura_corta|default:"—" }}</td>
-                      <td class="num">{{ item.comision|decimal_es }}</td>
-                      <td class="rubros-pdf">
-                        {% if item.rubros_pdf %}
-                          {{ item.rubros_pdf|join:", " }}
-                        {% else %}
-                          Sin gastos capturados.
-                        {% endif %}
-                      </td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            {% else %}
-              <p class="vacio">No hay resumen de gastos.</p>
-            {% endif %}
-          </section>
         </div>
       </div>
 
@@ -596,6 +599,42 @@
             </div>
           {% endif %}
         {% endif %}
+
+        <section class="gastos-lateral">
+          <h3>Gastos por contenedor</h3>
+          {% if resumen_gastos %}
+            <div class="tabla-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Contenedor</th>
+                    <th>Factura</th>
+                    <th class="num">Comisión</th>
+                    <th>Rubros</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in resumen_gastos %}
+                    <tr>
+                      <td>{{ item.contenedor }}</td>
+                      <td>{{ item.factura_corta|default:"—" }}</td>
+                      <td class="num">{{ item.comision|decimal_es }}</td>
+                      <td class="rubros-pdf">
+                        {% if item.rubros_pdf %}
+                          {{ item.rubros_pdf|join:", " }}
+                        {% else %}
+                          Sin gastos capturados.
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p class="vacio">No hay resumen de gastos.</p>
+          {% endif %}
+        </section>
       </aside>
     </div>
 
