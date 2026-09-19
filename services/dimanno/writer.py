@@ -71,6 +71,22 @@ COLUMNAS_ENTRADA = {
     "Precio de Venta €",
 }
 
+# Value2 convierte cadenas numéricas a número; estas columnas
+# deben quedar como texto (@) en el acumulativo.
+COLUMNAS_FORZAR_TEXTO = frozenset({
+    "Año",
+    "Semana",
+    "Cliente",
+    "Nave",
+    "Contenedor",
+    "Contenedor ",
+    "Destino",
+    "Tipo de fruta",
+    "Cartón",
+    "# Calibre",
+    "# de Calibre",
+})
+
 
 COLUMNAS_FORMULA = {
     "# ",
@@ -811,10 +827,14 @@ def escribir_valores_fila(
     valores: dict[str, Any],
 ) -> None:
     for nombre_columna, valor in valores.items():
-        rango_fila.Cells(
+        celda = rango_fila.Cells(
             1,
             posiciones[nombre_columna],
-        ).Value = valor
+        )
+        if nombre_columna in COLUMNAS_FORZAR_TEXTO:
+            celda.NumberFormat = "@"
+            valor = "" if valor is None else str(valor)
+        celda.Value = valor
 
 
 def escribir_valores_bloque(
@@ -836,10 +856,18 @@ def escribir_valores_bloque(
             [fila[nombre_columna]]
             for fila in filas_valores
         ]
-        hoja.Range(
+        rango = hoja.Range(
             hoja.Cells(fila_inicial, indice),
             hoja.Cells(fila_final, indice),
-        ).Value2 = matriz
+        )
+        if nombre_columna in COLUMNAS_FORZAR_TEXTO:
+            # Sin @, Excel guarda "6" como número 6.
+            rango.NumberFormat = "@"
+            matriz = [
+                ["" if v is None else str(v)]
+                for (v,) in matriz
+            ]
+        rango.Value2 = matriz
 
 
 def construir_valores_fila(
@@ -862,7 +890,7 @@ def construir_valores_fila(
         )
 
     return {
-        "Año": despacho.anio,
+        "Año": str(despacho.anio),
         "Semana": (
             f"{despacho.semana:02d}-{despacho.anio}"
         ),

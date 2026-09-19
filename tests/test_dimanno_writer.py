@@ -128,35 +128,35 @@ class PruebasEscritorDimanno(unittest.TestCase):
                     (
                         "CXRU1615350",
                         "Especial",
-                        6,
+                        "6",
                         1050,
                         18.82,
                     ),
                     (
                         "CXRU1615350",
                         "Especial",
-                        7,
+                        "7",
                         525,
                         18.89,
                     ),
                     (
                         "SEGU9548592",
                         "Intermedio",
-                        6,
+                        "6",
                         480,
                         14.15,
                     ),
                     (
                         "SEGU9548592",
                         "Intermedio",
-                        7,
+                        "7",
                         1040,
                         14.096,
                     ),
                     (
                         "SEGU9548592",
                         "Intermedio",
-                        8,
+                        "8",
                         160,
                         13.17,
                     ),
@@ -196,6 +196,13 @@ class PruebasEscritorDimanno(unittest.TestCase):
                             encabezados["# Calibre"],
                         ).value,
                         calibre,
+                    )
+                    self.assertIsInstance(
+                        hoja.cell(
+                            fila_excel,
+                            encabezados["# Calibre"],
+                        ).value,
+                        str,
                     )
 
                     self.assertEqual(
@@ -248,6 +255,51 @@ class PruebasEscritorDimanno(unittest.TestCase):
                     ruta_salida=ruta_salida,
                     recalcular_al_final=False,
                 )
+
+
+class EscrituraTextoCalibreTests(unittest.TestCase):
+    def test_bloque_fuerza_formato_texto_en_calibre(self):
+        from unittest.mock import MagicMock
+
+        from services.dimanno.writer import (
+            COLUMNAS_FORZAR_TEXTO,
+            escribir_valores_bloque,
+        )
+
+        self.assertIn("# Calibre", COLUMNAS_FORZAR_TEXTO)
+
+        rangos: dict[str, MagicMock] = {}
+
+        def range_factory(inicio, fin):
+            # inicio/fin son tuplas (fila, col) por el mock de Cells
+            col = inicio[1]
+            rango = MagicMock()
+            rangos[col] = rango
+            return rango
+
+        hoja = MagicMock()
+        hoja.Range.side_effect = range_factory
+        hoja.Cells.side_effect = lambda f, c: (f, c)
+
+        escribir_valores_bloque(
+            hoja=hoja,
+            fila_inicial=10,
+            fila_final=11,
+            posiciones={"# Calibre": 9, "Total Cajas": 10},
+            filas_valores=[
+                {"# Calibre": "6", "Total Cajas": 100},
+                {"# Calibre": "7", "Total Cajas": 80},
+            ],
+        )
+
+        rango_calibre = rangos[9]
+        self.assertEqual(rango_calibre.NumberFormat, "@")
+        self.assertEqual(
+            rango_calibre.Value2,
+            [["6"], ["7"]],
+        )
+        rango_cajas = rangos[10]
+        self.assertEqual(rango_cajas.Value2, [[100], [80]])
 
 
 if __name__ == "__main__":

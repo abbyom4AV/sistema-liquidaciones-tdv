@@ -288,7 +288,7 @@ def construir_valores_fila_orsero(
 
     return {
         "Semana": semana_texto,
-        "Año": despacho.anio,
+        "Año": str(despacho.anio),
         "Cliente": despacho.cliente,
         "Nave": despacho.barco,
         "Contenedor": despacho.contenedor,

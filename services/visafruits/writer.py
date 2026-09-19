@@ -521,7 +521,7 @@ def construir_valores_fila_visafruits(
 
     fila: dict[str, Any] = {
         "Semana": semana_texto,
-        "Año": int(linea.anio),
+        "Año": str(linea.anio),
         "Cliente": linea.cliente,
         "Nave": linea.nave,
         "Contenedor": linea.contenedor,
