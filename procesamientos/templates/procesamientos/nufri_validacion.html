@@ -189,12 +189,9 @@
       .errores { color: var(--error); }
       .vacio { margin: 0; color: var(--muted); font-size: 0.92rem; }
 
-      .bloque-tablas {
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 1rem;
+      .modulo-vista .bloque-tablas {
+        grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr);
         margin-bottom: 1.1rem;
-        align-items: start;
       }
 
       .cabecera-bloque {

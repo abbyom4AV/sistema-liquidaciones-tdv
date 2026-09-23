@@ -20,49 +20,43 @@
       }
 
       .nav-volver a:hover {
-   color: var(--acento-oscuro);
-   text-decoration: none;
- }
+        color: var(--acento-oscuro);
+        text-decoration: none;
+      }
 
       .cabecera {
-   display: flex;
-   justify-content: space-between;
-   gap: 0.35rem;
-   flex-wrap: wrap;
-   align-items: flex-end;
-   margin-bottom: 1.25rem;
- }
+        display: flex;
+        justify-content: space-between;
+        gap: 0.35rem;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        margin-bottom: 1.25rem;
+      }
 
       h1 {
-   margin: 0;
-   font-size: clamp(1.7rem, 2.2vw, 2rem);
- }
+        margin: 0;
+        font-size: clamp(1.7rem, 2.2vw, 2rem);
+      }
 
       .meta-cabecera {
         color: var(--muted);
         font-size: 0.95rem;
       }
 
-      .grid-principal {
-        display: grid;
-        grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
-        gap: 1rem;
-        align-items: start;
-        margin-bottom: 1rem;
-      }
-
       .col-principal {
         display: grid;
         gap: 1rem;
+        min-width: 0;
       }
 
       .tarjeta {
-   background: var(--tarjeta);
-   border: 1px solid var(--borde);
-   border-radius: var(--radius);
-   padding: 1.2rem 1.25rem;
-   box-shadow: var(--shadow);
- }
+        background: var(--tarjeta);
+        border: 1px solid var(--borde);
+        border-radius: var(--radius);
+        padding: 1.2rem 1.25rem;
+        box-shadow: var(--shadow);
+        min-width: 0;
+      }
 
       .seccion-titulo {
         margin: 0 0 0.75rem;
@@ -126,11 +120,11 @@
       }
 
       .dato strong {
-   display: block;
-   font-size: 0.78rem;
-   color: var(--muted);
-   margin-bottom: 0.2rem;
- }
+        display: block;
+        font-size: 0.78rem;
+        color: var(--muted);
+        margin-bottom: 0.2rem;
+      }
 
       .panel-lateral {
         background: var(--tarjeta);
@@ -138,6 +132,7 @@
         border-radius: var(--radius);
         padding: 1.1rem 1.2rem;
         box-shadow: var(--shadow);
+        min-width: 0;
       }
 
       .panel-lateral h2 {
@@ -178,6 +173,12 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 0.75rem;
+        margin-top: 0.9rem;
+      }
+
+      .incidencias .tarjeta {
+        box-shadow: none;
+        padding: 0.85rem 0.95rem;
       }
 
       .lista {
@@ -189,16 +190,25 @@
       .errores { color: var(--error); }
       .vacio { margin: 0; color: var(--muted); font-size: 0.92rem; }
 
-      .bloque-tablas {
+      /* Líneas a la izquierda; totales apilados a la derecha */
+      .bloque-detalle {
         display: grid;
-        grid-template-columns: 1.35fr 0.65fr;
+        grid-template-columns: minmax(0, 1.65fr) minmax(260px, 0.8fr);
         gap: 1rem;
         margin-bottom: 1.1rem;
         align-items: start;
       }
 
+      .col-resumenes {
+        display: grid;
+        gap: 1rem;
+        min-width: 0;
+        align-content: start;
+      }
+
       .tabla-scroll {
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       .cabecera-bloque {
@@ -215,28 +225,62 @@
       }
 
       table {
-   width: 100%;
-   border-collapse: collapse;
-   font-size: 0.93rem;
- }
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+
+      .tabla-lineas {
+        min-width: 640px;
+      }
+
+      .tabla-compacta th,
+      .tabla-compacta td {
+        padding: 0.45rem 0.4rem;
+      }
 
       th, td {
         text-align: left;
-        padding: 0.5rem 0.3rem;
+        padding: 0.5rem 0.4rem;
         border-bottom: 1px solid var(--borde);
         vertical-align: top;
       }
 
       th {
-   color: var(--muted);
-   font-size: 0.82rem;
-   font-weight: 600;
-   text-transform: uppercase;
-   letter-spacing: 0.03em;
-   white-space: nowrap;
- }
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+      }
 
-      td.num, th.num { text-align: right; white-space: nowrap; }
+      td.num, th.num {
+        text-align: right;
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .celda-carton {
+        min-width: 10rem;
+        max-width: 16rem;
+        line-height: 1.35;
+      }
+
+      .etiqueta-vertical {
+        display: inline-block;
+        margin-left: 0.35rem;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: var(--acento-oscuro);
+        background: var(--acento-suave);
+        border-radius: var(--radius-sm);
+        padding: 0.1rem 0.4rem;
+        vertical-align: middle;
+        white-space: nowrap;
+      }
 
       .etiqueta-sin-comision {
         display: inline-block;
@@ -247,6 +291,7 @@
         background: #fff7e6;
         border-radius: var(--radius-sm);
         padding: 0.1rem 0.4rem;
+        white-space: nowrap;
       }
 
       a.boton, button.boton {
@@ -292,15 +337,20 @@
         margin-bottom: 0.2rem;
       }
 
+      .panel-acciones {
+        display: grid;
+        gap: 0.5rem;
+      }
+
       .panel-acciones a.boton,
       .panel-acciones button.boton {
         width: 100%;
         text-align: center;
+        box-sizing: border-box;
       }
 
       @media (max-width: 980px) {
-        .grid-principal,
-        .bloque-tablas,
+        .bloque-detalle,
         .incidencias,
         .metrics,
         .detalle-grid {
@@ -469,7 +519,7 @@
               action="{% url 'procesamientos:sifa_generar' procesamiento.id %}"
             >
               {% csrf_token %}
-              <button class="boton" type="submit" style="width: 100%;">
+              <button class="boton" type="submit">
                 Generar archivo
               </button>
             </form>
@@ -501,123 +551,149 @@
       </aside>
     </div>
 
-    <div class="bloque-tablas">
-      <section class="tarjeta tabla-scroll">
+    <div class="bloque-detalle">
+      <section class="tarjeta">
         <div class="cabecera-bloque">
           <h2>Líneas preparadas</h2>
+          <span class="meta-cabecera">{{ lineas|length }} líneas</span>
         </div>
         {% if lineas %}
-          <table>
-            <thead>
-              <tr>
-                <th>Contenedor</th>
-                <th>Cartón</th>
-                <th>Calibre</th>
-                <th class="num">Cajas</th>
-                <th>Tipo fruta</th>
-                <th class="num">Precio €</th>
-                <th>Comisión</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for linea in lineas %}
+          <div class="tabla-scroll">
+            <table class="tabla-lineas">
+              <thead>
                 <tr>
-                  <td>{{ linea.contenedor }}</td>
-                  <td>{{ linea.carton }}</td>
-                  <td>{{ linea.calibre }}</td>
-                  <td class="num">{{ linea.total_cajas }}</td>
-                  <td>{{ linea.tipo_fruta }}</td>
-                  <td class="num">{{ linea.precio_venta_eur|decimal_es }}</td>
-                  <td>
-                    {% if linea.sin_comision_linea %}
-                      Sin comisión
-                      <span class="etiqueta-sin-comision">No</span>
-                    {% else %}
-                      Con comisión
-                    {% endif %}
-                  </td>
+                  <th>Contenedor</th>
+                  <th>Cartón</th>
+                  <th>Calibre</th>
+                  <th class="num">Cajas</th>
+                  <th>Tipo fruta</th>
+                  <th class="num">Precio €</th>
+                  <th>Comisión</th>
                 </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {% for linea in lineas %}
+                  <tr>
+                    <td>{{ linea.contenedor }}</td>
+                    <td class="celda-carton">
+                      {% if linea.carton|slice:":8"|upper == "VERTICAL" %}
+                        {{ linea.carton|slice:"9:" }}
+                        <span class="etiqueta-vertical">Vertical</span>
+                      {% else %}
+                        {{ linea.carton }}
+                      {% endif %}
+                    </td>
+                    <td>{{ linea.calibre }}</td>
+                    <td class="num">{{ linea.total_cajas }}</td>
+                    <td>{{ linea.tipo_fruta }}</td>
+                    <td class="num">{{ linea.precio_venta_eur|decimal_es }}</td>
+                    <td>
+                      {% if linea.sin_comision_linea %}
+                        Sin comisión
+                        <span class="etiqueta-sin-comision">No</span>
+                      {% else %}
+                        Con comisión
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         {% else %}
           <p class="vacio">No hay líneas preparadas.</p>
         {% endif %}
       </section>
 
-      <section class="tarjeta tabla-scroll">
-        <div class="cabecera-bloque">
-          <h2>Venta por contenedor</h2>
-        </div>
-        {% if resumen_contenedores %}
-          <table>
-            <thead>
-              <tr>
-                <th>Contenedor</th>
-                <th class="num">Cajas</th>
-                <th class="num">Venta €</th>
-                <th class="num">Comisión €</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in resumen_contenedores %}
-                <tr>
-                  <td>{{ item.contenedor }}</td>
-                  <td class="num">{{ item.total_cajas }}</td>
-                  <td class="num">{{ item.total_venta_eur|decimal_es }}</td>
-                  <td class="num">{{ item.comision_eur|decimal_es }}</td>
-                </tr>
-              {% endfor %}
-              <tr>
-                <td><strong>Total</strong></td>
-                <td class="num"><strong>{{ procesamiento.total_cajas_liquidacion|floatformat:0 }}</strong></td>
-                <td class="num"><strong>{{ procesamiento.total_venta_eur|decimal_es }}</strong></td>
-                <td class="num"><strong>{{ procesamiento.comision_total|decimal_es }}</strong></td>
-              </tr>
-            </tbody>
-          </table>
-        {% else %}
-          <p class="vacio">No hay totales por contenedor.</p>
-        {% endif %}
-      </section>
+      <div class="col-resumenes">
+        <section class="tarjeta">
+          <div class="cabecera-bloque">
+            <h2>Venta por contenedor</h2>
+          </div>
+          {% if resumen_contenedores %}
+            <div class="tabla-scroll">
+              <table class="tabla-compacta">
+                <thead>
+                  <tr>
+                    <th>Contenedor</th>
+                    <th class="num">Cajas</th>
+                    <th class="num">Venta €</th>
+                    <th class="num">Comisión €</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in resumen_contenedores %}
+                    <tr>
+                      <td>{{ item.contenedor }}</td>
+                      <td class="num">{{ item.total_cajas }}</td>
+                      <td class="num">{{ item.total_venta_eur|decimal_es }}</td>
+                      <td class="num">{{ item.comision_eur|decimal_es }}</td>
+                    </tr>
+                  {% endfor %}
+                  <tr>
+                    <td><strong>Total</strong></td>
+                    <td class="num">
+                      <strong>{{ procesamiento.total_cajas_liquidacion|floatformat:0 }}</strong>
+                    </td>
+                    <td class="num">
+                      <strong>{{ procesamiento.total_venta_eur|decimal_es }}</strong>
+                    </td>
+                    <td class="num">
+                      <strong>{{ procesamiento.comision_total|decimal_es }}</strong>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p class="vacio">No hay totales por contenedor.</p>
+          {% endif %}
+        </section>
 
-      <section class="tarjeta tabla-scroll">
-        <div class="cabecera-bloque">
-          <h2>Resumen de gastos</h2>
-        </div>
-        {% if resumen_gastos %}
-          <table>
-            <thead>
-              <tr>
-                <th>Rubro</th>
-                <th class="num">Monto €</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in resumen_gastos %}
-                <tr>
-                  <td>{{ item.nombre }}</td>
-                  <td class="num">{{ item.valor|decimal_es }}</td>
-                </tr>
-              {% endfor %}
-              <tr>
-                <td><strong>Total gastos</strong></td>
-                <td class="num"><strong>{{ total_gastos|decimal_es }}</strong></td>
-              </tr>
-              <tr>
-                <td><strong>Comisión total</strong></td>
-                <td class="num"><strong>{{ procesamiento.comision_total|decimal_es }}</strong></td>
-              </tr>
-              <tr>
-                <td><strong>Total costos (gastos + comisión)</strong></td>
-                <td class="num"><strong>{{ total_costos_estimado|decimal_es }}</strong></td>
-              </tr>
-            </tbody>
-          </table>
-        {% else %}
-          <p class="vacio">No hay resumen de gastos.</p>
-        {% endif %}
-      </section>
+        <section class="tarjeta">
+          <div class="cabecera-bloque">
+            <h2>Resumen de gastos</h2>
+          </div>
+          {% if resumen_gastos %}
+            <div class="tabla-scroll">
+              <table class="tabla-compacta">
+                <thead>
+                  <tr>
+                    <th>Rubro</th>
+                    <th class="num">Monto €</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in resumen_gastos %}
+                    <tr>
+                      <td>{{ item.nombre }}</td>
+                      <td class="num">{{ item.valor|decimal_es }}</td>
+                    </tr>
+                  {% endfor %}
+                  <tr>
+                    <td><strong>Total gastos</strong></td>
+                    <td class="num"><strong>{{ total_gastos|decimal_es }}</strong></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Comisión total</strong></td>
+                    <td class="num">
+                      <strong>{{ procesamiento.comision_total|decimal_es }}</strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Total costos</strong></td>
+                    <td class="num">
+                      <strong>{{ total_costos_estimado|decimal_es }}</strong>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p class="vacio">No hay resumen de gastos.</p>
+          {% endif %}
+        </section>
+      </div>
     </div>
 
     <div class="acciones-finales">

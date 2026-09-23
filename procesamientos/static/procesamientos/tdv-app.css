@@ -801,13 +801,39 @@ a.enlace:hover { text-decoration: underline; }
 
 .modulo-vista .bloque-tablas {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
   gap: 1rem;
+  align-items: start;
+}
+
+.modulo-vista .bloque-tablas > * {
+  min-width: 0;
+}
+
+/* Una sola tarjeta: ocupa todo el ancho (p. ej. Kraaijeveld / Glamour). */
+.modulo-vista .bloque-tablas > *:only-child {
+  grid-column: 1 / -1;
 }
 
 .modulo-vista .tabla-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+.modulo-vista .etiqueta-vertical {
+  display: inline-block;
+  margin-left: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--acento-oscuro);
+  background: var(--acento-suave);
+  border-radius: var(--radius-sm);
+  padding: 0.1rem 0.4rem;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 
 .modulo-vista .acciones-form,
@@ -1127,8 +1153,13 @@ a.enlace:hover { text-decoration: underline; }
 
 @media (max-width: 960px) {
   .modulo-vista .layout,
-  .modulo-vista .grid-principal {
+  .modulo-vista .grid-principal,
+  .modulo-vista .bloque-tablas {
     grid-template-columns: 1fr;
+  }
+
+  .modulo-vista .bloque-tablas > *:only-child {
+    grid-column: auto;
   }
 }
 

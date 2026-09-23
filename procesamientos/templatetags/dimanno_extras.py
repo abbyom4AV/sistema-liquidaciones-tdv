@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-from decimal import Decimal, InvalidOperation
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 
 from django import template
 
 register = template.Library()
+
+# Suficiente para montos y evita residuos típicos de float (…0000002).
+_PRECISION_UI = Decimal("0.000001")
 
 
 @register.filter(name="decimal_es")
@@ -17,13 +20,20 @@ def decimal_es(valor) -> str:
         return ""
 
     try:
-        numero = Decimal(str(valor))
-    except (InvalidOperation, TypeError, ValueError):
+        if isinstance(valor, float):
+            numero = Decimal(str(valor))
+        else:
+            numero = Decimal(str(valor).strip().replace(",", "."))
+    except (InvalidOperation, TypeError, ValueError, AttributeError):
+        return str(valor)
+
+    if not numero.is_finite():
         return str(valor)
 
     if numero == 0:
         return "0"
 
+    numero = numero.quantize(_PRECISION_UI, rounding=ROUND_HALF_UP)
     texto = format(numero, "f")
     if "." in texto:
         texto = texto.rstrip("0").rstrip(".")
